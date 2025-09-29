@@ -101,8 +101,66 @@ const getRefreshToken = () => {
     return axios.get(URL_BACKEND)
 }
 
+const registerAPI = (password, name, email, phone, gender) => {
+    const URL_BACKEND = "/auth/register"
+    const data = {
+        username: email,
+        password: password,
+        name: name,
+        phone: phone,
+        email: email,
+        gender: gender,
+        role: {
+            name: "CUSTOMER"
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const verifyOtp = (email, otp, type) => {
+    const URL_BACKEND = "/auth/verify-otp"
+    const data = {
+        email: email,
+        otp: otp,
+        type: type
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const resendOtp = (email, type) => {
+    const URL_BACKEND = `/auth/resend-otp?email=${email}&type=${type}`
+    return axios.get(URL_BACKEND)
+}
+
+const forgetPasswordAPI = (email) => {
+    const URL_BACKEND = `/auth/forget-password?email=${email}`
+    return axios.get(URL_BACKEND)
+}
+
+//module service
+const fetchAllServicesWithPagination = (page, pageSize, filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/services?page=${page}&size=${pageSize}&filter=${filter}`
+    } else {
+        URL_BACKEND = `/services?page=${page}&size=${pageSize}`
+    }
+    return axios.get(URL_BACKEND)
+}
+
+const fetchAllServicesWithoutPagination = (filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/services?filter=${filter}`
+    } else {
+        URL_BACKEND = `/services`
+    }
+    return axios.get(URL_BACKEND)
+}
 
 
 
-export { getAccountAPI, getRefreshToken, loginAPI, logoutAPI };
+export {
+    fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, verifyOtp
+};
 

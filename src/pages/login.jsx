@@ -1,46 +1,52 @@
 import { Button, Form, Input, message, notification } from "antd";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
 import { loginAPI } from "../services/api.service";
 
 const LoginPage = () => {
 
+    const { user, setUser } = useContext(AuthContext)
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-    const { setUser } = useContext(AuthContext)
-    const [tab, setTab] = useState("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = () => {
-        if (onLogin) onLogin(email, password);
-    };
-
+    useEffect(() => {
+        if (user && user.id) {
+            navigate("/")
+        }
+    })
 
     const onFinish = async (values) => {
         setLoading(true)
         const res = await loginAPI(values.username, values.password)
-        if (res.data) {
-            message.success("Đăng nhập thành công")
-            localStorage.setItem("access_token", res.data.access_token)
-            setUser(res.data.user)
-            navigate("/")
-        }
-        else {
-            notification.error({
-                message: "Error login",
-                description: JSON.stringify(res.message)
-            })
-        }
-        setLoading(false)
+        setTimeout(() => {
+            if (res.data) {
+                message.success("Đăng nhập thành công")
+                localStorage.setItem("access_token", res.data.access_token)
+                setUser(res.data.user)
+                if (user?.role.name === "CUSTOMER") {
+                    navigate("/")
+                } else {
+                    navigate("/management")
+                }
+            }
+            else {
+                setLoading(false)
+                notification.error({
+                    message: "Error login",
+                    description: JSON.stringify(res.message)
+                })
+            }
+        }, 2000)
     }
 
     return (
         <div style={{
             minHeight: "100vh",
-            background: "#f7f7f7",
+            background: "#F6F6F6",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
@@ -50,7 +56,7 @@ const LoginPage = () => {
                 borderRadius: 18,
                 boxShadow: "0 2px 16px #e6e6e6",
                 padding: "48px 36px 36px 36px",
-                width: 410,
+                width: 600,
                 maxWidth: "95vw",
                 display: "flex",
                 flexDirection: "column",
@@ -58,7 +64,7 @@ const LoginPage = () => {
             }}>
                 <h2 style={{
                     fontWeight: 700,
-                    fontSize: 32,
+                    fontSize: 35,
                     marginBottom: 8,
                     textAlign: "center"
                 }}>
@@ -66,7 +72,7 @@ const LoginPage = () => {
                 </h2>
                 <div style={{
                     color: "#444",
-                    fontSize: 16,
+                    fontSize: 18,
                     marginBottom: 28,
                     textAlign: "center"
                 }}>
@@ -82,18 +88,15 @@ const LoginPage = () => {
                     background: "#f5f6f7",
                 }}>
                     <button
-                        onClick={() => setTab("login")}
                         style={{
                             flex: 1,
                             padding: "12px 0",
                             fontWeight: 600,
-                            fontSize: 16,
-                            background: tab === "login" ? "#fff" : "#f5f6f7",
-                            border: "none",
-                            outline: "none",
+                            fontSize: 18,
+                            background: "#fff",
                             cursor: "pointer",
-                            color: tab === "login" ? "#222" : "#888",
-                            borderRight: "1px solid #eee",
+                            color: "#222",
+                            border: "3px solid #f5f6f7",
                             transition: "background 0.2s"
                         }}
                     >
@@ -101,17 +104,17 @@ const LoginPage = () => {
                     </button>
 
                     <button
-                        onClick={() => setTab("register")}
+                        onClick={() => navigate("/register")}
                         style={{
                             flex: 1,
                             padding: "12px 0",
                             fontWeight: 600,
-                            fontSize: 16,
-                            background: tab === "register" ? "#fff" : "#f5f6f7",
+                            fontSize: 18,
+                            background: "#f5f6f7",
                             border: "none",
                             outline: "none",
                             cursor: "pointer",
-                            color: tab === "register" ? "#222" : "#888",
+                            color: "#888",
                             transition: "background 0.2s"
                         }}
                     >
@@ -119,24 +122,50 @@ const LoginPage = () => {
                     </button>
                 </div>
                 {/* Form */}
-                {tab === "login" && (
-                    <>
-                        <div style={{ width: "100%", marginBottom: 8, fontWeight: 500 }}>Email</div>
+                <Form
+                    form={form}
+                    name="basic"
+                    layout="vertical"
+                    style={{ width: "100%" }}
+                    onFinish={onFinish}
+                    autoComplete="off"
+                >
+                    <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Email</div>
+                    <Form.Item
+                        name="username"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập email!' },
+                            { type: "email", message: "Email không đúng định dạng!" }
+                        ]}
+                        style={{ marginBottom: 30 }}
+                    >
                         <Input
                             size="large"
                             placeholder="email@example.com"
-                            style={{ marginBottom: 18, borderRadius: 8 }}
+                            style={{ borderRadius: 8 }}
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                         />
-                        <div style={{ width: "100%", marginBottom: 8, fontWeight: 500 }}>Mật khẩu</div>
+                    </Form.Item>
+
+                    <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Mật khẩu</div>
+                    <Form.Item
+                        name="password"
+                        rules={[
+                            { required: true, message: 'Vui lòng nhập mật khẩu!' }
+                        ]}
+                        style={{ marginBottom: 40 }}
+                    >
                         <Input.Password
                             size="large"
                             placeholder="Mật khẩu của bạn"
-                            style={{ marginBottom: 24, borderRadius: 8 }}
+                            style={{ borderRadius: 8 }}
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                         />
+                    </Form.Item>
+
+                    <Form.Item style={{ marginBottom: 0 }}>
                         <Button
                             type="primary"
                             size="large"
@@ -146,23 +175,24 @@ const LoginPage = () => {
                                 borderColor: "#41894b",
                                 borderRadius: 8,
                                 fontWeight: 600,
-                                fontSize: 17,
+                                fontSize: 20,
                                 marginBottom: 18
                             }}
-                            onClick={handleLogin}
+                            htmlType="submit"
+                            loading={loading}
                         >
                             Đăng nhập
                         </Button>
-                        <div style={{ textAlign: "center", marginTop: 8 }}>
-                            <a href="#" style={{ color: "#41894b", fontWeight: 500 }}>Quên mật khẩu?</a>
-                        </div>
-                    </>
-                )}
-                {tab === "register" && (
-                    <div style={{ width: "100%", textAlign: "center", color: "#888", marginTop: 30 }}>
-                        Chức năng đăng ký sẽ sớm ra mắt!
+                    </Form.Item>
+                    <div style={{ textAlign: "center", marginTop: 8 }}>
+                        <Button
+                            style={{ color: "#41894b", fontWeight: 500, fontSize: 17 }}
+                            onClick={() => navigate("/forget-password")}>
+                            Quên mật khẩu?
+                        </Button>
                     </div>
-                )}
+                </Form>
+
             </div>
         </div>
     );

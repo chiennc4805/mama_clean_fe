@@ -1,10 +1,98 @@
-import { CheckCircleOutlined, HeartOutlined, ThunderboltOutlined, UserOutlined } from "@ant-design/icons"
+import { CalendarOutlined, CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, HeartOutlined, HomeOutlined, SafetyOutlined, StarOutlined, ThunderboltOutlined, UserOutlined } from "@ant-design/icons"
+import { Button, Card, Col, DatePicker, Form, Input, Row, Select, Typography } from "antd"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { fetchAllServicesWithoutPagination } from "../services/api.service"
+
+const { Title, Paragraph, Text: AntText } = Typography;
 
 const HomePage = () => {
 
+    const [form] = Form.useForm()
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [servicesOption, setServicesOption] = useState([])
+
+    const processSteps = [
+        {
+            icon: <CheckCircleOutlined style={{ fontSize: '32px', color: '#52c41a' }} />,
+            title: 'Chọn dịch vụ',
+            description: 'Lựa chọn loại hình và gói dịch vụ phù hợp với nhu cầu của bạn trên Mama\'s Clean.',
+            number: '1'
+        },
+        {
+            icon: <CalendarOutlined style={{ fontSize: '32px', color: '#52c41a' }} />,
+            title: 'Chọn thời gian & địa điểm',
+            description: 'Đặt lịch dọn dẹp vào thời gian và địa chỉ bạn mong muốn một cách dễ dàng và linh hoạt.',
+            number: '2'
+        },
+        {
+            icon: <HeartOutlined style={{ fontSize: '32px', color: '#52c41a' }} />,
+            title: 'Xác nhận & Thanh toán',
+            description: 'Xác nhận thông tin đặt lịch và hoàn tất thanh toán an toàn, minh bạch.',
+            number: '3'
+        },
+        {
+            icon: <HomeOutlined style={{ fontSize: '32px', color: '#52c41a' }} />,
+            title: 'Tận hưởng không gian sạch sẽ',
+            description: 'Đội ngũ chuyên nghiệp của chúng tôi sẽ đến và mang lại không gian sạch bóng cho bạn.',
+            number: '4'
+        }
+    ];
+
+    const fetchDataInFormBookingNow = async () => {
+        const res = await fetchAllServicesWithoutPagination()
+        if (res.data) {
+            setServicesOption(res.data.result.map(x => ({ label: x.name, value: x.id })))
+        }
+    }
+
+    useEffect(() => {
+        fetchDataInFormBookingNow()
+    }, [])
+
+    const onFinish_now_booking = async (values) => {
+        setLoading(true)
+        const res = await loginAPI(values.username, values.password)
+        setTimeout(() => {
+            if (res.data) {
+                message.success("Đăng nhập thành công")
+                localStorage.setItem("access_token", res.data.access_token)
+                setUser(res.data.user)
+                navigate("/")
+            }
+            else {
+                setLoading(false)
+                notification.error({
+                    message: "Error login",
+                    description: JSON.stringify(res.message)
+                })
+            }
+        }, 2000)
+    }
+
+    const benefits = [
+        {
+            icon: <CheckOutlined style={{ color: '#52c41a' }} />,
+            text: 'Dịch vụ nhanh chóng, phù hợp với lịch trình bận rộn.'
+        },
+        {
+            icon: <ClockCircleOutlined style={{ color: '#52c41a' }} />,
+            text: 'Chi phí hợp lý, tiết kiệm cho sinh viên.'
+        },
+        {
+            icon: <StarOutlined style={{ color: '#52c41a' }} />,
+            text: 'Không gian sạch sẽ giúp tăng cường sự tập trung và sức khỏe.'
+        },
+        {
+            icon: <SafetyOutlined style={{ color: '#52c41a' }} />,
+            text: 'Đặt lịch dễ dàng, không tốn nhiều công sức.'
+        }
+    ];
+
     return (
         <>
-            {/* banner */}
+            {/* banner section */}
             <div style={{
                 position: "relative",
                 width: "100%",
@@ -13,7 +101,7 @@ const HomePage = () => {
             }}>
                 {/* Ảnh nền làm mờ */}
                 <img
-                    src="src/assets/homepage/anh1.jpg"
+                    src="src/assets/homepage/banner.jpg"
                     alt="banner"
                     style={{
                         width: "100%",
@@ -76,7 +164,8 @@ const HomePage = () => {
                                 fontSize: 18,
                                 fontWeight: 600,
                                 cursor: "pointer"
-                            }}>
+                            }}
+                            onClick={() => navigate("/booking")}>
                             Đặt lịch ngay
                         </button>
 
@@ -95,9 +184,9 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* why choose area */}
+            {/* why-choose section */}
             <div style={{
-                background: "#f7f7f7",
+                background: "#F6F6F6",
                 padding: "150px 0",
                 width: "100%",
             }}>
@@ -220,7 +309,7 @@ const HomePage = () => {
                             justifyContent: "center",
                         }}>
                             <img
-                                src="src/assets/homepage/why_choose_right.png"
+                                src="src/assets/homepage/why_choose.png"
                                 alt="Mama's Clean Team"
                                 style={{
                                     width: "100%",
@@ -234,9 +323,9 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {/* Dịch vụ nổi bật */}
+            {/* featured-service section */}
             <div style={{
-                background: "#fff",
+                background: "#FFFFFF",
                 padding: "130px 0",
                 width: "100%",
             }}>
@@ -400,6 +489,677 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* booking-now section */}
+            <div style={{
+                minHeight: "100vh",
+                background: "#F6F6F6",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+                <div style={{
+                    background: "#fff",
+                    borderRadius: 18,
+                    boxShadow: "0 2px 16px #e6e6e6",
+                    padding: "48px 36px 36px 36px",
+                    width: 700,
+                    maxWidth: "95vw",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
+                }}>
+                    <h2 style={{
+                        fontWeight: 700,
+                        fontSize: 35,
+                        marginBottom: 15,
+                        textAlign: "center"
+                    }}>
+                        Đặt lịch dọn phòng nhanh chóng với Mama's Clean
+                    </h2>
+                    <div style={{
+                        color: "#444",
+                        fontSize: 18,
+                        marginBottom: 35,
+                        textAlign: "center"
+                    }}>
+                        Chọn dịch vụ, thời gian và địa điểm của bạn để trải nghiệm không gian sống sạch sẽ, tươi mới.
+                    </div>
+                    {/* Form */}
+                    <Form
+                        form={form}
+                        name="basic"
+                        layout="vertical"
+                        style={{ width: "100%" }}
+                        onFinish={onFinish_now_booking}
+                        autoComplete="off"
+                    >
+                        <Row
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between"
+                            }}
+                        >
+                            <Col span={11}>
+                                <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Loại dịch vụ</div>
+                                <Form.Item
+                                    name="username"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: "email", message: "Email không đúng định dạng!" }
+                                    ]}
+                                    style={{ marginBottom: 30 }}
+                                >
+                                    <Select
+                                        placeholder="Chọn dịch vụ"
+                                        allowClear={true}
+                                        options={servicesOption}
+                                    />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={11}>
+                                <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Ngày</div>
+                                <Form.Item
+                                    name="username"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: "email", message: "Email không đúng định dạng!" }
+                                    ]}
+                                    style={{ marginBottom: 30 }}
+                                >
+                                    <DatePicker
+                                        placeholder='Chọn ngày'
+                                        style={{ width: '100%' }}
+                                        size="large"
+                                        format="DD/MM/YYYY"
+                                    />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={11}>
+                                <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Giờ</div>
+                                <Form.Item
+                                    name="username"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: "email", message: "Email không đúng định dạng!" }
+                                    ]}
+                                    style={{ marginBottom: 30 }}
+                                >
+                                    <Input
+                                        size="large"
+                                        placeholder="Nhập địa chỉ của bạn"
+                                        style={{ borderRadius: 8 }}
+                                    />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={11}>
+                                <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Địa chỉ</div>
+                                <Form.Item
+                                    name="username"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: "email", message: "Email không đúng định dạng!" }
+                                    ]}
+                                    style={{ marginBottom: 30 }}
+                                >
+                                    <Input
+                                        size="large"
+                                        placeholder="Nhập địa chỉ của bạn"
+                                        style={{ borderRadius: 8 }}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Form.Item style={{ marginBottom: 0 }}>
+                            <Button
+                                type="primary"
+                                size="large"
+                                block
+                                style={{
+                                    background: "#41894b",
+                                    borderColor: "#41894b",
+                                    borderRadius: 8,
+                                    fontWeight: 600,
+                                    fontSize: 20,
+                                    marginBottom: 18
+                                }}
+                                htmlType="submit"
+                                loading={loading}
+                            >
+                                Đặt lịch
+                            </Button>
+                        </Form.Item>
+                    </Form>
+
+                </div>
+            </div>
+
+            {/* process-step section */}
+            <div style={{
+                padding: '100px 20px 60px 20px',
+                backgroundColor: '#FFFFFF',
+                minHeight: '90vh',
+            }}>
+                <div style={{ maxWidth: '90%', margin: '0 auto' }}>
+                    {/* Header */}
+                    <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                        <Title level={2} style={{
+                            fontSize: '50px',
+                            fontWeight: 'bold',
+                            color: '#2c3e50',
+                            marginBottom: '50px'
+                        }}>
+                            Cách thức hoạt động đơn giản của Mama's Clean
+                        </Title>
+                        <Paragraph style={{
+                            fontSize: '25px',
+                            color: '#7f8c8d',
+                            maxWidth: '900px',
+                            margin: '0 auto',
+                            lineHeight: '1.6'
+                        }}>
+                            Chỉ với vài bước đơn giản, bạn đã có thể tận hưởng không gian sống sạch sẽ và thoải mái ngay lập tức.
+                        </Paragraph>
+                    </div>
+
+                    {/* Process Steps */}
+                    <Row gutter={[32, 32]} justify="center">
+                        {processSteps.map((step, index) => (
+                            <Col xs={24} sm={12} lg={6} key={index}>
+                                <Card
+                                    style={{
+                                        textAlign: 'center',
+                                        height: '100%',
+                                        borderRadius: '16px',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                        transition: 'all 0.3s ease',
+                                        position: 'relative',
+                                        overflow: 'visible'
+                                    }}
+                                    bodyStyle={{
+                                        padding: '40px 24px 32px',
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'space-between'
+                                    }}
+                                    className="process-card"
+                                >
+                                    {/* Step Number */}
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-15px',
+                                        left: '20px',
+                                        width: '40px',
+                                        height: '40px',
+                                        backgroundColor: '#52c41a',
+                                        color: 'white',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '18px',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 2px 8px rgba(82, 196, 26, 0.3)'
+                                    }}>
+                                        {step.number}
+                                    </div>
+
+                                    <div>
+                                        {/* Icon */}
+                                        <div style={{
+                                            marginBottom: '24px',
+                                            padding: '20px',
+                                            backgroundColor: '#f6ffed',
+                                            borderRadius: '50%',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            {step.icon}
+                                        </div>
+
+                                        {/* Title */}
+                                        <Title level={4} style={{
+                                            marginBottom: '20px',
+                                            color: '#2c3e50',
+                                            fontSize: '25px',
+                                            fontWeight: '600'
+                                        }}>
+                                            {step.title}
+                                        </Title>
+
+                                        <Paragraph style={{
+                                            color: '#7f8c8d',
+                                            fontSize: '16px',
+                                            lineHeight: '1.6',
+                                            margin: 0
+                                        }}>
+                                            {step.description}
+                                        </Paragraph>
+                                    </div>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                </div>
+
+                <style jsx>{`
+                    .process-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+                    }
+                    
+                    .process-card .ant-card-body {
+                    position: relative;
+                    }
+                    
+                    @media (max-width: 768px) {
+                    .process-card {
+                        margin-bottom: 20px;
+                    }
+                    }
+                `}</style>
+            </div>
+
+            {/* customer-feedback section */}
+            <div style={{
+                padding: '60px 20px',
+                backgroundColor: '#F6F6F6',
+                minHeight: '90vh'
+            }}>
+                <div style={{ marginTop: '100px' }}>
+                    {/* Testimonials Header */}
+                    <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                        <Title level={2} style={{
+                            fontSize: '50px',
+                            fontWeight: 'bold',
+                            color: '#2c3e50',
+                            marginBottom: '20px'
+                        }}>
+                            Khách hàng nói gì về Mama's Clean
+                        </Title>
+                        <Paragraph style={{
+                            fontSize: '23px',
+                            color: '#7f8c8d',
+                            maxWidth: '800px',
+                            margin: '0 auto',
+                            lineHeight: '1.6'
+                        }}>
+                            Sự hài lòng của khách hàng là động lực lớn nhất để chúng tôi không ngừng cải thiện dịch vụ mỗi ngày.
+                        </Paragraph>
+                    </div>
+                    {/* Testimonials Cards */}
+                    <Row gutter={[32, 32]} justify="center">
+                        {/* Testimonial 1 */}
+                        <Col xs={24} md={8}>
+                            <Card
+                                bordered={false}
+                                style={{
+                                    borderRadius: '16px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                    height: '100%'
+                                }}
+                                bodyStyle={{ padding: '32px' }}
+                            >
+                                <div style={{ marginBottom: '24px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                        <div style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            borderRadius: '50%',
+                                            backgroundImage: 'linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: '12px'
+                                        }}>
+                                            <span style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>NH</span>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#2c3e50', fontSize: '20px' }}>
+                                                Nguyễn Thị Hoa
+                                            </div>
+                                            <div style={{ color: '#f39c12', fontSize: '14px' }}>
+                                                ⭐⭐⭐⭐⭐
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Paragraph style={{
+                                    color: '#7f8c8d',
+                                    fontSize: '18px',
+                                    lineHeight: '1.6',
+                                    fontStyle: 'italic',
+                                    margin: 0
+                                }}>
+                                    "Dịch vụ quá tuyệt vời! Nhân viên dọn dẹp kỹ lưỡng và rất chuyên nghiệp. Nhà tôi luôn sạch bóng sau mỗi lần sử dụng dịch vụ của Mama's Clean."
+                                </Paragraph>
+                            </Card>
+                        </Col>
+
+                        {/* Testimonial 2 */}
+                        <Col xs={24} md={8}>
+                            <Card
+                                bordered={false}
+                                style={{
+                                    borderRadius: '16px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                    height: '100%'
+                                }}
+                                bodyStyle={{ padding: '32px' }}
+                            >
+                                <div style={{ marginBottom: '24px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                        <div style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            borderRadius: '50%',
+                                            backgroundImage: 'linear-gradient(45deg, #a8edea 0%, #fed6e3 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: '12px'
+                                        }}>
+                                            <span style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>TH</span>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#2c3e50', fontSize: '20px' }}>
+                                                Trần Văn Hùng
+                                            </div>
+                                            <div style={{ color: '#f39c12', fontSize: '14px' }}>
+                                                ⭐⭐⭐⭐⭐
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Paragraph style={{
+                                    color: '#7f8c8d',
+                                    fontSize: '18px',
+                                    lineHeight: '1.6',
+                                    fontStyle: 'italic',
+                                    margin: 0
+                                }}>
+                                    "Tôi rất hài lòng với sự tiện lợi và chất lượng dịch vụ từ Mama's Clean. Đặt lịch dễ dàng, nhân viên đúng giờ và làm việc hiệu quả, không gian nhà luôn thơm mát."
+                                </Paragraph>
+                            </Card>
+                        </Col>
+
+                        {/* Testimonial 3 */}
+                        <Col xs={24} md={8}>
+                            <Card
+                                bordered={false}
+                                style={{
+                                    borderRadius: '16px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                    height: '100%'
+                                }}
+                                bodyStyle={{ padding: '32px' }}
+                            >
+                                <div style={{ marginBottom: '24px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                                        <div style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            borderRadius: '50%',
+                                            backgroundImage: 'linear-gradient(45deg, #ffecd2 0%, #fcb69f 100%)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: '12px'
+                                        }}>
+                                            <span style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>LM</span>
+                                        </div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', color: '#2c3e50', fontSize: '20px' }}>
+                                                Lê Thị Mai
+                                            </div>
+                                            <div style={{ color: '#f39c12', fontSize: '14px' }}>
+                                                ⭐⭐⭐⭐⭐
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Paragraph style={{
+                                    color: '#7f8c8d',
+                                    fontSize: '18px',
+                                    lineHeight: '1.6',
+                                    fontStyle: 'italic',
+                                    margin: 0
+                                }}>
+                                    "Ứng dụng dễ sử dụng, đội ngũ hỗ trợ nhiệt tình. Tuyệt vời! Tôi sẽ giới thiệu Mama's Clean cho bạn bè và gia đình."
+                                </Paragraph>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            </div >
+
+            {/* student-cleaning-service section */}
+            <div style={{
+                minHeight: '100vh',
+                background: '#F2FDF4',
+                padding: '0px 20px'
+            }}>
+                <div style={{ maxWidth: '95%', margin: '0 auto', padding: "100px 0px" }}>
+                    {/* Header Section */}
+                    <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                        <Title
+                            level={1}
+                            style={{
+                                fontSize: '50px',
+                                fontWeight: 'bold',
+                                color: '#1f2937',
+                                marginBottom: '20px',
+                                lineHeight: '1.2'
+                            }}
+                        >
+                            Dọn dẹp tiện lợi cho đời sống sinh viên năng động
+                        </Title>
+                        <Paragraph
+                            style={{
+                                fontSize: '25px',
+                                color: '#6b7280',
+                                maxWidth: '1000px',
+                                margin: '0 auto',
+                                lineHeight: '1.6'
+                            }}
+                        >
+                            Mama's Clean giúp sinh viên giữ gìn không gian sống sạch sẽ, để bạn tập trung vào việc
+                            học và tận hưởng cuộc sống đại học.
+                        </Paragraph>
+                    </div>
+
+                    {/* Main Content Section */}
+                    <Row gutter={[48, 48]} align="middle">
+                        {/* Image Column */}
+                        <Col xs={24} lg={12}>
+                            <div style={{
+                                borderRadius: '10px',
+                                overflow: 'hidden',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                                background: '#fff'
+                            }}>
+                                <img
+                                    src="src/assets/homepage/student_cleaning_service.jpg"
+                                    alt="Clean living space"
+                                    style={{
+                                        width: '100%',
+                                        height: '550px',
+                                        objectFit: 'cover',
+                                        display: 'block'
+                                    }}
+                                />
+                            </div>
+                        </Col>
+
+                        {/* Content Column */}
+                        <Col xs={24} lg={12}>
+                            <div style={{ paddingLeft: '20px' }}>
+                                <Title
+                                    level={2}
+                                    style={{
+                                        fontSize: '45px',
+                                        color: '#1f2937',
+                                        marginBottom: '24px',
+                                        fontWeight: '650'
+                                    }}
+                                >
+                                    Tối ưu thời gian, tối đa trải nghiệm
+                                </Title>
+
+                                <Paragraph
+                                    style={{
+                                        fontSize: '25px',
+                                        color: '#4b5563',
+                                        marginBottom: '32px',
+                                        lineHeight: '1.7'
+                                    }}
+                                >
+                                    Với Mama's Clean, bạn không cần lo lắng về việc dọn dẹp nhà cửa. Hãy
+                                    để chúng tôi lo liệu, bạn chỉ cần tập trung vào học tập, bạn bè và những
+                                    hoat động yêu thích.
+                                </Paragraph>
+
+                                {/* Features List */}
+                                <div style={{ marginBottom: '40px' }}>
+                                    {[
+                                        'Dịch vụ nhanh chóng, phù hợp với lịch trình bận rộn.',
+                                        'Chi phí hợp lý, tiết kiệm cho sinh viên.',
+                                        'Không gian sách sẽ giúp tăng cường sự tập trung và sức khỏe.',
+                                        'Đặt lịch dễ dàng, không tốn nhiều công sức.'
+                                    ].map((feature, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                marginBottom: '16px'
+                                            }}
+                                        >
+                                            <CheckCircleOutlined
+                                                style={{
+                                                    color: '#10b981',
+                                                    fontSize: '23px',
+                                                    marginRight: '12px',
+                                                    marginTop: '2px',
+                                                    flexShrink: 0
+                                                }}
+                                            />
+                                            <AntText
+                                                style={{
+                                                    fontSize: '21px',
+                                                    color: '#374151',
+                                                    lineHeight: '1.6'
+                                                }}
+                                            >
+                                                {feature}
+                                            </AntText>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* CTA Button */}
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    style={{
+                                        backgroundColor: '#41864D',
+                                        borderColor: '#41864D',
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        height: '56px',
+                                        paddingLeft: '32px',
+                                        paddingRight: '32px',
+                                        borderRadius: '6px',
+                                    }}
+                                >
+                                    Tìm hiểu gói sinh viên
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+            </div>
+
+            {/* finish section */}
+            <div style={{
+                minHeight: '30vh',
+                background: '#F2FDF4',
+                padding: '150px 20px 100px 20px',
+            }}>
+                {/* CTA Section */}
+                <div style={{
+                    padding: '80px 20px',
+                    background: '#F2FDF4',
+                    textAlign: 'center'
+                }}>
+                    <div style={{ maxWidth: '100%', margin: '0 auto' }}>
+                        <Title level={2} style={{
+                            fontSize: '50px',
+                            fontWeight: 'bold',
+                            marginBottom: '24px'
+                        }}>
+                            Sẵn sàng trải nghiệm không gian sạch sẽ với Mama's Clean?
+                        </Title>
+
+                        <Paragraph style={{
+                            fontSize: '25px',
+                            marginBottom: '40px',
+                            lineHeight: '1.6'
+                        }}>
+                            Đặt lịch ngay hôm nay để ngôi nhà của bạn luôn tinh tươm và thơm mát như ý muốn.
+                        </Paragraph>
+
+                        <Button
+                            type="primary"
+                            size="large"
+                            style={{
+                                backgroundColor: '#41864D',
+                                borderColor: '#41864D',
+                                color: 'white',
+                                borderRadius: '8px',
+                                fontWeight: '600',
+                                fontSize: '20px',
+                                height: '60px',
+                                paddingLeft: '50px',
+                                paddingRight: '50px',
+                            }}
+                            onClick={() => navigate("/booking")}
+                        >
+                            Đặt lịch dọn dẹp ngay
+                        </Button>
+                    </div>
+                </div>
+
+                <style jsx>{`
+                    .ant-btn:hover {
+                    transform: translateY(-2px);
+                    transition: all 0.3s ease;
+                    }
+                    
+                    @media (max-width: 992px) {
+                    .hero-title {
+                        font-size: 32px !important;
+                    }
+                    
+                    .hero-description {
+                        font-size: 16px !important;
+                    }
+                    }
+                    
+                    @media (max-width: 576px) {
+                    .hero-title {
+                        font-size: 28px !important;
+                    }
+                    }
+                `}</style>
+            </div>
+
         </>
     )
 
