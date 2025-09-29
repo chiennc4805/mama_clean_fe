@@ -13,6 +13,7 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+
     useEffect(() => {
         if (user && user.id) {
             navigate("/")
@@ -27,10 +28,10 @@ const LoginPage = () => {
                 message.success("Đăng nhập thành công")
                 localStorage.setItem("access_token", res.data.access_token)
                 setUser(res.data.user)
-                if (user?.role.name === "CUSTOMER") {
-                    navigate("/")
+                if (res.data.user.role.name === "CUSTOMER") {
+                    navigate("/");
                 } else {
-                    navigate("/management")
+                    navigate("/management");
                 }
             }
             else {

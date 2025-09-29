@@ -1,13 +1,15 @@
 import { CalendarOutlined, CheckCircleOutlined, CheckOutlined, ClockCircleOutlined, HeartOutlined, HomeOutlined, SafetyOutlined, StarOutlined, ThunderboltOutlined, UserOutlined } from "@ant-design/icons"
 import { Button, Card, Col, DatePicker, Form, Input, Row, Select, Typography } from "antd"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { AuthContext } from "../components/context/auth.context"
 import { fetchAllServicesWithoutPagination } from "../services/api.service"
 
 const { Title, Paragraph, Text: AntText } = Typography;
 
 const HomePage = () => {
 
+    const { user, setUser } = useContext(AuthContext)
     const [form] = Form.useForm()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -48,6 +50,9 @@ const HomePage = () => {
     }
 
     useEffect(() => {
+        if (["SUPER_ADMIN", "CLEANER"].includes(user?.role?.name)) {
+            navigate("/management")
+        }
         fetchDataInFormBookingNow()
     }, [])
 
@@ -1165,4 +1170,4 @@ const HomePage = () => {
 
 }
 
-export default HomePage
+export default HomePage;

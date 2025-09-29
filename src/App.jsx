@@ -2,34 +2,35 @@ import { BankOutlined, ClockCircleOutlined, DollarOutlined, ReadOutlined, TeamOu
 import { Layout, Menu } from 'antd';
 import { Footer } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { AuthContext } from './components/context/auth.context';
 import FooterLayout from './components/layout/footer';
 import HeaderLayOut from './components/layout/header';
 import FooterManagement from './components/layout/management/footer_management';
 import AdminHeader from './components/layout/management/header_management';
-import { getAccountAPI } from './services/api.service';
 
 function App() {
 
 	const { Header, Content } = Layout;
-	const { user, setUser } = useContext(AuthContext)
+	const { user, setUser, isAppLoading } = useContext(AuthContext)
 
 
-	useEffect(() => {
-		console.log(user)
-		fetchUserInfo()
-	}, [])
+	// useEffect(() => {
+	// 	fetchUserInfo()
+	// }, [])
 
-	const fetchUserInfo = async () => {
-		if (localStorage.getItem('access_token')) {
-			const res = await getAccountAPI()
-			if (res.data) {
-				setUser(res.data.user)
-			}
-		}
-	}
+	// const fetchUserInfo = async () => {
+	// 	if (localStorage.getItem('access_token')) {
+	// 		const res = await getAccountAPI()
+	// 		if (res.data) {
+	// 			console.log(res.data.user)
+	// 			setUser(res.data.user)
+	// 		}
+	// 	}
+	// }
+
+	if (isAppLoading) return <>Đang tải vui lòng chờ</>
 
 	const siderStyle = {
 		height: '100vh',
@@ -45,7 +46,7 @@ function App() {
 
 	return (
 		<>
-			{user.id === "" || user?.role.name === "CUSTOMER" ?
+			{!user || user.id === "" || user.role?.name === "CUSTOMER" ?
 				<Layout>
 					<Header
 						style={{
@@ -85,26 +86,31 @@ function App() {
 									scrollbarWidth: "thin",
 								}}
 								items={[
-									...(user?.role.name === "SUPER_ADMIN" ?
+									...(user?.role?.name === "SUPER_ADMIN" ?
 										[
 											{
-												key: "customer_management",
-												label: "Quản lý khách hàng",
+												key: "customer-management",
+												label: <Link to={"/management/manage-customer"}>Quản lý khách hàng</Link>,
 												icon: <UserOutlined />
 											},
 											{
 												key: "cleaner_management",
-												label: "Quản lý người dọn dẹp",
+												label: <Link to={"/management/manage-cleaner"}>Quản lý người dọn dẹp</Link>,
 												icon: <UserOutlined />
 											},
 											{
 												key: "order_management",
-												label: "Quản lý đơn hàng",
+												label: <Link to={"/management/manage-order"}>Quản lý đơn hàng</Link>,
 												icon: <UserOutlined />
 											},
 											{
 												key: "service_management",
-												label: "Quản lý dịch vụ",
+												label: <Link to={"/management/manage-service"}>Quản lý dịch vụ</Link>,
+												icon: <UserOutlined />
+											},
+											{
+												key: "assignment",
+												label: <Link to={"/management/manage-assignment"}>Phân công thủ công</Link>,
 												icon: <UserOutlined />
 											},
 											{
@@ -164,8 +170,8 @@ function App() {
 								]}
 							/>
 						</Sider>
-						<Content>
-							Content
+						<Content style={{ background: "#fff" }}>
+							<Outlet />
 						</Content>
 					</Layout>
 					<Footer

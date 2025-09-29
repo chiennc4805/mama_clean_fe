@@ -158,9 +158,56 @@ const fetchAllServicesWithoutPagination = (filter = null) => {
     return axios.get(URL_BACKEND)
 }
 
+//module user
+const fetchAllUserWithPaginationAPI = (page, pageSize, filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/users?page=${page}&size=${pageSize}&filter=${filter}`
+    } else {
+        URL_BACKEND = `/users?page=${page}&size=${pageSize}`
+    }
+    return axios.get(URL_BACKEND)
+
+}
+
+const createUserAPI = (password, name, email, phone, roleName) => {
+    const URL_BACKEND = "/users"
+    const data = {
+        username: email,
+        password: password,
+        name: name,
+        email: email,
+        phone: phone,
+        role: {
+            name: roleName
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const fetchUserByIdAPI = (id) => {
+    const URL_BACKEND = `/users/${id}`
+    return axios.get(URL_BACKEND)
+}
+
+const updateUserAPI = (id, name, email, phone, gender, roleId) => {
+    const URL_BACKEND = "/users"
+    const data = {
+        id: id,
+        name: name,
+        email: email,
+        phone: phone,
+        gender: gender,
+        role: {
+            id: roleId
+        }
+    }
+    return axios.put(URL_BACKEND, data)
+}
+
 
 
 export {
-    fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, verifyOtp
+    createUserAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUserWithPaginationAPI, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateUserAPI, verifyOtp
 };
 

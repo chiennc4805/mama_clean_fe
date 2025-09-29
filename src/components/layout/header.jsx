@@ -1,13 +1,16 @@
-import { DownOutlined, SmileOutlined } from "@ant-design/icons";
-import { Button, Dropdown, message, Space } from "antd";
-import { useContext } from "react";
+import { DownOutlined, EditOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown, message, Space, Typography } from "antd";
+import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logoutAPI } from "../../services/api.service";
 import { AuthContext } from "../context/auth.context";
 
+const { Text } = Typography
+
 function HeaderLayOut() {
 
     const { user, setUser } = useContext(AuthContext)
+    const [openDropdown, setOpenDropDown] = useState(false)
     const navigate = useNavigate()
 
     const navLinkStyle = ({ isActive }) => ({
@@ -29,46 +32,64 @@ function HeaderLayOut() {
                 message.success("Đăng xuất thành công.")
             }
 
+            setOpenDropDown(false)
             //redirect to home
             navigate("/login")
         }
     }
 
-    const dropdown_items = [
-        {
-            key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                    1st menu item
-                </a>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    2nd menu item (disabled)
-                </a>
-            ),
-            icon: <SmileOutlined />,
-            disabled: true,
-        },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    3rd menu item (disabled)
-                </a>
-            ),
-            disabled: true,
-        },
-        {
-            key: '4',
-            danger: true,
-            label: 'Đăng xuất',
-            onClick: handleLogout
-        },
-    ];
+    const dropdownContent = (
+        <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '16px',
+            width: '400px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+        }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <Avatar
+                    size={75}
+                    src="https://i.pravatar.cc/150?img=47"
+                />
+                <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Text strong style={{ fontSize: '20px', color: '#41864D', fontWeight: 700 }}>
+                            {user.name}
+                        </Text>
+                        <EditOutlined style={{ fontSize: '18px', color: '#8c8c8c', cursor: 'pointer' }} onClick={() => { setOpenDropDown(false); navigate("/profile") }} />
+                    </div>
+                    <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
+                        {user.email || "abc"}
+                    </Text>
+                    <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
+                        Số dư tài khoản: {user.balance} VNĐ
+                    </Text>
+                </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+                <Button
+                    style={{
+                        flex: 1,
+                        borderColor: 'black',
+                    }}
+                    onClick={() => handleLogout()}
+                >
+                    Đăng xuất
+                </Button>
+                <Button
+                    type="primary"
+                    style={{
+                        flex: 1,
+                        backgroundColor: '#41864D',
+                        borderColor: '#41864D'
+                    }}
+                >
+                    Nạp tiền
+                </Button>
+            </div>
+        </div>
+    );
 
     return (
         <div
@@ -108,12 +129,10 @@ function HeaderLayOut() {
                 // Đã đăng nhập: Hiển thị tên user hoặc avatar
 
                 <Dropdown
-                    menu={{ items: dropdown_items }}
-                    dropdownRender={menu => (
-                        <div style={{ width: 250 }}>
-                            {menu}
-                        </div>
-                    )}
+                    dropdownRender={() => dropdownContent}
+                    trigger={['click']}
+                    open={openDropdown}
+                    onOpenChange={(flag) => setOpenDropDown(flag)}
                 >
                     <a onClick={e => e.preventDefault()}>
                         <Space>
