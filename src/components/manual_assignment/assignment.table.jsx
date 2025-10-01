@@ -1,13 +1,17 @@
-import { Button, Col, notification, Row, Table } from 'antd';
-import { useState } from 'react';
+import { Button, Col, message, notification, Row, Select, Table } from 'antd';
+import { updateBookingAPI } from '../../services/api.service';
 
 
-const CleanerTable = (props) => {
+const AssignmentTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
-        current, setCurrent, total } = props
-    const [dataTable, setDataTable] = useState([])
+        current, setCurrent, total, cleanersOption } = props
+
+    const formatterNumber = (val) => {
+        if (!val) return "0";
+        return Number(val).toLocaleString("en-US");
+    };
 
     const openNotificationWithIcon = (type, message, description) => {
         api[type]({
@@ -16,48 +20,90 @@ const CleanerTable = (props) => {
         });
     };
 
+    const assignCleaner = async (record) => {
+        const res = await updateBookingAPI(record.id, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, "Chờ xác nhận", record.customer.id, record.cleaner.id, record.service.id)
+
+        setTimeout(() => {
+            if (res.data) {
+                message.success("Phân công thành công")
+            }
+            else {
+                setLoading(false);
+                notification.error({
+                    message: "Phân công thất bại",
+                    description: JSON.stringify(res.message)
+                })
+            }
+        }, 2000)
+    }
+
     const columns = [
         {
-            title: 'Họ tên',
+            title: 'Khách hàng',
             render: (record) => {
                 return (
                     <span>
-                        {record.user.name}
+                        {record.customer.name}
                     </span>
                 )
             },
             width: 140,
         },
         {
-            title: 'Email',
+            title: 'Dịch vụ',
             render: (record) => {
                 return (
                     <span>
-                        {record.user.email}
+                        {record.service.name}
                     </span>
                 )
             },
-            width: 100,
-        },
-        {
-            title: 'Số CCCD',
-            dataIndex: 'idNumber',
-            key: 'idNumber',
             width: 180,
         },
         {
-            title: 'Điểm',
-            dataIndex: 'rating',
-            key: 'rating',
+            title: 'Ngày & Giờ',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.date + " " + record.startTime}
+                    </span>
+                )
+            },
             width: 150,
         },
         {
-            title: 'Hành động',
+            title: 'Phân công nhiệm vụ',
+            render: (record) => (
+                <Select
+                    style={{ width: 140 }}
+                    placeholder="Chọn cleaner"
+                    value={record.cleaner ? record.cleaner.id : undefined}
+                    onChange={(value) => {
+                        // gán cleaner vào record
+                        record.cleaner = { id: value };
+                        // hoặc gọi API lưu tạm
+                    }}
+                    options={cleanersOption}
+                >
+                </Select>
+            ),
+            width: 180,
+        },
+        {
+            title: '',
             key: 'action',
             width: 130,
-            render: () => (
-                <Button type="link" size="small">
-                    Xem chi tiết
+            render: (record) => (
+                <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => {
+                        // Gọi API phân công cleaner
+                        console.log("Phân công:", record);
+                        assignCleaner(record)
+                    }}
+                >
+                    Phân công
                 </Button>
             ),
         },
@@ -91,7 +137,7 @@ const CleanerTable = (props) => {
             >
                 <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
                     <h2>
-                        Danh sách nhân viên
+                        Danh sách đơn hàng
                     </h2>
                 </div>
 
@@ -122,4 +168,4 @@ const CleanerTable = (props) => {
 
 }
 
-export default CleanerTable;
+export default AssignmentTable;

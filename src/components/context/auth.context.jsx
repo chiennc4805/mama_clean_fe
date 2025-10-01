@@ -11,7 +11,11 @@ const AuthWrapper = ({ children }) => {
     const [user, setUser] = useState({
         id: "",
         name: "",
-        role: ""
+        email: "",
+        balance: 0,
+        role: {
+            name: ""
+        }
     })
 
     const [isAppLoading, setIsAppLoading] = useState(true)
@@ -22,7 +26,8 @@ const AuthWrapper = ({ children }) => {
             if (token) {
                 try {
                     const res = await getAccountAPI();
-                    setUser(res.data.user); // lưu luôn role
+                    console.log(res.data.user)
+                    setUser(res.data.user);
                 } catch (err) {
                     setUser(null);
                 }

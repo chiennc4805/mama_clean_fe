@@ -1,7 +1,7 @@
 import { Button, Card, Col, DatePicker, Form, Input, Row, Select, TimePicker, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { fetchAllServicesWithoutPagination } from '../../services/api.service';
+import { fetchAllServicesWithoutPagination, fetchServiceById } from '../../services/api.service';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -12,6 +12,7 @@ const BookingProgress = (props) => {
     const { bookingInfo, setBookingInfo, setStep } = props
     const [form] = Form.useForm()
     const [servicesOption, setServicesOption] = useState([]);
+    const [areasOption, setAreasOption] = useState([])
 
 
     useEffect(() => {
@@ -27,36 +28,39 @@ const BookingProgress = (props) => {
         const loadService = async () => {
             const res = await fetchAllServicesWithoutPagination()
             if (res.data) {
-                setServicesOption(res.data.result.map(x => ({ label: x.name, value: x.id })))
+                const seen = new Set();
+                const unique = res.data.result.filter(item => {
+                    if (seen.has(item.name)) return false;
+                    seen.add(item.name);
+                    return true;
+                });
+                setServicesOption(unique.map(x => ({ label: x.name, value: x.id })))
             }
         }
         loadService()
     }, [])
 
-    const handleBooking = (values) => {
-        //calculate price
-        let price
-        const serviceName = values.service.label
-
-        if (serviceName === "Dọn dẹp cơ bản") {
-            price = 100000
-        } else if (serviceName === "Dọn dẹp tiêu chuẩn") {
-            price = 200000
-        } else {
-            price = 300000
-        }
+    const handleBooking = async (values) => {
+        const res = await fetchServiceById(values.area.value)
 
         setBookingInfo({
-            serviceId: values.service.value,
+            serviceId: values.area.value,
             serviceName: values.service.label,
-            area: values.area,
+            area: values.area.label,
             date: values.date,
             time: values.time,
             address: values.address,
             note: values.note,
-            price: price
+            price: res?.data?.price | 0
         })
         setStep("payment")
+    }
+
+    const loadAreaOptions = async (serviceName) => {
+        const res = await fetchAllServicesWithoutPagination(`name~'${serviceName}'`)
+        if (res.data) {
+            setAreasOption(res.data.result.map(item => ({ label: "<= " + item.area + " m2", value: item.id })))
+        }
     }
 
 
@@ -85,12 +89,16 @@ const BookingProgress = (props) => {
                     </Text>
                     <Form.Item
                         name={"service"}
+                        rules={[
+                            { required: true, message: 'Vui lòng chọn dịch vụ!' },
+                        ]}
                     >
                         <Select
                             style={{ width: '100%' }}
                             size="large"
                             options={servicesOption}
                             labelInValue
+                            onChange={(option) => { loadAreaOptions(option.label) }}
                         >
                         </Select>
                     </Form.Item>
@@ -112,12 +120,17 @@ const BookingProgress = (props) => {
                             </Text>
                             <Form.Item
                                 name={"area"}
+                                rules={[
+                                    { required: true, message: 'Vui lòng điền diện tích!' },
+                                ]}
                             >
-                                <Input
-                                    placeholder='Diện tích phòng'
+                                <Select
                                     style={{ width: '100%' }}
                                     size="large"
-                                />
+                                    options={areasOption}
+                                    labelInValue
+                                >
+                                </Select>
                             </Form.Item>
 
                         </Col>
@@ -128,6 +141,9 @@ const BookingProgress = (props) => {
 
                             <Form.Item
                                 name={"date"}
+                                rules={[
+                                    { required: true, message: 'Vui lòng chọn ngày!' },
+                                ]}
                             >
                                 <DatePicker
                                     placeholder='Chọn ngày'
@@ -145,6 +161,9 @@ const BookingProgress = (props) => {
 
                             <Form.Item
                                 name={"time"}
+                                rules={[
+                                    { required: true, message: 'Vui lòng chọn giờ!' },
+                                ]}
                             >
                                 <TimePicker
                                     defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
@@ -161,6 +180,9 @@ const BookingProgress = (props) => {
                     </div>
                     <Form.Item
                         name={"address"}
+                        rules={[
+                            { required: true, message: 'Vui lòng điền địa chỉ!' },
+                        ]}
                     >
                         <TextArea
                             rows={4}

@@ -1,7 +1,7 @@
 import { Col, DatePicker, Form, Input, Modal, notification, Row, Select } from "antd";
 import { createCleanerAPI } from "../../services/api.service";
 
-const CleanerForm = (props) => {
+const BookingForm = (props) => {
 
     const [api, contextHolder] = notification.useNotification({ maxCount: 1 });
     const { loadUser, isFormOpen, setIsFormOpen } = props
@@ -32,7 +32,7 @@ const CleanerForm = (props) => {
             {contextHolder}
 
             <Modal
-                title="Thêm mới nhân viên" open={isFormOpen}
+                title="Thêm mới đơn hàng" open={isFormOpen}
                 onOk={() => form.submit()}
                 onCancel={() => {
                     setIsFormOpen(false);
@@ -215,4 +215,4 @@ const CleanerForm = (props) => {
     )
 }
 
-export default CleanerForm;
+export default BookingForm;

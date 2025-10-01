@@ -1,10 +1,20 @@
-import { Breadcrumb, Button, Card, Col, Divider, Row, Typography } from 'antd';
+import { Breadcrumb, Button, Card, Col, Divider, message, notification, Row, Typography } from 'antd';
+import dayjs from 'dayjs';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createBookingAPI } from '../../services/api.service';
+import { getCoordsFromAddress } from '../../services/common.function';
+import { AuthContext } from '../context/auth.context';
 
 const { Title, Text } = Typography;
 
 const PaymentProgress = (props) => {
 
+    const { user } = useContext(AuthContext)
     const { bookingInfo, setStep } = props
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
+
 
     const formatterNumber = (val) => {
         if (!val) return "0";
@@ -14,11 +24,43 @@ const PaymentProgress = (props) => {
     const bookingDetails = [
         { label: 'Loại dịch vụ:', value: bookingInfo.serviceName },
         { label: 'Diện tích:', value: bookingInfo.area },
-        { label: 'Ngày:', value: bookingInfo.date.format('DD/MM/YYYY') },
-        { label: 'Thời gian:', value: bookingInfo.time.format('HH:mm:ss') },
+        { label: 'Ngày:', value: dayjs(bookingInfo.date).format('DD/MM/YYYY') },
+        { label: 'Thời gian:', value: dayjs(bookingInfo.time).format('HH:mm:ss') || "" },
         { label: 'Địa chỉ:', value: bookingInfo.address },
         { label: 'Phí dịch vụ:', value: formatterNumber(bookingInfo.price) + " VNĐ" },
     ];
+
+    const handlePayBooking = async () => {
+        // setBookingInfo({
+        //     serviceId: values.area.value,
+        //     serviceName: values.service.label,
+        //     area: values.area.label,
+        //     date: values.date,
+        //     time: values.time,
+        //     address: values.address,
+        //     note: values.note,
+        //     price: res?.data?.price | 0
+        // })
+        setLoading(true)
+
+        const coords = await getCoordsFromAddress(bookingInfo.address)
+
+        const res = await createBookingAPI(bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, bookingInfo.serviceId)
+
+        setTimeout(() => {
+            if (res.data) {
+                message.success("Đặt lịch thành công")
+                navigate("/")
+            }
+            else {
+                setLoading(false)
+                notification.error({
+                    message: "Error login",
+                    description: JSON.stringify(res.message)
+                })
+            }
+        }, 2000)
+    }
 
 
 
@@ -67,7 +109,7 @@ const PaymentProgress = (props) => {
                             <Text style={{ fontSize: "18px" }} strong>Số dư:</Text>
                         </Col>
                         <Col span={12} style={{ textAlign: 'right' }}>
-                            <Text strong style={{ fontSize: '18px' }}>350.000 VNĐ</Text>
+                            <Text strong style={{ fontSize: '18px' }}>{formatterNumber(user.balance)} VNĐ</Text>
                         </Col>
                     </Row>
 
@@ -81,6 +123,8 @@ const PaymentProgress = (props) => {
                             height: '48px',
                             fontSize: '16px'
                         }}
+                        onClick={() => { handlePayBooking() }}
+                        loading={loading}
                     >
                         Xác nhận thanh toán
                     </Button>

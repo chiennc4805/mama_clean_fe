@@ -10,7 +10,7 @@ const FooterLayout = () => {
     return (
         <footer style={{
             background: "#fff",
-            padding: "60px 0 30px 0",
+            padding: "30px 0 10px 0",
             borderTop: "1px solid #f0f0f0",
             fontFamily: "inherit",
             width: "100%"
@@ -30,24 +30,24 @@ const FooterLayout = () => {
                     {/* Logo + slogan + social */}
                     <div style={{ minWidth: 300, flex: "1 1 320px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
-                            <img src="src/assets/logo.png" alt="Mama's Clean" style={{ height: 64 }} />
+                            <img src="src/assets/logo.png" alt="Mama's Clean" style={{ height: 55 }} />
                             <span style={{
                                 fontWeight: 700,
                                 color: "#21823b",
-                                fontSize: 26,
+                                fontSize: 24,
                                 letterSpacing: 1.5
                             }}>MAMA’S CLEAN</span>
                         </div>
                         <div style={{
                             color: "#222",
-                            fontSize: 18,
+                            fontSize: 16,
                             marginBottom: 28,
                             maxWidth: 340,
                             lineHeight: 1.6
                         }}>
                             “Mama's Clean mang đến dịch vụ dọn dẹp nhà cửa chuyên nghiệp, giúp không gian sống của bạn luôn sạch như mẹ dọn”
                         </div>
-                        <div style={{ display: "flex", gap: 18, fontSize: 28, color: "#21823b" }}>
+                        <div style={{ display: "flex", gap: 18, fontSize: 18, color: "#21823b" }}>
                             <a href="#" aria-label="Facebook" style={{ color: "#21823b" }}><FacebookFilled /></a>
                             <a href="#" aria-label="Instagram" style={{ color: "#21823b" }}><InstagramFilled /></a>
                             <a href="#" aria-label="Twitter" style={{ color: "#21823b" }}><TwitterSquareFilled /></a>
@@ -57,43 +57,43 @@ const FooterLayout = () => {
                     </div>
                     {/* Dịch vụ */}
                     <div style={{ minWidth: 180, flex: "1 1 180px" }}>
-                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 20, color: "#222" }}>Dịch vụ</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Dọn dẹp nhà</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Dọn dẹp văn phòng</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Dọn dẹp chuyên sâu</div>
-                        <div style={{ color: "#555", fontSize: 17 }}>Dọn dẹp sau sự kiện</div>
+                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 16, color: "#222" }}>Dịch vụ</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Dọn dẹp nhà</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Dọn dẹp văn phòng</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Dọn dẹp chuyên sâu</div>
+                        <div style={{ color: "#555", fontSize: 12 }}>Dọn dẹp sau sự kiện</div>
                     </div>
                     {/* Công ty */}
                     <div style={{ minWidth: 180, flex: "1 1 180px" }}>
-                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 20, color: "#222" }}>Công ty</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Về chúng tôi</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Tuyển dụng</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Đối tác</div>
-                        <div style={{ color: "#555", fontSize: 17 }}>Tin tức</div>
+                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 16, color: "#222" }}>Công ty</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Về chúng tôi</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Tuyển dụng</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Đối tác</div>
+                        <div style={{ color: "#555", fontSize: 12 }}>Tin tức</div>
                     </div>
                     {/* Hỗ trợ */}
                     <div style={{ minWidth: 180, flex: "1 1 180px" }}>
-                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 20, color: "#222" }}>Hỗ trợ</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Câu hỏi thường gặp</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Chính sách bảo mật</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>Điều khoản dịch vụ</div>
-                        <div style={{ color: "#555", fontSize: 17 }}>Sitemap</div>
+                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 16, color: "#222" }}>Hỗ trợ</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Câu hỏi thường gặp</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Chính sách bảo mật</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Điều khoản dịch vụ</div>
+                        <div style={{ color: "#555", fontSize: 12 }}>Sitemap</div>
                     </div>
                     {/* Liên hệ */}
                     <div style={{ minWidth: 220, flex: "1 1 220px" }}>
-                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 20, color: "#222" }}>Liên hệ</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>1900-1234</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 17 }}>hotro@mamasclean.vn</div>
-                        <div style={{ color: "#555", fontSize: 17 }}>123 Đường ABC, Quận 1, TP.HCM</div>
+                        <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 16, color: "#222" }}>Liên hệ</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>1900-1234</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>hotro@mamasclean.vn</div>
+                        <div style={{ color: "#555", fontSize: 12 }}>123 Đường ABC, Quận 1, TP.HCM</div>
                     </div>
                 </div>
                 {/* Copyright */}
                 <div style={{
                     borderTop: "1px solid #eee",
-                    marginTop: 40,
-                    padding: "22px 0 0 0",
+                    marginTop: 10,
+                    padding: "11px 0 0 0",
                     color: "#888",
-                    fontSize: 15,
+                    fontSize: 12,
                     textAlign: "left"
                 }}>
                     © 2024 Mama's Clean. Bảo lưu mọi quyền.

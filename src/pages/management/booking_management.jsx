@@ -1,28 +1,27 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Divider, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import CustomerForm from '../../components/customer_management/create.customer.modal';
-import CustomerTable from '../../components/customer_management/customer.table';
-import { fetchAllUserWithPaginationAPI } from '../../services/api.service';
+import BookingTable from '../../components/booking_management/booking.table';
+import BookingForm from '../../components/booking_management/create.booking.modal';
+import { fetchAllBookingsWithPaginationAPI } from '../../services/api.service';
 
 const { Option } = Select;
 
-const CustomerManagement = () => {
+const BookingManagement = () => {
 
-    const [dataUsers, setDataUsers] = useState()
+    const [dataCleaners, setDataUsers] = useState()
     const [current, setCurrent] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
-    const [roleOptions, setRoleOptions] = useState(null)
     const [isFormOpen, setIsFormOpen] = useState(false)
-    let filter = "" //useSelector((state) => state.search.user)
+    let filter = null //useSelector((state) => state.search.user)
 
     useEffect(() => {
-        loadUser()
+        loadCleaner()
     }, [current, pageSize, filter])
 
-    const loadUser = async () => {
-        const res = await fetchAllUserWithPaginationAPI(current, pageSize, filter = "role.name~'CUSTOMER'")
+    const loadCleaner = async () => {
+        const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, filter)
         if (res.data) {
             if (res.data.result.length === 0 && current > 1) {
                 setCurrent(res.data.meta.page - 1)
@@ -43,7 +42,7 @@ const CustomerManagement = () => {
                 {/* title */}
                 <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
                     <h1>
-                        Quản Lý Khách Hàng
+                        Quản Lý Đơn Hàng
                     </h1>
 
                     <Button
@@ -107,15 +106,15 @@ const CustomerManagement = () => {
                     </div>
                 </div>
 
-                <CustomerForm
-                    loadUser={loadUser}
+                <BookingForm
+                    loadCleaner={loadCleaner}
                     isFormOpen={isFormOpen}
                     setIsFormOpen={setIsFormOpen}
                 />
 
-                <CustomerTable
-                    dataUsers={dataUsers}
-                    loadUser={loadUser}
+                <BookingTable
+                    dataCleaners={dataCleaners}
+                    loadCleaner={loadCleaner}
                     current={current}
                     setCurrent={setCurrent}
                     pageSize={pageSize}
@@ -128,4 +127,4 @@ const CustomerManagement = () => {
     )
 };
 
-export default CustomerManagement;
+export default BookingManagement;

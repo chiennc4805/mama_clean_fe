@@ -1,13 +1,16 @@
-import { Button, Col, notification, Row, Table } from 'antd';
-import { useState } from 'react';
+import { Button, Col, notification, Row, Table, Tag } from 'antd';
 
 
-const CleanerTable = (props) => {
+const BookingTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
         current, setCurrent, total } = props
-    const [dataTable, setDataTable] = useState([])
+
+    const formatterNumber = (val) => {
+        if (!val) return "0";
+        return Number(val).toLocaleString("en-US");
+    };
 
     const openNotificationWithIcon = (type, message, description) => {
         api[type]({
@@ -18,41 +21,83 @@ const CleanerTable = (props) => {
 
     const columns = [
         {
-            title: 'Họ tên',
+            title: 'Khách hàng',
             render: (record) => {
                 return (
                     <span>
-                        {record.user.name}
+                        {record.customer.name}
                     </span>
                 )
             },
             width: 140,
         },
         {
-            title: 'Email',
+            title: 'Người dọn dẹp',
             render: (record) => {
                 return (
-                    <span>
-                        {record.user.email}
-                    </span>
+                    record.cleaner
+                        ? <span>{record.cleaner.name}</span>
+                        : <span></span>
                 )
             },
             width: 100,
         },
         {
-            title: 'Số CCCD',
-            dataIndex: 'idNumber',
-            key: 'idNumber',
+            title: 'Dịch vụ',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.service.name}
+                    </span>
+                )
+            },
             width: 180,
         },
         {
-            title: 'Điểm',
-            dataIndex: 'rating',
-            key: 'rating',
+            title: 'Ngày & Giờ',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.date + " " + record.startTime}
+                    </span>
+                )
+            },
             width: 150,
         },
         {
-            title: 'Hành động',
+            title: 'Trạng thái',
+            render: (record) => {
+                if (record.status === "Đang chờ") {
+                    return <Tag color="default">{record.status}</Tag>
+                } else if (record.status === "Hoàn thành") {
+                    return <Tag color="success">{record.status}</Tag>
+                } else if (record.status === "Đang tiến hành") {
+                    return <Tag color="processing">{record.status}</Tag>
+                } else if (record.status === "Đã huỷ") {
+                    return <Tag color="red">{record.status}</Tag>
+                } else if (record.status === "Từ chối") {
+                    return <Tag color="red">{record.status}</Tag>
+                } else if (record.status === "Mới") {
+                    return <Tag color="green">{record.status}</Tag>
+                } else {
+                    return <Tag color="magenta">{record.status}</Tag>
+                }
+            },
+            width: 150,
+        },
+        {
+            title: 'Tổng cộng',
+            render: (record) => {
+                return (
+                    <span>
+                        {formatterNumber(record.totalPrice)}
+                    </span>
+                )
+            },
+            width: 150,
+        },
+        {
+            title: 'Trạng thái',
             key: 'action',
             width: 130,
             render: () => (
@@ -91,7 +136,7 @@ const CleanerTable = (props) => {
             >
                 <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
                     <h2>
-                        Danh sách nhân viên
+                        Danh sách đơn hàng
                     </h2>
                 </div>
 
@@ -122,4 +167,4 @@ const CleanerTable = (props) => {
 
 }
 
-export default CleanerTable;
+export default BookingTable;

@@ -16,7 +16,7 @@ const UserProfile = () => {
         name: "",
         phone: "",
         gender: "",
-        email: ""
+        email: "",
     });
 
     const handleChange = (field, value) => {
@@ -44,13 +44,15 @@ const UserProfile = () => {
 
         setLoading(true)
         const gender = formData.gender === "1" ? true : false
-        const res = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, user.role.id)
+        const res = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, user.role?.id)
 
         setTimeout(() => {
             if (res.data) {
                 setUser({
                     id: user.id,
                     name: formData.name,
+                    email: user.email,
+                    balance: user.balance,
                     role: user.role
                 })
                 message.success("Cập nhật thành công")

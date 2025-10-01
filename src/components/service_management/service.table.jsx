@@ -1,13 +1,16 @@
-import { Button, Col, notification, Row, Table } from 'antd';
-import { useState } from 'react';
+import { Button, Col, notification, Row, Table, Tag } from 'antd';
 
 
-const CleanerTable = (props) => {
+const ServiceTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
-    const { dataCleaners, loadCleaner, pageSize, setPageSize,
+    const { dataUsers, loadUser, pageSize, setPageSize,
         current, setCurrent, total } = props
-    const [dataTable, setDataTable] = useState([])
+
+    const formatterNumber = (val) => {
+        if (!val) return "0";
+        return Number(val).toLocaleString("en-US");
+    };
 
     const openNotificationWithIcon = (type, message, description) => {
         api[type]({
@@ -18,38 +21,45 @@ const CleanerTable = (props) => {
 
     const columns = [
         {
-            title: 'Họ tên',
-            render: (record) => {
-                return (
-                    <span>
-                        {record.user.name}
-                    </span>
-                )
-            },
-            width: 140,
+            title: 'Tên',
+            dataIndex: 'name',
+            key: 'name',
+            width: 180,
         },
         {
-            title: 'Email',
+            title: 'Mô tả',
+            dataIndex: 'description',
+            key: 'description',
+            width: 220,
+        },
+        {
+            title: 'Diện tích (m2)',
+            dataIndex: 'area',
+            key: 'area',
+            width: 120,
+            align: 'center',
+        },
+        {
+            title: 'Giá cả (VNĐ)',
             render: (record) => {
                 return (
                     <span>
-                        {record.user.email}
+                        {formatterNumber(record.price)}
                     </span>
                 )
             },
             width: 100,
+            align: 'center',
         },
         {
-            title: 'Số CCCD',
-            dataIndex: 'idNumber',
-            key: 'idNumber',
-            width: 180,
-        },
-        {
-            title: 'Điểm',
-            dataIndex: 'rating',
-            key: 'rating',
+            title: 'Trạng thái',
+            key: 'status',
             width: 150,
+            render: (status) => (
+                <Tag color={'green'}>
+                    {"Kích hoạt"}
+                </Tag>
+            ),
         },
         {
             title: 'Hành động',
@@ -91,7 +101,7 @@ const CleanerTable = (props) => {
             >
                 <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
                     <h2>
-                        Danh sách nhân viên
+                        Danh sách dịch vụ
                     </h2>
                 </div>
 
@@ -100,7 +110,7 @@ const CleanerTable = (props) => {
                         <Table
                             rowKey={"id"}
                             columns={columns}
-                            dataSource={dataCleaners}
+                            dataSource={dataUsers}
                             bordered={true}
                             size='large'
                             pagination={
@@ -122,4 +132,4 @@ const CleanerTable = (props) => {
 
 }
 
-export default CleanerTable;
+export default ServiceTable;

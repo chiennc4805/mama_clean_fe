@@ -3,26 +3,25 @@ import { Button, DatePicker, Divider, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import CleanerTable from '../../components/cleaner_management/cleaner.table';
 import CleanerForm from '../../components/cleaner_management/create.cleaner.modal';
-import { fetchAllUserWithPaginationAPI } from '../../services/api.service';
+import { fetchAllCleanerWithPaginationAPI } from '../../services/api.service';
 
 const { Option } = Select;
 
 const CleanerManagement = () => {
 
-    const [dataUsers, setDataUsers] = useState()
+    const [dataCleaners, setDataUsers] = useState()
     const [current, setCurrent] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
-    const [roleOptions, setRoleOptions] = useState(null)
     const [isFormOpen, setIsFormOpen] = useState(false)
-    let filter = "" //useSelector((state) => state.search.user)
+    let filter = null //useSelector((state) => state.search.user)
 
     useEffect(() => {
-        loadUser()
+        loadCleaner()
     }, [current, pageSize, filter])
 
-    const loadUser = async () => {
-        const res = await fetchAllUserWithPaginationAPI(current, pageSize, filter = "role.name~'CUSTOMER'")
+    const loadCleaner = async () => {
+        const res = await fetchAllCleanerWithPaginationAPI(current, pageSize, filter)
         if (res.data) {
             if (res.data.result.length === 0 && current > 1) {
                 setCurrent(res.data.meta.page - 1)
@@ -51,9 +50,9 @@ const CleanerManagement = () => {
                         icon={<PlusOutlined />}
                         onClick={() => setIsFormOpen(true)}
                         style={{
-                            width: "150px",
-                            height: "45px",
-                            fontSize: "18px",
+                            width: "120px",
+                            height: "40px",
+                            fontSize: "14px",
                             background: "#41864D"
                         }}
                     >
@@ -67,7 +66,7 @@ const CleanerManagement = () => {
                 <div style={{
                     display: 'flex',
                     gap: 100,
-                    marginBottom: '50px',
+                    marginBottom: '20px',
                     padding: "0px 20px"
                 }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -108,14 +107,14 @@ const CleanerManagement = () => {
                 </div>
 
                 <CleanerForm
-                    loadUser={loadUser}
+                    loadCleaner={loadCleaner}
                     isFormOpen={isFormOpen}
                     setIsFormOpen={setIsFormOpen}
                 />
 
                 <CleanerTable
-                    dataUsers={dataUsers}
-                    loadUser={loadUser}
+                    dataCleaners={dataCleaners}
+                    loadCleaner={loadCleaner}
                     current={current}
                     setCurrent={setCurrent}
                     pageSize={pageSize}

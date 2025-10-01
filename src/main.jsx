@@ -14,9 +14,15 @@ import BookingPage from './pages/booking.jsx';
 import UnauthorizedPage from './pages/error/403.jsx';
 import HomePage from './pages/home.jsx';
 import LoginPage from './pages/login.jsx';
+import BookingManagement from './pages/management/booking_management.jsx';
+import CleanerProfile from './pages/management/cleaner.profile.jsx';
 import CleanerManagement from './pages/management/cleaner_management.jsx';
 import CustomerManagement from './pages/management/customer_management.jsx';
 import HomeManagement from './pages/management/home_management.jsx';
+import ManualAssignment from './pages/management/manual.assignment.jsx';
+import PersonalJob from './pages/management/personal.job.jsx';
+import ServiceManagement from './pages/management/service_management.jsx';
+import TopUpPage from './pages/top.up.jsx';
 import UserProfile from './pages/user.profile.jsx';
 import store from './redux/store.js';
 import './styles/global.css';
@@ -52,6 +58,15 @@ const router = createBrowserRouter([
 					</RequireAuth>)
 			},
 			{
+				path: "top-up",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CUSTOMER"]}>
+							<TopUpPage />
+						</RoleRoute>
+					</RequireAuth>)
+			},
+			{
 				path: "booking",
 				element: (
 					<RequireAuth>
@@ -75,27 +90,71 @@ const router = createBrowserRouter([
 				path: "management/manage-customer",
 				element: (
 					<RequireAuth>
-						<RoleRoute allowedRoles={["SUPER_ADMIN", "CLEANER"]}>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
 							<CustomerManagement />
 						</RoleRoute>
 					</RequireAuth>
 				)
 			},
 			{
+				path: "management/cleaner-profile",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<CleanerProfile />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
 				path: "management/manage-cleaner",
-				element: <CleanerManagement />
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<CleanerManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
 			},
 			{
 				path: "management/manage-order",
-				element: <CleanerManagement />
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<BookingManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
 			},
 			{
 				path: "management/manage-service",
-				element: <CleanerManagement />
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<ServiceManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
 			},
 			{
 				path: "/management/manage-assignment",
-				element: <CleanerManagement />
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<ManualAssignment />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "/management/jobs",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<PersonalJob />
+						</RoleRoute>
+					</RequireAuth>
+				)
 			},
 			{
 				path: "403",

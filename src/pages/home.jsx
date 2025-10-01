@@ -3,7 +3,6 @@ import { Button, Card, Col, DatePicker, Form, Input, Row, Select, Typography } f
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthContext } from "../components/context/auth.context"
-import { fetchAllServicesWithoutPagination } from "../services/api.service"
 
 const { Title, Paragraph, Text: AntText } = Typography;
 
@@ -43,7 +42,7 @@ const HomePage = () => {
     ];
 
     const fetchDataInFormBookingNow = async () => {
-        const res = await fetchAllServicesWithoutPagination()
+        // const res = await fetchAllServicesWithoutPagination() //notice: required api while home isn't required => make home is required =? auto redirect to login
         if (res.data) {
             setServicesOption(res.data.result.map(x => ({ label: x.name, value: x.id })))
         }

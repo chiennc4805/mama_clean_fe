@@ -15,21 +15,6 @@ function App() {
 	const { Header, Content } = Layout;
 	const { user, setUser, isAppLoading } = useContext(AuthContext)
 
-
-	// useEffect(() => {
-	// 	fetchUserInfo()
-	// }, [])
-
-	// const fetchUserInfo = async () => {
-	// 	if (localStorage.getItem('access_token')) {
-	// 		const res = await getAccountAPI()
-	// 		if (res.data) {
-	// 			console.log(res.data.user)
-	// 			setUser(res.data.user)
-	// 		}
-	// 	}
-	// }
-
 	if (isAppLoading) return <>Đang tải vui lòng chờ</>
 
 	const siderStyle = {
@@ -113,11 +98,7 @@ function App() {
 												label: <Link to={"/management/manage-assignment"}>Phân công thủ công</Link>,
 												icon: <UserOutlined />
 											},
-											{
-												key: "divide_job_manually",
-												label: "Phân công thủ công",
-												icon: <UserOutlined />
-											},
+
 											{
 												key: "profit_management",
 												label: "Quản lý Thanh toán & Thu nhập",
@@ -138,7 +119,7 @@ function App() {
 										[
 											{
 												key: "personal_job",
-												label: "Công việc cá nhân",
+												label: <Link to="/management/jobs">Công việc cá nhân</Link>,
 												icon: <UserOutlined />,
 											},
 											{
@@ -157,8 +138,8 @@ function App() {
 												icon: <ClockCircleOutlined />,
 											},
 											{
-												key: "contract",
-												label: <Link to="/fee">Hồ sơ</Link>,
+												key: "cleaner_profile",
+												label: <Link to="/management/cleaner-profile">Hồ sơ</Link>,
 												icon: <DollarOutlined />
 											},
 											{
@@ -188,44 +169,3 @@ function App() {
 }
 
 export default App;
-
-
-{/* <Button
-	type="text"
-	icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-	onClick={() => setCollapsed(!collapsed)}
-	style={{
-		fontSize: '16px',
-		width: 64,
-		height: 64,
-	}}
-/>
-{
-	user && user.id ?
-	<Dropdown menu={{ items }} trigger={['click']}>
-		<div
-			onClick={e => e.preventDefault()}
-			style={{ margin: "0px 10px", cursor: "pointer" }}>
-			Welcome {user.name}
-			<Avatar size="middle" icon={<UserOutlined />} style={{ margin: "0px 15px" }} />
-		</div>
-	</Dropdown>
-	:
-	<>
-		<Link to="/login" style={{ margin: "0px 50px" }}>Đăng nhập</Link>
-	</>
-} */}
-
-// {
-// 	key: "campus",
-// 	label: "Cơ sở",
-// 	icon: <EnvironmentOutlined />,
-// 	children: [
-// 		{
-// 			label: <Link to="/campus">Thông tin</Link>
-// 		},
-// 		{
-// 			label: <Link to="/facility">Thiết bị</Link>
-// 		},
-// 	]
-// },

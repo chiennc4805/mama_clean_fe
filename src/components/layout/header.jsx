@@ -26,7 +26,11 @@ function HeaderLayOut() {
             setUser({
                 id: "",
                 name: "",
-                role: ""
+                email: "",
+                balance: 0,
+                role: {
+                    name: ""
+                }
             })
             if (mess) {
                 message.success("Đăng xuất thành công.")
@@ -54,15 +58,15 @@ function HeaderLayOut() {
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Text strong style={{ fontSize: '20px', color: '#41864D', fontWeight: 700 }}>
-                            {user.name}
+                            {user?.name}
                         </Text>
                         <EditOutlined style={{ fontSize: '18px', color: '#8c8c8c', cursor: 'pointer' }} onClick={() => { setOpenDropDown(false); navigate("/profile") }} />
                     </div>
                     <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
-                        {user.email || "abc"}
+                        {user?.email || "abc"}
                     </Text>
                     <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
-                        Số dư tài khoản: {user.balance} VNĐ
+                        Số dư tài khoản: {user?.balance} VNĐ
                     </Text>
                 </div>
             </div>
@@ -84,6 +88,7 @@ function HeaderLayOut() {
                         backgroundColor: '#41864D',
                         borderColor: '#41864D'
                     }}
+                    onClick={() => navigate("/top-up")}
                 >
                     Nạp tiền
                 </Button>
@@ -109,23 +114,22 @@ function HeaderLayOut() {
                     alt="Logo"
                     style={{ height: 65, marginRight: 8 }}
                 />
-                <span style={{ fontWeight: "bold", color: "#21823b", fontSize: 43, letterSpacing: 1 }}>
+                <span style={{ fontWeight: "bold", color: "#21823b", fontSize: 35, letterSpacing: 1 }}>
                     MAMA’S CLEAN
                 </span>
             </div>
 
             {/* Menu */}
-            <div style={{ display: "flex", alignItems: "center", fontSize: 22, gap: 40 }}>
+            <div style={{ display: "flex", alignItems: "center", fontSize: 20, gap: 40 }}>
                 <NavLink to="/" style={navLinkStyle} end>Trang chủ</NavLink>
                 <NavLink to="/booking" style={navLinkStyle}>Đặt lịch</NavLink>
                 <NavLink to="/services" style={navLinkStyle}>Dịch vụ</NavLink>
-                <NavLink to="/about" style={navLinkStyle}>Về chúng tôi</NavLink>
                 <NavLink to="/contact" style={navLinkStyle}>Liên hệ</NavLink>
                 <NavLink to="/feedback" style={navLinkStyle}>Phản hồi</NavLink>
             </div>
 
 
-            {user && user.id ? (
+            {user && user.id != "" ? (
                 // Đã đăng nhập: Hiển thị tên user hoặc avatar
 
                 <Dropdown
@@ -137,7 +141,7 @@ function HeaderLayOut() {
                     <a onClick={e => e.preventDefault()}>
                         <Space>
                             <div style={{ fontWeight: "bold", fontSize: 23, color: "#21823b" }}>
-                                Xin chào, {user.name}
+                                Xin chào, {user?.name}
                             </div>
                             <DownOutlined />
                         </Space>
@@ -149,7 +153,7 @@ function HeaderLayOut() {
                     <Button
                         type="default"
                         size="large"
-                        style={{ height: 55, fontSize: 20, padding: "0 24px", borderColor: "#21823b", color: "#21823b" }}
+                        style={{ fontSize: 16, padding: "25px 20px", borderColor: "#21823b", color: "#21823b" }}
                         onClick={() => navigate("/login")}
                     >
                         Đăng nhập
@@ -157,7 +161,7 @@ function HeaderLayOut() {
                     <Button
                         type="primary"
                         size="large"
-                        style={{ background: "#21823b", borderColor: "#21823b", height: 55, fontSize: 20, padding: "0 24px" }}
+                        style={{ background: "#21823b", borderColor: "#21823b", fontSize: 16, padding: "25px 20px" }}
                         onClick={() => navigate("/register")}
                     >
                         Đăng ký
