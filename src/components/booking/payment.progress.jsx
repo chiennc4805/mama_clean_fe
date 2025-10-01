@@ -50,7 +50,7 @@ const PaymentProgress = (props) => {
         setTimeout(() => {
             if (res.data) {
                 message.success("Đặt lịch thành công")
-                navigate("/")
+                setTimeout(() => navigate(0), 1500)
             }
             else {
                 setLoading(false)
