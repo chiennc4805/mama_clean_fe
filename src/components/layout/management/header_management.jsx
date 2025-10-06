@@ -18,7 +18,12 @@ const AdminHeader = () => {
             setUser({
                 id: "",
                 name: "",
-                role: ""
+                email: "",
+                balance: 0,
+                role: {
+                    name: ""
+                },
+                avatar: ""
             })
             if (mess) {
                 message.success("Đăng xuất thành công.")
@@ -113,6 +118,7 @@ const AdminHeader = () => {
                         color: '#666'
                     }}
                     icon={<UserOutlined />}
+                    src={`http://localhost:8080/upload/avatar/${user.avatar}`}
                 />
             </div>
         </Header>

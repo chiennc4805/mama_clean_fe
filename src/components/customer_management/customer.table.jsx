@@ -6,9 +6,8 @@ const CustomerTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataUsers, loadUser, pageSize, setPageSize,
-        current, setCurrent, total } = props
+        current, setCurrent, total, setDataDetail, setActiveComponent } = props
     const [dataUpdate, setDataUpdate] = useState(null)
-    const [isUpdateFormOpen, setIsUpdateFormOpen] = useState(false)
     const [dataTable, setDataTable] = useState([])
 
     const openNotificationWithIcon = (type, message, description) => {
@@ -24,13 +23,8 @@ const CustomerTable = (props) => {
             let lastActivityDate = null;
             let isOnline = false;
 
-            if (user.userActivities && user.userActivities.length > 0) {
-                // Lấy activity mới nhất
-                const latestActivity = user.userActivities
-                    .slice()
-                    .sort((a, b) => new Date(b.requestTime) - new Date(a.requestTime))[0];
-
-                lastActivityDate = new Date(latestActivity.requestTime);
+            if (user.latestActivityTime) {
+                lastActivityDate = new Date(user.latestActivityTime);
 
                 // Xác định online nếu hoạt động trong 5 phút gần nhất
                 const now = new Date();
@@ -39,14 +33,16 @@ const CustomerTable = (props) => {
             }
 
             return {
-                key: user.id,
+                id: user.id,
                 name: user.name,
+                phone: user.phone,
                 email: user.email,
                 orders: user.orders?.length || 0, // nếu có trường orders
                 status: isOnline ? "Hoạt động" : "Không hoạt động",
                 lastActivity: lastActivityDate
                     ? lastActivityDate.toLocaleString()
                     : "Chưa có hoạt động",
+                role: user.role
             };
         });
 
@@ -79,7 +75,7 @@ const CustomerTable = (props) => {
             key: 'status',
             width: 150,
             render: (status) => (
-                <Tag color={status === 'Hoạt động' ? 'green' : 'default'}>
+                <Tag color={status === 'Hoạt động' ? 'green' : 'error'}>
                     {status}
                 </Tag>
             ),
@@ -94,8 +90,8 @@ const CustomerTable = (props) => {
             title: 'Hành động',
             key: 'action',
             width: 130,
-            render: () => (
-                <Button type="link" size="small">
+            render: (record) => (
+                <Button type="primary" size="small" onClick={() => { setDataDetail(record); setActiveComponent("detail") }}>
                     Xem chi tiết
                 </Button>
             ),

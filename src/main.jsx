@@ -12,10 +12,13 @@ import AccountForgetPasswordPage from './pages/account_forget_password.jsx';
 import AccountRegistrationPage from './pages/account_register.jsx';
 import BookingPage from './pages/booking.jsx';
 import UnauthorizedPage from './pages/error/403.jsx';
+import FeedbackPage from './pages/feedback.jsx';
 import HomePage from './pages/home.jsx';
 import LoginPage from './pages/login.jsx';
+import AvailableJobPage from './pages/management/available.job.jsx';
 import BookingManagement from './pages/management/booking_management.jsx';
 import CleanerProfile from './pages/management/cleaner.profile.jsx';
+import CleanerSchedulePage from './pages/management/cleaner.schedule.jsx';
 import CleanerManagement from './pages/management/cleaner_management.jsx';
 import CustomerManagement from './pages/management/customer_management.jsx';
 import HomeManagement from './pages/management/home_management.jsx';
@@ -26,6 +29,7 @@ import TopUpPage from './pages/top.up.jsx';
 import UserProfile from './pages/user.profile.jsx';
 import store from './redux/store.js';
 import './styles/global.css';
+
 
 const router = createBrowserRouter([
 	{
@@ -72,6 +76,16 @@ const router = createBrowserRouter([
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CUSTOMER"]}>
 							<BookingPage />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "feedback",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CUSTOMER"]}>
+							<FeedbackPage />
 						</RoleRoute>
 					</RequireAuth>
 				)
@@ -152,6 +166,26 @@ const router = createBrowserRouter([
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
 							<PersonalJob />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "/management/available-jobs",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<AvailableJobPage />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "/management/schedule",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<CleanerSchedulePage />
 						</RoleRoute>
 					</RequireAuth>
 				)

@@ -3,6 +3,7 @@ import { DatePicker, Divider, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import AssignmentTable from '../../components/manual_assignment/assignment.table';
 import { fetchAllBookingsWithPaginationAPI, fetchAllUsersWithoutPagination } from '../../services/api.service';
+import { debounce } from 'lodash';
 
 const { Option } = Select;
 
@@ -13,15 +14,30 @@ const ManualAssignment = () => {
     const [pageSize, setPageSize] = useState(10)
     const [total, setTotal] = useState(0)
     const [cleanersOption, setCleanersOption] = useState([])
-    let filter = null //useSelector((state) => state.search.user)
+    const [filter, setFilter] = useState({
+        customerName: "",
+        date: ""
+    });
 
     useEffect(() => {
-        loadBooking()
         loadCleaner()
+    }, [])
+
+    useEffect(() => {
+        const handler = debounce(() => {
+            loadBooking();
+        }, 500); // chỉ gọi sau 500ms không gõ thêm
+
+        handler();
+        return () => handler.cancel();
     }, [current, pageSize, filter])
 
     const loadBooking = async () => {
-        const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, `status~'Mới'`)
+        let filterParam = "status~'mới'";
+        filterParam += filter.customerName ? ` and customer.name~'${filter.customerName}'` : "";
+        filterParam += filter.date ? ` and date~'${filter.date}'` : "";
+
+        const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, filterParam)
         if (res.data) {
             if (res.data.result.length === 0 && current > 1) {
                 setCurrent(res.data.meta.page - 1)
@@ -59,43 +75,31 @@ const ManualAssignment = () => {
                 {/* filter */}
                 <div style={{
                     display: 'flex',
-                    gap: 100,
+                    gap: 50,
                     marginBottom: '20px',
                     padding: "0px 20px"
                 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-                            Trạng thái
-                        </div>
-                        <Select
-                            defaultValue="all"
-                            placeholder="Chọn trạng thái"
-                            style={{ width: 200, height: 40 }}  // tăng chiều rộng
-                        >
-                            <Option value="all">Chọn trạng thái</Option>
-                            <Option value="active">Hoạt động</Option>
-                            <Option value="inactive">Không hoạt động</Option>
-                        </Select>
-                    </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-                            Ngày hoạt động cuối cùng
+                            Ngày làm việc
                         </div>
                         <DatePicker
-                            placeholder="Chọn ngày"
-                            style={{ width: 200, height: 40 }}  // tăng chiều rộng
+                            placeholder="Tìm kiếm theo ngày"
+                            style={{ width: 200, height: 40 }} // tăng chiều rộng
+                            onChange={(date, dateString) => setFilter({ ...filter, date: dateString })}
                         />
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-                            Tên
+                            Tên khách hàng
                         </div>
                         <Input
-                            placeholder="Tìm kiếm theo tên"
+                            placeholder="Tìm kiếm theo tên khách hàng"
                             prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
                             style={{ width: 250, height: 40 }} // tăng chiều rộng
+                            onChange={(e) => setFilter({ ...filter, customerName: e.target.value })}
                         />
                     </div>
                 </div>
@@ -103,6 +107,7 @@ const ManualAssignment = () => {
                 <AssignmentTable
                     dataCleaners={dataCleaners}
                     loadCleaner={loadCleaner}
+                    loadBooking={loadBooking}
                     current={current}
                     setCurrent={setCurrent}
                     pageSize={pageSize}

@@ -4,7 +4,12 @@ import { getAccountAPI } from '../../services/api.service';
 const AuthContext = createContext({
     id: "",
     name: "",
-    role: ""
+    email: "",
+    balance: "",
+    role: {
+        name: ""
+    },
+    avatar: ""
 });
 
 const AuthWrapper = ({ children }) => {
@@ -15,7 +20,8 @@ const AuthWrapper = ({ children }) => {
         balance: 0,
         role: {
             name: ""
-        }
+        },
+        avatar: ""
     })
 
     const [isAppLoading, setIsAppLoading] = useState(true)

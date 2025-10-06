@@ -1,206 +1,298 @@
-import { Avatar, Button, Card, Input, message, notification, Select, Space, Typography } from 'antd';
+import { Avatar, Button, Card, Form, Input, message, notification, Select, Space, Tabs, Typography, Upload } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/context/auth.context';
-import { fetchUserByIdAPI, updateUserAPI } from '../services/api.service';
+import { changePasswordAPI, fetchUserByIdAPI, updateUserAPI, uploadImageAPI } from '../services/api.service';
+import { User, Lock } from 'lucide-react';
+import { CameraOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import TabPane from 'antd/es/tabs/TabPane';
+import { useNavigate } from 'react-router-dom';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const UserProfile = () => {
 
+    const [personalForm] = Form.useForm();
+    const [passwordForm] = Form.useForm();
+    const [avatarImageFile, setAvatarImageFile] = useState(null);
+    const [avatarPreviewUrl, setAvatarPreviewUrl] = useState(null);
     const { user, setUser } = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
-
-    const [formData, setFormData] = useState({
-        id: "",
-        name: "",
-        phone: "",
-        gender: "",
-        email: "",
-    });
-
-    const handleChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    };
+    const [dataUser, setDataUser] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const loadUser = async () => {
             const res = await fetchUserByIdAPI(user?.id)
             if (res.data) {
-                setFormData({
+                const dataUser = {
                     id: res.data.id,
                     name: res.data.name,
                     phone: res.data.phone,
                     gender: res.data.gender ? "1" : "0",
                     email: res.data.email,
-                })
+                }
+                personalForm.setFieldsValue(dataUser)
             }
         }
         loadUser()
     }, [])
 
-    const handleSubmit = async () => {
-        console.log('Form values:', formData);
-
+    const handlePersonalInfoSubmit = async (values) => {
         setLoading(true)
-        const gender = formData.gender === "1" ? true : false
-        const res = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, user.role?.id)
+        const gender = values.gender === "1" ? true : false
+        if (avatarImageFile) {
+            let formData = new FormData()
+            formData.append("file", avatarImageFile)
+            const resUploadAPI = await uploadImageAPI("avatar", formData)
+            console.log("upload res: " + resUploadAPI)
+            if (resUploadAPI.data != "Upload failed!") {
+                const res = await updateUserAPI(user.id, values.name, values.email, values.phone, gender, user.role?.id, resUploadAPI.data)
+                setTimeout(() => {
+                    if (res.data) {
+                        setUser({
+                            id: user.id,
+                            name: values.name,
+                            email: user.email,
+                            balance: user.balance,
+                            role: user.role,
+                            avatar: resUploadAPI.data
+                        })
+                        message.success("Cập nhật thành công")
+                    }
+                    else {
+                        notification.error({
+                            message: "Cập nhật thất bại",
+                            description: JSON.stringify(res.message)
+                        })
+                    }
+                    setLoading(false)
+                }, 2000)
+            } else {
+                message.error(resUploadAPI.data.trim())
+            }
+        } else {
+            const res = await updateUserAPI(user.id, values.name, values.email, values.phone, gender, user.role?.id, user.avatar)
+            setTimeout(() => {
+                if (res.data) {
+                    setUser({
+                        id: user.id,
+                        name: values.name,
+                        email: user.email,
+                        balance: user.balance,
+                        role: user.role,
+                        avatar: user.avatar
+                    })
+                    message.success("Cập nhật thành công")
+                }
+                else {
+                    notification.error({
+                        message: "Cập nhật thất bại",
+                        description: JSON.stringify(res.message)
+                    })
+                }
+                setLoading(false)
+            }, 2000)
+        }
 
-        setTimeout(() => {
-            if (res.data) {
-                setUser({
-                    id: user.id,
-                    name: formData.name,
-                    email: user.email,
-                    balance: user.balance,
-                    role: user.role
-                })
-                message.success("Cập nhật thành công")
-            }
-            else {
-                notification.error({
-                    message: "Cập nhật thất bại",
-                    description: JSON.stringify(res.message)
-                })
-            }
-            setLoading(false)
-        }, 2000)
+
     };
 
+    const handlePasswordSubmit = async (values) => {
+        setLoading(true)
+        const res = await changePasswordAPI(user.id, values.currentPassword, values.newPassword)
+        if (res.data) {
+            setTimeout(() => {
+                message.success('Đổi mật khẩu thành công!');
+                passwordForm.resetFields();
+                setLoading(false)
+            }, 2000)
+        } else {
+            message.error(res.message.trim())
+            setLoading(false)
+        }
+    };
+
+    const handleBeforeUpload = (file) => {
+        const newName = `${user.id}.${file.name.split('.').pop()}`;
+        const renamedFile = new File([file], newName, { type: file.type });
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setAvatarPreviewUrl(e.target.result); // ghi đè ảnh cũ
+        };
+        reader.readAsDataURL(renamedFile);
+        setAvatarImageFile(renamedFile);
+        return false; // ngăn upload mặc định
+    };
+
+
     return (
-        <div style={{ padding: '40px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                <Card>
-                    <Title level={1} style={{ marginBottom: '24px' }}>
-                        Hồ sơ cá nhân
-                    </Title>
+        <div style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
+            <div style={{ background: '#fff', borderRadius: '8px', padding: '24px' }}>
+                <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '24px' }}>
+                    Hồ sơ cá nhân
+                </h1>
 
-                    <div style={{ marginBottom: '32px' }}>
-                        <Title level={3} style={{ marginBottom: '4px' }}>
-                            Thông tin cá nhân
-                        </Title>
-                        <Text type="secondary" style={{ fontSize: '15px' }}>
-                            Cập nhật thông tin cá nhân của bạn.
-                        </Text>
-                    </div>
+                <Tabs defaultActiveKey="personal" size="large">
+                    <TabPane
+                        tab={
+                            <span>
+                                <UserOutlined />
+                                Thông tin cá nhân
+                            </span>
+                        }
+                        key="personal"
+                    >
+                        <div style={{ marginTop: '16px' }}>
+                            <p style={{ color: '#666', marginBottom: '24px' }}>
+                                Cập nhật thông tin cá nhân của bạn.
+                            </p>
 
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
-                        marginBottom: '32px',
-                        paddingBottom: '24px',
-                        borderBottom: '1px solid #f0f0f0'
-                    }}>
-                        <Avatar
-                            size={80}
-                            src="https://i.pravatar.cc/150?img=47"
-                        />
-                        <Button
-                            type="link"
-                            style={{ padding: 0, height: 'auto', color: '#595959' }}
-                        >
-                            Thay đổi ảnh đại diện
-                        </Button>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Tên</Text>
-                            </div>
-                            <Input
-                                size="large"
-                                placeholder="Nguyễn Thị Thảo"
-                                value={formData.name}
-                                onChange={(e) => handleChange('name', e.target.value)}
-                            />
-                        </div>
-
-                        <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Số điện thoại</Text>
-                            </div>
-                            <Input
-                                size="large"
-                                placeholder="0912 345 678"
-                                value={formData.phone}
-                                onChange={(e) => handleChange('phone', e.target.value)}
-                            />
-                        </div>
-
-                        <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Giới tính</Text>
-                            </div>
-                            <Select
-                                size="large"
-                                style={{ width: '100%' }}
-                                value={formData.gender}
-                                onChange={(value) => handleChange('gender', value)}
-                            >
-                                <Option value="1" >Nam</Option>
-                                <Option value="0">Nữ</Option>
-                            </Select>
-                        </div>
-
-                        <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Email</Text>
-                            </div>
-                            <Input
-                                size="large"
-                                placeholder="thaonguyen@example.com"
-                                value={formData.email}
-                                disabled
-                            />
-                        </div>
-
-                        {/* <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Đổi mật khẩu</Text>
-                            </div>
-                            <Input.Password
-                                size="large"
-                                placeholder="Nhập mật khẩu mới"
-                                value={formData.password}
-                                onChange={(e) => handleChange('password', e.target.value)}
-                            />
-                        </div>
-
-                        <div>
-                            <div style={{ marginBottom: '8px' }}>
-                                <Text>Xác nhận mật khẩu</Text>
-                            </div>
-                            <Input.Password
-                                size="large"
-                                placeholder="Xác nhận mật khẩu"
-                                value={formData.confirmPassword}
-                                onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                            />
-                        </div> */}
-
-                        <div style={{ marginTop: '12px' }}>
-                            <Space>
-                                <Button size="large">
-                                    Hủy
-                                </Button>
-                                <Button
-                                    type="primary"
-                                    size="large"
-                                    onClick={handleSubmit}
-                                    style={{
-                                        backgroundColor: '#41864D',
-                                        borderColor: '#41864D'
-                                    }}
-                                    loading={loading}
+                            {/* Avatar Upload */}
+                            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                                <Upload
+                                    name="avatar"
+                                    listType="picture-circle"
+                                    showUploadList={false}
+                                    beforeUpload={handleBeforeUpload}
                                 >
-                                    Lưu thay đổi
-                                </Button>
-                            </Space>
+                                    <Avatar size={100} src={avatarPreviewUrl || `http://localhost:8080/upload/avatar/${user.avatar}`} />
+                                </Upload>
+                                <div style={{ marginTop: '8px', color: '#1890ff' }}>
+                                    Thay đổi ảnh đại diện
+                                </div>
+                            </div>
+
+                            {/* Form thông tin cá nhân */}
+                            <Form
+                                form={personalForm}
+                                layout="vertical"
+                                onFinish={handlePersonalInfoSubmit}
+                            >
+                                <Form.Item
+                                    label="Tên"
+                                    name="name"
+                                    rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
+                                >
+                                    <Input size="large" placeholder="Nhập tên của bạn" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Số điện thoại"
+                                    name="phone"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập số điện thoại!' },
+                                        { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ!' }
+                                    ]}
+                                >
+                                    <Input size="large" placeholder="Nhập số điện thoại" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Giới tính"
+                                    name="gender"
+                                    rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
+                                >
+                                    <Select size="large" placeholder="Chọn giới tính">
+                                        <Option value="1">Nam</Option>
+                                        <Option value="0">Nữ</Option>
+                                    </Select>
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Email"
+                                    name="email"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập email!' },
+                                        { type: 'email', message: 'Email không hợp lệ!' }
+                                    ]}
+                                >
+                                    <Input size="large" placeholder="Nhập email" disabled />
+                                </Form.Item>
+
+                                <Form.Item>
+                                    <div style={{ display: 'flex', justifyContent: "center" }}>
+                                        <Button type="primary" size="large" htmlType="submit" loading={loading}>
+                                            Lưu thay đổi
+                                        </Button>
+                                    </div>
+                                </Form.Item>
+                            </Form>
                         </div>
-                    </div>
-                </Card>
+                    </TabPane>
+
+                    <TabPane
+                        tab={
+                            <span>
+                                <LockOutlined />
+                                Mật khẩu
+                            </span>
+                        }
+                        key="password"
+                    >
+                        <div style={{ marginTop: '16px' }}>
+                            <p style={{ color: '#666', marginBottom: '24px' }}>
+                                Thay đổi mật khẩu của bạn để bảo mật tài khoản.
+                            </p>
+
+                            {/* Form đổi mật khẩu */}
+                            <Form
+                                form={passwordForm}
+                                layout="vertical"
+                                onFinish={handlePasswordSubmit}
+                                style={{ maxWidth: '500px' }}
+                            >
+                                <Form.Item
+                                    label="Mật khẩu hiện tại"
+                                    name="currentPassword"
+                                    rules={[{ required: true, message: 'Vui lòng nhập mật khẩu hiện tại!' }]}
+                                >
+                                    <Input.Password size="large" placeholder="Nhập mật khẩu hiện tại" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Mật khẩu mới"
+                                    name="newPassword"
+                                    rules={[
+                                        { required: true, message: 'Vui lòng nhập mật khẩu mới!' },
+                                    ]}
+                                >
+                                    <Input.Password size="large" placeholder="Nhập mật khẩu mới" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Xác nhận mật khẩu mới"
+                                    name="confirmPassword"
+                                    dependencies={['newPassword']}
+                                    rules={[
+                                        { required: true, message: 'Vui lòng xác nhận mật khẩu mới!' },
+                                        ({ getFieldValue }) => ({
+                                            validator(_, value) {
+                                                if (!value || getFieldValue('newPassword') === value) {
+                                                    return Promise.resolve();
+                                                }
+                                                return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+                                            },
+                                        }),
+                                    ]}
+                                >
+                                    <Input.Password size="large" placeholder="Nhập lại mật khẩu mới" />
+                                </Form.Item>
+
+                                <Form.Item>
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        <Button size="large" onClick={() => passwordForm.resetFields()}>
+                                            Reset
+                                        </Button>
+                                        <Button type="primary" size="large" htmlType="submit" loading={loading}>
+                                            Đổi mật khẩu
+                                        </Button>
+                                    </div>
+                                </Form.Item>
+                            </Form>
+                        </div>
+                    </TabPane>
+                </Tabs>
             </div>
         </div>
     );

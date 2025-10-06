@@ -5,6 +5,7 @@ import CheckInJob from '../../components/personal_job/check.in';
 import JobDetail from '../../components/personal_job/job.detail';
 import PersonalJobTable from '../../components/personal_job/job.table';
 import { fetchAllBookingsWithPaginationAPI } from '../../services/api.service';
+import CheckOutJob from '../../components/personal_job/check.out';
 
 const { Option } = Select;
 
@@ -18,12 +19,29 @@ const PersonalJob = () => {
     const [total, setTotal] = useState(0)
     const [dataDetail, setDataDetail] = useState({})
     const [filter, setFilter] = useState("")
-    const [activeTab, setActiveTab] = useState('new');
+    const [activeTab, setActiveTab] = useState('all');
 
 
     useEffect(() => {
-        loadJobs()
-    }, [current, pageSize, filter])
+        let rawFilter = "";
+        if (activeTab === "new") {
+            rawFilter = `and status in ['Từ chối', 'Chờ xác nhận']`;
+        } else if (activeTab === "confirmed") {
+            rawFilter = " and status in ['Chờ Check-in', 'Chờ Check-out']";
+        } else if (activeTab === "finished") {
+            rawFilter = " and status in ['Đã hoàn thành']";
+        }
+        const encodedFilter = encodeURIComponent(rawFilter);
+        setFilter(encodedFilter);
+
+        // reset về trang đầu mỗi khi đổi tab
+        setCurrent(1);
+    }, [activeTab]);
+
+    // Khi current, pageSize, filter thay đổi thì loadJobs
+    useEffect(() => {
+        loadJobs();
+    }, [current, pageSize, filter]);
 
     const loadJobs = async () => {
         const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, `cleaner.id~'${user.id}'` + filter)
@@ -79,15 +97,19 @@ const PersonalJob = () => {
                             <JobDetail
                                 dataDetail={dataDetail}
                                 setStep={setStep}
+                                loadJobs={loadJobs}
                             />
                         )
                     } else if (step === "check-in") {
                         return (
-                            <CheckInJob dataDetail={dataDetail} setStep={setStep} />
+                            <CheckInJob dataDetail={dataDetail} setStep={setStep} loadJobs={loadJobs} />
                         )
                     } else if (step === "check-out") {
                         return (
-                            <span>check out</span>
+                            <CheckOutJob
+                                dataDetail={dataDetail}
+                                setStep={setStep}
+                            />
                         )
                     }
                 })()

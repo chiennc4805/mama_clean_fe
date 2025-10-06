@@ -1,13 +1,16 @@
-import { Button, Col, notification, Row, Table } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Col, message, notification, Popconfirm, Row, Table } from 'antd';
 import { useState } from 'react';
+import { deleteCleanerProfileAPI, deleteUserAPI } from '../../services/api.service';
+import { useNavigate } from 'react-router-dom';
 
 
 const CleanerTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
-        current, setCurrent, total } = props
-    const [dataTable, setDataTable] = useState([])
+        current, setCurrent, total, setDataDetail, setActiveComponent } = props
+    const navigate = useNavigate()
 
     const openNotificationWithIcon = (type, message, description) => {
         api[type]({
@@ -15,6 +18,18 @@ const CleanerTable = (props) => {
             description: description
         });
     };
+
+    const handleDeleteUser = async (userId, cleanerProfileId) => {
+        const deleteUser = await deleteUserAPI(userId)
+        if (deleteUser.data) {
+            message.success("Xoá cleaner thành công")
+            setTimeout(() => {
+                navigate(0)
+            }, 1000)
+        } else {
+            message.error(deleteUser.message.trim())
+        }
+    }
 
     const columns = [
         {
@@ -46,19 +61,34 @@ const CleanerTable = (props) => {
             width: 180,
         },
         {
-            title: 'Điểm',
+            title: 'Rating',
             dataIndex: 'rating',
             key: 'rating',
             width: 150,
         },
         {
-            title: 'Hành động',
+            title: '',
             key: 'action',
             width: 130,
-            render: () => (
-                <Button type="link" size="small">
-                    Xem chi tiết
-                </Button>
+            render: (record) => (
+                <>
+                    <Button type="primary" size="small" onClick={() => { setDataDetail(record); setActiveComponent("detail") }}>
+                        Xem chi tiết
+                    </Button>
+
+                    <Popconfirm
+                        title="Xoá nguời dùng"
+                        description="Bạn chắc chắn xoá nguời dùng này?"
+                        onConfirm={() => handleDeleteUser(record.user.id, record.id)}
+                        okText="Có"
+                        cancelText="Không"
+                        placement='left'
+                    >
+                        <DeleteOutlined style={{ cursor: "pointer", color: "red", marginLeft: 10 }} />
+                    </Popconfirm>
+                </>
+
+
             ),
         },
     ];

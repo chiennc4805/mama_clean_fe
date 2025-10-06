@@ -30,7 +30,8 @@ function HeaderLayOut() {
                 balance: 0,
                 role: {
                     name: ""
-                }
+                },
+                avatar: ""
             })
             if (mess) {
                 message.success("Đăng xuất thành công.")
@@ -53,7 +54,7 @@ function HeaderLayOut() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <Avatar
                     size={75}
-                    src="https://i.pravatar.cc/150?img=47"
+                    src={`http://localhost:8080/upload/avatar/${user.avatar}`}
                 />
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

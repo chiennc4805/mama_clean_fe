@@ -4,7 +4,7 @@ import { createCleanerAPI } from "../../services/api.service";
 const BookingForm = (props) => {
 
     const [api, contextHolder] = notification.useNotification({ maxCount: 1 });
-    const { loadUser, isFormOpen, setIsFormOpen } = props
+    const { loadBooking, isFormOpen, setIsFormOpen } = props
     const [form] = Form.useForm();
 
     const openNotificationWithIcon = (type, message, description) => {
@@ -19,7 +19,7 @@ const BookingForm = (props) => {
         const res = await createCleanerAPI(values.fullname, values.email, values.phone, values.gender, values.password, "CLEANER", values.dob, values.idNumber, values.idDate, values.idPlace)
         if (res.data) {
             openNotificationWithIcon('success', 'Thành công', 'Thêm mới nhân viên thành công')
-            await loadUser()
+            await loadBooking()
             setIsFormOpen(false)
             form.resetFields()
         } else {

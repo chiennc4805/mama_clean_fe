@@ -6,6 +6,7 @@ import PaymentProgress from '../components/booking/payment.progress';
 const BookingPage = () => {
 
     const [bookingInfo, setBookingInfo] = useState({
+        name: "",
         serviceId: "",
         serviceName: "",
         area: "",

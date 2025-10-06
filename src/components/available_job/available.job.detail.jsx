@@ -1,53 +1,28 @@
 import { EnvironmentOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Checkbox, Col, message, notification, Popconfirm, Row, Typography } from 'antd';
-import { useState } from 'react';
-import { updateBookingAPI } from '../../services/api.service';
+import { Breadcrumb, Button, Checkbox, Col, message, notification, Row, Typography } from 'antd';
+import { useContext, useState } from 'react';
+import { getAvailableJobAPI, updateBookingAPI } from '../../services/api.service';
 import { formatterNumber } from '../../services/common.function';
+import { AuthContext } from '../context/auth.context';
 
 const { Title, Text } = Typography;
 
-const JobDetail = (props) => {
+const AvailableJobDetail = (props) => {
+
+    const { user } = useContext(AuthContext)
     const [isChecked, setIsChecked] = useState(false);
     const { dataDetail, setStep } = props
-    const [loadingCancel, setLoadingCancel] = useState(false)
     const [loadingGet, setLoadingGet] = useState(false)
-
-
-    const handleCancelJob = async () => {
-        setLoadingCancel(true)
-
-        const res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Mới", dataDetail.customer.id, null, dataDetail.service.id)
-
-        setTimeout(() => {
-            if (res.data) {
-                message.success("Huỷ bỏ thành công")
-                setTimeout(() => {
-                    // setStep("list");
-                    // setActiveTab("new");
-                    window.location.reload()
-                }, 2000)
-            }
-            else {
-                setLoadingCancel(false);
-                notification.error({
-                    message: "Huỷ bỏ thất bại",
-                    description: JSON.stringify(res.message)
-                })
-            }
-        }, 2000)
-    }
 
     const handleGetJob = async () => {
         setLoadingGet(true)
 
-        const res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-in", dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
+        const res = await getAvailableJobAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-in", dataDetail.customer.id, user.id, dataDetail.service.id)
 
         setTimeout(() => {
             if (res.data) {
                 message.success("Nhận việc thành công")
                 setTimeout(() => {
-                    // setStep("list");
-                    // setActiveTab("new");
                     window.location.reload()
                 }, 2000)
             }
@@ -163,82 +138,48 @@ const JobDetail = (props) => {
                     </div>
                 </div>
 
-                {/* Action Buttons */}
-                {dataDetail.status === "Chờ xác nhận" ?
-
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Text style={{ color: '#262626', fontSize: 14, fontWeight: 600, display: 'block', marginBottom: 10 }}>
-                                Xác nhận và Hành động
-                            </Text>
-                            <Checkbox
-                                checked={isChecked}
-                                onChange={(e) => setIsChecked(e.target.checked)}
-                                style={{ fontSize: 14, marginBottom: 20 }}
-                            >
-                                Đã đọc kỹ chi tiết công việc
-                            </Checkbox>
-                        </Col>
-                        <Col span={12}>
-                            <Row gutter={8}>
-                                <Col span={12}>
-
-                                    <Popconfirm
-                                        title="Bỏ qua công việc"
-                                        description="Bạn có chắc chắn bỏ qua công việc này?"
-                                        onConfirm={handleCancelJob}
-                                        okText="Yes"
-                                        cancelText="No"
-                                    >
-                                        <Button
-                                            block
-                                            size="large"
-                                            style={{
-                                                height: 48,
-                                                borderRadius: 6,
-                                                borderColor: isChecked ? '#ff4d4f' : '#d9d9d9',
-                                                color: isChecked ? '#ff4d4f' : '#d9d9d9',
-                                                fontSize: 14
-                                            }}
-                                            loading={loadingCancel}
-                                            disabled={!isChecked}
-                                        >
-                                            Bỏ qua
-                                        </Button>
-                                    </Popconfirm>
-                                </Col>
-                                <Col span={12}>
-                                    <Button
-                                        block
-                                        type="primary"
-                                        size="large"
-                                        style={{
-                                            height: 48,
-                                            borderRadius: 6,
-                                            backgroundColor: isChecked ? '#41864D' : '#d9d9d9',
-                                            borderColor: isChecked ? '#41864D' : '#d9d9d9',
-                                            fontSize: 14,
-                                            color: '#fff',
-                                            fontWeight: 500
-                                        }}
-                                        disabled={!isChecked}
-                                        onClick={() => handleGetJob()}
-                                        loading={loadingGet}
-                                    >
-                                        Nhận việc
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Col>
-
-
-                    </Row>
-                    :
-                    <span></span>
-                }
+                <Row gutter={16}>
+                    <Col span={24}>
+                        <Text style={{ color: '#262626', fontSize: 14, fontWeight: 600, display: 'block', marginBottom: 10 }}>
+                            Xác nhận và Hành động
+                        </Text>
+                        <Checkbox
+                            checked={isChecked}
+                            onChange={(e) => setIsChecked(e.target.checked)}
+                            style={{ fontSize: 14, marginBottom: 20 }}
+                        >
+                            Đã đọc kỹ chi tiết công việc
+                        </Checkbox>
+                    </Col>
+                    <Col span={12}>
+                        <Row gutter={8}>
+                            <Col span={12}>
+                                <Button
+                                    block
+                                    type="primary"
+                                    size="large"
+                                    style={{
+                                        height: 48,
+                                        borderRadius: 6,
+                                        backgroundColor: isChecked ? '#41864D' : '#d9d9d9',
+                                        borderColor: isChecked ? '#41864D' : '#d9d9d9',
+                                        fontSize: 14,
+                                        color: '#fff',
+                                        fontWeight: 500
+                                    }}
+                                    disabled={!isChecked}
+                                    onClick={() => handleGetJob()}
+                                    loading={loadingGet}
+                                >
+                                    Nhận việc
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
             </div>
         </div>
     );
 }
 
-export default JobDetail
+export default AvailableJobDetail;

@@ -1,12 +1,13 @@
 import { Button, Col, message, notification, Row, Select, Table } from 'antd';
-import { updateBookingAPI } from '../../services/api.service';
+import { assignCleanerJobManuallyAPI, updateBookingAPI } from '../../services/api.service';
+import dayjs from 'dayjs';
 
 
 const AssignmentTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
-        current, setCurrent, total, cleanersOption } = props
+        current, setCurrent, total, cleanersOption, loadBooking } = props
 
     const formatterNumber = (val) => {
         if (!val) return "0";
@@ -21,19 +22,20 @@ const AssignmentTable = (props) => {
     };
 
     const assignCleaner = async (record) => {
-        const res = await updateBookingAPI(record.id, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, "Chờ xác nhận", record.customer.id, record.cleaner.id, record.service.id)
+        const res = await assignCleanerJobManuallyAPI(record.id, record.name, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, "Chờ xác nhận", record.customer.id, record.cleaner.id, record.service.id)
 
         setTimeout(() => {
             if (res.data) {
                 message.success("Phân công thành công")
             }
             else {
-                setLoading(false);
                 notification.error({
                     message: "Phân công thất bại",
                     description: JSON.stringify(res.message)
                 })
             }
+            loadCleaner()
+            loadBooking()
         }, 2000)
     }
 
@@ -58,6 +60,17 @@ const AssignmentTable = (props) => {
                     </span>
                 )
             },
+            width: 150,
+        },
+        {
+            title: 'Công việc',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.name}
+                    </span>
+                )
+            },
             width: 180,
         },
         {
@@ -70,6 +83,11 @@ const AssignmentTable = (props) => {
                 )
             },
             width: 150,
+            sorter: (a, b) => {
+                const dateA = dayjs(`${a.date} ${a.startTime}`);
+                const dateB = dayjs(`${b.date} ${b.startTime}`);
+                return dateA - dateB;
+            },
         },
         {
             title: 'Phân công nhiệm vụ',
@@ -87,7 +105,7 @@ const AssignmentTable = (props) => {
                 >
                 </Select>
             ),
-            width: 180,
+            width: 160,
         },
         {
             title: '',
@@ -137,7 +155,7 @@ const AssignmentTable = (props) => {
             >
                 <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
                     <h2>
-                        Danh sách đơn hàng
+                        Danh sách phân công
                     </h2>
                 </div>
 

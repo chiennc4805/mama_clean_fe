@@ -17,6 +17,7 @@ const BookingProgress = (props) => {
 
     useEffect(() => {
         form.setFieldsValue({
+            name: bookingInfo.name,
             service: bookingInfo.service || "",
             area: bookingInfo.area,
             date: bookingInfo.date,
@@ -44,6 +45,7 @@ const BookingProgress = (props) => {
         const res = await fetchServiceById(values.area.value)
 
         setBookingInfo({
+            name: values.name,
             serviceId: values.area.value,
             serviceName: values.service.label,
             area: values.area.label,
@@ -114,7 +116,30 @@ const BookingProgress = (props) => {
                     </Text>
 
                     <Row gutter={24}>
-                        <Col span={8}>
+                        <Col span={24}>
+                            <Text strong style={{ display: 'block', marginBottom: 10 }}>
+                                Tên công việc (Mô tả ngắn gọn công việc)
+                            </Text>
+                            <Form.Item
+                                name={"name"}
+                                rules={[
+                                    { required: true, message: 'Vui lòng điền mô tả!' },
+                                    { max: 50, message: 'Tối đa 30 ký tự!' },
+                                ]}
+                            >
+                                <Input
+                                    style={{ width: '100%' }}
+                                    size="large"
+                                    placeholder='Dọn dẹp nhà bếp'
+                                    showCount
+                                    maxLength={50}
+                                >
+                                </Input>
+                            </Form.Item>
+
+                        </Col>
+
+                        <Col span={9}>
                             <Text strong style={{ display: 'block', marginBottom: 10 }}>
                                 Diện tích (m2)
                             </Text>
@@ -134,7 +159,7 @@ const BookingProgress = (props) => {
                             </Form.Item>
 
                         </Col>
-                        <Col span={8}>
+                        <Col span={9}>
                             <Text strong style={{ display: 'block', marginBottom: 10 }}>
                                 Ngày
                             </Text>
@@ -150,11 +175,12 @@ const BookingProgress = (props) => {
                                     style={{ width: '100%' }}
                                     size="large"
                                     format="DD/MM/YYYY"
+                                    minDate={dayjs()}
                                 />
                             </Form.Item>
 
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Text strong style={{ display: 'block', marginBottom: 10 }}>
                                 Giờ
                             </Text>
@@ -166,8 +192,8 @@ const BookingProgress = (props) => {
                                 ]}
                             >
                                 <TimePicker
-                                    defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}
                                     size='large'
+                                    format={"HH:mm"}
                                 />
                             </Form.Item>
                         </Col>

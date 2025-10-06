@@ -22,6 +22,7 @@ const PaymentProgress = (props) => {
     };
 
     const bookingDetails = [
+        { label: 'Công việc:', value: bookingInfo.name },
         { label: 'Loại dịch vụ:', value: bookingInfo.serviceName },
         { label: 'Diện tích:', value: bookingInfo.area },
         { label: 'Ngày:', value: dayjs(bookingInfo.date).format('DD/MM/YYYY') },
@@ -44,22 +45,25 @@ const PaymentProgress = (props) => {
         setLoading(true)
 
         const coords = await getCoordsFromAddress(bookingInfo.address)
+        if (coords) {
+            const res = await createBookingAPI(bookingInfo.name, bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, bookingInfo.serviceId)
 
-        const res = await createBookingAPI(bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, bookingInfo.serviceId)
-
-        setTimeout(() => {
-            if (res.data) {
-                message.success("Đặt lịch thành công")
-                setTimeout(() => navigate(0), 1500)
-            }
-            else {
-                setLoading(false)
-                notification.error({
-                    message: "Error login",
-                    description: JSON.stringify(res.message)
-                })
-            }
-        }, 2000)
+            setTimeout(() => {
+                if (res.data) {
+                    message.success("Đặt lịch thành công")
+                    setTimeout(() => navigate(0), 1500)
+                }
+                else {
+                    notification.error({
+                        message: "Đặt lịch thất bại",
+                        description: JSON.stringify(res.message)
+                    })
+                }
+            }, 1000)
+        } else {
+            message.error("Lấy địa chỉ thất bại")
+        }
+        setLoading(false)
     }
 
 

@@ -1,10 +1,11 @@
-import { Button, Col, notification, Row, Table, Tag } from 'antd';
+import { Col, notification, Row, Table, Tag } from 'antd';
+import dayjs from 'dayjs';
 
 
 const BookingTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
-    const { dataCleaners, loadCleaner, pageSize, setPageSize,
+    const { dataBookings, loadBooking, pageSize, setPageSize,
         current, setCurrent, total } = props
 
     const formatterNumber = (val) => {
@@ -29,7 +30,7 @@ const BookingTable = (props) => {
                     </span>
                 )
             },
-            width: 140,
+            width: 150,
         },
         {
             title: 'Người dọn dẹp',
@@ -40,7 +41,7 @@ const BookingTable = (props) => {
                         : <span></span>
                 )
             },
-            width: 100,
+            width: 150,
         },
         {
             title: 'Dịch vụ',
@@ -51,7 +52,18 @@ const BookingTable = (props) => {
                     </span>
                 )
             },
-            width: 180,
+            width: 150,
+        },
+        {
+            title: 'Công việc',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.name}
+                    </span>
+                )
+            },
+            width: 220,
         },
         {
             title: 'Ngày & Giờ',
@@ -62,16 +74,23 @@ const BookingTable = (props) => {
                     </span>
                 )
             },
-            width: 150,
+            width: 120,
+            sorter: (a, b) => {
+                const dateA = dayjs(`${a.date} ${a.startTime}`);
+                const dateB = dayjs(`${b.date} ${b.startTime}`);
+                return dateA - dateB;
+            },
         },
         {
             title: 'Trạng thái',
             render: (record) => {
                 if (record.status === "Đang chờ") {
                     return <Tag color="default">{record.status}</Tag>
-                } else if (record.status === "Hoàn thành") {
-                    return <Tag color="success">{record.status}</Tag>
-                } else if (record.status === "Đang tiến hành") {
+                } else if (record.status === "Đã hoàn thành") {
+                    return <Tag color="#87d068">{record.status}</Tag>
+                } else if (record.status === "Chờ Check-in") {
+                    return <Tag color="processing">{record.status}</Tag>
+                } else if (record.status === "Chờ Check-out") {
                     return <Tag color="processing">{record.status}</Tag>
                 } else if (record.status === "Đã huỷ") {
                     return <Tag color="red">{record.status}</Tag>
@@ -83,7 +102,8 @@ const BookingTable = (props) => {
                     return <Tag color="magenta">{record.status}</Tag>
                 }
             },
-            width: 150,
+            width: 100,
+            align: 'center'
         },
         {
             title: 'Tổng cộng',
@@ -94,17 +114,8 @@ const BookingTable = (props) => {
                     </span>
                 )
             },
-            width: 150,
-        },
-        {
-            title: 'Trạng thái',
-            key: 'action',
-            width: 130,
-            render: () => (
-                <Button type="link" size="small">
-                    Xem chi tiết
-                </Button>
-            ),
+            width: 120,
+            align: 'center'
         },
     ];
 
@@ -145,7 +156,7 @@ const BookingTable = (props) => {
                         <Table
                             rowKey={"id"}
                             columns={columns}
-                            dataSource={dataCleaners}
+                            dataSource={dataBookings}
                             bordered={true}
                             size='large'
                             pagination={

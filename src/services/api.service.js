@@ -216,7 +216,7 @@ const fetchUserByIdAPI = (id) => {
     return axios.get(URL_BACKEND)
 }
 
-const updateUserAPI = (id, name, email, phone, gender, roleId) => {
+const updateUserAPI = (id, name, email, phone, gender, roleId, avatar) => {
     const URL_BACKEND = "/users"
     const data = {
         id: id,
@@ -227,7 +227,8 @@ const updateUserAPI = (id, name, email, phone, gender, roleId) => {
         gender: gender,
         role: {
             id: roleId
-        }
+        },
+        avatar: avatar
     }
     return axios.put(URL_BACKEND, data)
 }
@@ -300,11 +301,22 @@ const fetchAllCleanersWithoutPaginationAPI = (filter = null) => {
     return axios.get(URL_BACKEND)
 }
 
+const deleteUserAPI = id => {
+    const URL_BACKEND = `/users/${id}`
+    return axios.delete(URL_BACKEND)
+}
 
 
-const createBookingAPI = (address, addressLat, addressLon, date, startTime, totalPrice, note, customerId, serviceId) => {
+const deleteCleanerProfileAPI = id => {
+    const URL_BACKEND = `/cleaner-profiles/${id}`
+    return axios.delete(URL_BACKEND)
+}
+
+
+const createBookingAPI = (name, address, addressLat, addressLon, date, startTime, totalPrice, note, customerId, serviceId) => {
     const URL_BACKEND = `/bookings`
     const data = {
+        name: name,
         address: address,
         addressLat: addressLat,
         addressLon: addressLon,
@@ -334,10 +346,21 @@ const fetchAllBookingsWithPaginationAPI = (page, pageSize, filter = null) => {
     return axios.get(URL_BACKEND)
 }
 
-const updateBookingAPI = (id, address, addressLat, addressLon, date, startTime, totalPrice, note, status, customerId, cleanerId, serviceId) => {
+const fetchAllBookingsWithoutPaginationAPI = (filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/bookings?filter=${filter}`
+    } else {
+        URL_BACKEND = `/bookings`
+    }
+    return axios.get(URL_BACKEND)
+}
+
+const updateBookingAPI = (id, name, address, addressLat, addressLon, date, startTime, totalPrice, note, status, customerId, cleanerId, serviceId) => {
     const URL_BACKEND = "/bookings"
     const data = {
         id: id,
+        name: name,
         address: address,
         addressLat: addressLat,
         addressLon: addressLon,
@@ -371,7 +394,7 @@ const checkInAPI = (customerLat, customerLon, cleanerLat, cleanerLon) => {
 }
 
 const createBookingCheckInAPI = (addressLat, addressLon, bookingId) => {
-    const URL_BACKEND = '/booking-check-in'
+    const URL_BACKEND = '/booking/checkin'
     const data = {
         addressLat: addressLat,
         addressLon: addressLon,
@@ -382,5 +405,93 @@ const createBookingCheckInAPI = (addressLat, addressLon, bookingId) => {
     return axios.post(URL_BACKEND, data)
 }
 
-export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp };
+const assignCleanerJobManuallyAPI = (id, name, address, addressLat, addressLon, date, startTime, totalPrice, note, status, customerId, cleanerId, serviceId) => {
+    const URL_BACKEND = "/manual-assign-job"
+    const data = {
+        id: id,
+        name: name,
+        address: address,
+        addressLat: addressLat,
+        addressLon: addressLon,
+        date: date,
+        startTime: startTime,
+        totalPrice: totalPrice,
+        note: note,
+        status: status,
+        customer: {
+            id: customerId
+        },
+        cleaner: {
+            id: cleanerId
+        },
+        service: {
+            id: serviceId
+        }
+    }
+    return axios.put(URL_BACKEND, data)
+}
+
+const getAvailableJobAPI = (id, name, address, addressLat, addressLon, date, startTime, totalPrice, note, status, customerId, cleanerId, serviceId) => {
+    const URL_BACKEND = "/get-available-job"
+    const data = {
+        id: id,
+        name: name,
+        address: address,
+        addressLat: addressLat,
+        addressLon: addressLon,
+        date: date,
+        startTime: startTime,
+        totalPrice: totalPrice,
+        note: note,
+        status: status,
+        customer: {
+            id: customerId
+        },
+        cleaner: {
+            id: cleanerId
+        },
+        service: {
+            id: serviceId
+        }
+    }
+    return axios.put(URL_BACKEND, data)
+}
+
+const uploadImageAPI = (directory, formData) => {
+    return axios.post("/uploads/images/" + directory, formData)
+}
+
+const createBookingCheckOutAPI = (checkOutImageName, note, bookingId) => {
+    const URL_BACKEND = "/booking/checkout"
+    const data = {
+        checkOutImageName: checkOutImageName,
+        note: note,
+        booking: {
+            id: bookingId
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const deleteBookingCheckOutAPI = (id) => {
+    const URL_BACKEND = `/booking/checkout/${id}`
+    return axios.delete(URL_BACKEND)
+}
+
+const deleteBookingCheckInAPI = (id) => {
+    const URL_BACKEND = `/booking/checkin/${id}`
+    return axios.delete(URL_BACKEND)
+}
+
+const changePasswordAPI = (userId, currentPassword, newPassword) => {
+    const URL_BACKEND = "/auth/change-password"
+    const data = {
+        userId: userId,
+        currentPassword: currentPassword,
+        newPassword: newPassword
+    }
+    return axios.put(URL_BACKEND, data)
+}
+
+export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI };
 

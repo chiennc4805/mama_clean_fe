@@ -2,3 +2,14 @@
     margin: 0;
     padding: 0;
 }
+
+/* Highlight ngày hiện tại trong FullCalendar */
+.fc-day-today {
+  background-color: rgba(74, 137, 102, 0.15) !important;
+  border: 2px solid #4a8966 !important;
+}
+
+/* Nếu dùng view dạng tuần/ngày (timeGrid) thì highlight cả cột */
+.fc-timegrid-col.fc-day-today {
+  background-color: rgba(74, 137, 102, 0.1) !important;
+}

@@ -1,5 +1,4 @@
 import { Button, Col, notification, Row, Table, Tag } from 'antd';
-import { useEffect } from 'react';
 
 
 const PersonalJobTable = (props) => {
@@ -21,22 +20,18 @@ const PersonalJobTable = (props) => {
         { key: 'finished', label: 'Đã hoàn thành' }
     ];
 
-    useEffect(() => {
-        let rawFilter = ""
-        if (activeTab === "new") {
-            rawFilter = `and status in ['Từ chối', 'Chờ xác nhận']`;
-        }
-        else if (activeTab === "confirmed") {
-            rawFilter = " and status in ['Chờ Check-in', 'Chờ Check-out']"
-        }
-        else {
-            rawFilter = " and status in ['Đã hoàn thành']"
-        }
-        const encodedFilter = encodeURIComponent(rawFilter);
-        setFilter(encodedFilter)
-    }, [activeTab])
-
     const columns = [
+        {
+            title: 'Công việc',
+            render: (record) => {
+                return (
+                    <span>
+                        {record.name}
+                    </span>
+                )
+            },
+            width: 160,
+        },
         {
             title: 'Dịch vụ',
             render: (record) => {
@@ -46,7 +41,7 @@ const PersonalJobTable = (props) => {
                     </span>
                 )
             },
-            width: 140,
+            width: 120,
         },
         {
             title: 'Thời gian',
@@ -75,9 +70,11 @@ const PersonalJobTable = (props) => {
             render: (record) => {
                 if (record.status === "Đang chờ") {
                     return <Tag color="default">{record.status}</Tag>
-                } else if (record.status === "Hoàn thành") {
+                } else if (record.status === "Đã hoàn thành") {
                     return <Tag color="success">{record.status}</Tag>
-                } else if (record.status === "Đang tiến hành") {
+                } else if (record.status === "Chờ Check-in") {
+                    return <Tag color="processing">{record.status}</Tag>
+                } else if (record.status === "Chờ Check-out") {
                     return <Tag color="processing">{record.status}</Tag>
                 } else if (record.status === "Đã huỷ") {
                     return <Tag color="red">{record.status}</Tag>
@@ -89,12 +86,12 @@ const PersonalJobTable = (props) => {
                     return <Tag color="magenta">{record.status}</Tag>
                 }
             },
-            width: 150,
+            width: 100,
         },
         {
             title: 'Chi tiết',
             key: 'action',
-            width: 130,
+            width: 160,
             render: (record) => {
                 if (record.status === "Chờ Check-in") {
                     return (

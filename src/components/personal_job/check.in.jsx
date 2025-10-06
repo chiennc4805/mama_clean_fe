@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Card, message, Space, Tag } from 'antd';
 import { useState } from 'react';
-import { checkInAPI, createBookingCheckInAPI, updateBookingAPI } from '../../services/api.service';
+import { checkInAPI, createBookingCheckInAPI, deleteBookingCheckInAPI, updateBookingAPI } from '../../services/api.service';
 
 const CheckInJob = (props) => {
 
@@ -33,28 +33,38 @@ const CheckInJob = (props) => {
     const handleCheckIn = async () => {
         setLoading(true)
         try {
-            const { lat, lon } = await getCurrentCoords();
-
-            const res = await checkInAPI(
-                parseFloat(dataDetail.addressLat),
-                parseFloat(dataDetail.addressLon),
-                lat,
-                lon
-            );
-            if (res.data.trim() === "Thành công") {
-                const updateBooking = await updateBookingAPI(dataDetail.id, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-out", dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
-
-                const createBookingCheckIn = await createBookingCheckInAPI(lat, lon, dataDetail.id)
-
-                if (updateBooking.data && createBookingCheckIn) {
-                    message.success("Check-In thành công");
-                    setStep("list")
+            const { lat, lon } = await getCurrentCoords(); //sai từ đây
+            if ({ lat, lon }) {
+                const res = await checkInAPI(
+                    parseFloat(dataDetail.addressLat),
+                    parseFloat(dataDetail.addressLon),
+                    lat,
+                    lon
+                );
+                if (res?.data.trim() === "Thành công") {
+                    //create checkin object
+                    const createBookingCheckIn = await createBookingCheckInAPI(lat, lon, dataDetail.id)
+                    if (createBookingCheckIn.data) {
+                        //update booking status
+                        const updateBooking = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-out", dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
+                        if (updateBooking.data) {
+                            message.success('Check-in công việc thành công!');
+                            setTimeout(() => {
+                                window.location.reload()
+                            }, 2000)
+                        }
+                        else {
+                            await deleteBookingCheckInAPI(createBookingCheckIn.data.id)
+                            message.error(updateBooking.message.trim())
+                        }
+                    } else {
+                        message.error(createBookingCheckIn.message.trim())
+                    }
                 } else {
-                    message.error(updateBooking.message.trim())
-                    message.error(createBookingCheckIn.message.trim())
+                    message.error(res.data.trim());
                 }
             } else {
-                message.error(res.data.trim());
+                message.error("Lấy địa chỉ thất bại")
             }
         } catch (err) {
             console.error("Lỗi khi lấy tọa độ:", err);
