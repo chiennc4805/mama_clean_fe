@@ -258,7 +258,7 @@ const createCleanerAPI = (name, email, phone, gender, password, roleName, dob, i
     return axios.post(URL_BACKEND, data)
 }
 
-const updateCleanerAPI = (id, dob, idNumber, idDate, idPlace, bank, bankNo, userId) => {
+const updateCleanerAPI = (id, dob, idNumber, idDate, idPlace, bank, bankNo, rating, ratingCount, userId) => {
     const URL_BACKEND = '/cleaner-profiles'
     const data = {
         id: id,
@@ -268,6 +268,8 @@ const updateCleanerAPI = (id, dob, idNumber, idDate, idPlace, bank, bankNo, user
         idPlace: idPlace,
         bank: bank,
         bankNo: bankNo,
+        rating: rating,
+        ratingCount: ratingCount,
         user: {
             id: userId
         }
@@ -343,6 +345,11 @@ const fetchAllBookingsWithPaginationAPI = (page, pageSize, filter = null) => {
     } else {
         URL_BACKEND = `/bookings?page=${page}&size=${pageSize}`
     }
+    return axios.get(URL_BACKEND)
+}
+
+const fetchBookingByIdAPI = id => {
+    const URL_BACKEND = `/bookings/${id}`
     return axios.get(URL_BACKEND)
 }
 
@@ -493,5 +500,27 @@ const changePasswordAPI = (userId, currentPassword, newPassword) => {
     return axios.put(URL_BACKEND, data)
 }
 
-export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI };
+const createFeedBackAPI = (content, rating, bookingId) => {
+    const URL_BACKEND = "/feedbacks"
+    const data = {
+        content: content,
+        rating: rating,
+        booking: {
+            id: bookingId
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const updateCleanerRatingAPI = (cleanerUserId, newRating) => {
+    const URL_BACKEND = `/cleaner-profiles/${cleanerUserId}?rating=${newRating}`
+    return axios.put(URL_BACKEND)
+}
+
+const deleteFeedbackAPI = (id) => {
+    const URL_BACKEND = `/feedbacks/${id}`
+    return axios.delete(URL_BACKEND)
+}
+
+export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI };
 

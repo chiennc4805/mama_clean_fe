@@ -33,7 +33,9 @@ const CleanerProfile = () => {
                     idDate: dayjs(res.data.idDate),
                     idPlace: res.data.idPlace,
                     bank: res.data.bank,
-                    bankNo: res.data.bankNo
+                    bankNo: res.data.bankNo,
+                    rating: res.data.rating,
+                    ratingCount: res.data.ratingCount
                 });
             }
         };
@@ -53,7 +55,7 @@ const CleanerProfile = () => {
             if (resUpload.data !== "Upload failed!") {
 
                 const resUser = await updateUserAPI(values.id, values.name, values.email, values.phone, gender, user.role?.id, resUpload.data);
-                const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.id);
+                const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
 
                 setTimeout(() => {
                     if (resUser.data && resCleaner.data) {
@@ -80,7 +82,7 @@ const CleanerProfile = () => {
             }
         } else {
             const resUser = await updateUserAPI(values.id, values.name, values.email, values.phone, gender, user.role?.id, user.avatar);
-            const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.id);
+            const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
 
             setTimeout(() => {
                 if (resUser.data && resCleaner.data) {
@@ -300,6 +302,21 @@ const CleanerProfile = () => {
                                             <Input size="large" placeholder="Nhập số tài khoản" />
                                         </Form.Item>
                                     </Col>
+
+                                    <Form.Item
+                                        label="Rating"
+                                        name="rating"
+                                        hidden
+                                    >
+                                        <Input size="large" placeholder="Nhập số tài khoản" />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="RatingCount"
+                                        name="ratingCount"
+                                        hidden
+                                    >
+                                        <Input size="large" placeholder="Nhập số tài khoản" />
+                                    </Form.Item>
 
                                     <Col span={24}>
                                         <Form.Item>

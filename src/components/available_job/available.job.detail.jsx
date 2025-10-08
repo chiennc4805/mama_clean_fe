@@ -1,7 +1,7 @@
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Checkbox, Col, message, notification, Row, Typography } from 'antd';
 import { useContext, useState } from 'react';
-import { getAvailableJobAPI, updateBookingAPI } from '../../services/api.service';
+import { getAvailableJobAPI } from '../../services/api.service';
 import { formatterNumber } from '../../services/common.function';
 import { AuthContext } from '../context/auth.context';
 

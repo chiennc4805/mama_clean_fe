@@ -48,8 +48,9 @@ const CleanerDetail = (props) => {
             idDate: dayjs(dataDetail.idDate),
             idPlace: dataDetail.idPlace,
             bank: dataDetail.bank,
-            bankNo: dataDetail.bankNo
-
+            bankNo: dataDetail.bankNo,
+            rating: dataDetail.rating,
+            ratingCount: dataDetail.ratingCount
         })
     }, [])
 
@@ -59,7 +60,7 @@ const CleanerDetail = (props) => {
         setLoading(true)
         const gender = formData.gender === "1" ? true : false
         const resUser = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, dataDetail.user.role?.id)
-        const resCleaner = await updateCleanerAPI(formData.idCleaner, formData.dob, formData.idNumber, formData.idDate, formData.idPlace, formData.bank, formData.bankNo, formData.id)
+        const resCleaner = await updateCleanerAPI(formData.idCleaner, formData.dob, formData.idNumber, formData.idDate, formData.idPlace, formData.bank, formData.bankNo, formData.rating, formData.ratingCount, formData.id)
         // const resCleaner = await
 
         setTimeout(() => {

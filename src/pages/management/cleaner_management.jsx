@@ -110,7 +110,7 @@ const CleanerManagement = () => {
                                 min={0}
                                 max={5}
                                 style={{ width: 250, height: 40 }} // tăng chiều rộng
-                                onChange={(value) => setFilter({ name: filter.name, rating: value })}
+                                onChange={(value) => setFilter({ name: filter.name, rating: value || 0 })}
                             />
                         </div>
                     </div>

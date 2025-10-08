@@ -15,7 +15,7 @@ const PersonalJobTable = (props) => {
     };
 
     const tabs = [
-        { key: 'new', label: 'Mới' },
+        { key: 'new', label: 'Chờ xác nhận' },
         { key: 'confirmed', label: 'Đã xác nhận' },
         { key: 'finished', label: 'Đã hoàn thành' }
     ];
@@ -71,7 +71,7 @@ const PersonalJobTable = (props) => {
                 if (record.status === "Đang chờ") {
                     return <Tag color="default">{record.status}</Tag>
                 } else if (record.status === "Đã hoàn thành") {
-                    return <Tag color="success">{record.status}</Tag>
+                    return <Tag color="#87d068">{record.status}</Tag>
                 } else if (record.status === "Chờ Check-in") {
                     return <Tag color="processing">{record.status}</Tag>
                 } else if (record.status === "Chờ Check-out") {

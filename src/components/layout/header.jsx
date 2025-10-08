@@ -1,4 +1,4 @@
-import { DownOutlined, EditOutlined } from "@ant-design/icons";
+import { DownOutlined, EditOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, message, Space, Typography } from "antd";
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ function HeaderLayOut() {
         transition: "color 0.2s",
     });
 
-    const handleLogout = async (mess) => {
+    const handleLogout = async () => {
         const res = await logoutAPI()
         if (res.data) {
             //clear data
@@ -33,28 +33,40 @@ function HeaderLayOut() {
                 },
                 avatar: ""
             })
-            if (mess) {
-                message.success("Đăng xuất thành công.")
-            }
-
+            message.success("Đăng xuất thành công.")
             setOpenDropDown(false)
-            //redirect to home
-            navigate("/login")
+            setTimeout(() => {
+                window.location.href = "/login"
+            }, 800)
         }
     }
 
     const dropdownContent = (
         <div style={{
+            position: 'relative',
             backgroundColor: 'white',
             borderRadius: '8px',
             padding: '16px',
             width: '400px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
         }}>
+            {/* Icon giỏ hàng góc trên phải */}
+            <ShoppingCartOutlined
+                style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    fontSize: 24,
+                    color: '#21823b',
+                    cursor: 'pointer'
+                }}
+                onClick={() => navigate("/order")}
+            />
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <Avatar
                     size={75}
-                    src={`http://localhost:8080/upload/avatar/${user.avatar}`}
+                    src={`http://localhost:8080/upload/avatar/${user?.avatar}` || ""}
                 />
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -62,6 +74,7 @@ function HeaderLayOut() {
                             {user?.name}
                         </Text>
                         <EditOutlined style={{ fontSize: '18px', color: '#8c8c8c', cursor: 'pointer' }} onClick={() => { setOpenDropDown(false); navigate("/profile") }} />
+
                     </div>
                     <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
                         {user?.email || "abc"}

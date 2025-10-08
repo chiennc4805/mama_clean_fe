@@ -54,7 +54,7 @@ const CleanerSchedulePage = () => {
                     const { status } = info.event.extendedProps;
                     if (["Chờ Check-in", "Chờ Check-out"].includes(status)) {
                         info.el.style.backgroundColor = "#FAAD14";
-                    } else if (status === "Hoàn thành") {
+                    } else if (status === "Đã hoàn thành") {
                         info.el.style.backgroundColor = "#52C41A";
                     } else {
                         info.el.style.backgroundColor = "red";

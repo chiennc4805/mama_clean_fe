@@ -1,5 +1,5 @@
 import { Button, Col, message, notification, Row, Select, Table } from 'antd';
-import { assignCleanerJobManuallyAPI, updateBookingAPI } from '../../services/api.service';
+import { assignCleanerJobManuallyAPI } from '../../services/api.service';
 import dayjs from 'dayjs';
 
 

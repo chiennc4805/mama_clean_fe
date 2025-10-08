@@ -3,14 +3,16 @@ import { Avatar, Button, Layout } from 'antd';
 import { useContext } from 'react';
 import { logoutAPI } from '../../../services/api.service';
 import { AuthContext } from '../../context/auth.context';
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 
 const AdminHeader = () => {
 
     const { user, setUser } = useContext(AuthContext)
+    const navigate = useNavigate()
 
-    const handleLogout = async (mess) => {
+    const handleLogout = async () => {
         const res = await logoutAPI()
         if (res.data) {
             //clear data
@@ -25,12 +27,10 @@ const AdminHeader = () => {
                 },
                 avatar: ""
             })
-            if (mess) {
-                message.success("Đăng xuất thành công.")
-            }
-
-            //redirect to home
-            window.location.href = "/login";
+            message.success("Đăng xuất thành công.")
+            setTimeout(() => {
+                window.location.href = "/login"
+            }, 800)
         }
     }
 

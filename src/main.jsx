@@ -29,6 +29,8 @@ import TopUpPage from './pages/top.up.jsx';
 import UserProfile from './pages/user.profile.jsx';
 import store from './redux/store.js';
 import './styles/global.css';
+import OrderManagement from './pages/order.management.jsx';
+import CustomerReviews from './pages/management/customer.feedback.cleaner.jsx';
 
 
 const router = createBrowserRouter([
@@ -91,6 +93,16 @@ const router = createBrowserRouter([
 				)
 			},
 			{
+				path: "order",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CUSTOMER"]}>
+							<OrderManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
 				path: "management",
 				element: (
 					<RequireAuth>
@@ -106,16 +118,6 @@ const router = createBrowserRouter([
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
 							<CustomerManagement />
-						</RoleRoute>
-					</RequireAuth>
-				)
-			},
-			{
-				path: "management/cleaner-profile",
-				element: (
-					<RequireAuth>
-						<RoleRoute allowedRoles={["CLEANER"]}>
-							<CleanerProfile />
 						</RoleRoute>
 					</RequireAuth>
 				)
@@ -186,6 +188,26 @@ const router = createBrowserRouter([
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
 							<CleanerSchedulePage />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "management/cleaner-profile",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<CleanerProfile />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "management/feedback/cleaner",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<CustomerReviews />
 						</RoleRoute>
 					</RequireAuth>
 				)

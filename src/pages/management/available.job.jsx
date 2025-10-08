@@ -21,7 +21,7 @@ const AvailableJobPage = () => {
     }, [current, pageSize, filter])
 
     const loadBooking = async () => {
-        const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, `status~'Mới'` + filter ? filter : "")
+        const res = await fetchAllBookingsWithPaginationAPI(current, pageSize, "status~'Mới'" + (filter ? filter : ""))
         if (res.data) {
             if (res.data.result.length === 0 && current > 1) {
                 setCurrent(res.data.meta.page - 1)
@@ -65,7 +65,7 @@ const AvailableJobPage = () => {
                             style={{ width: 200, height: 40 }}  // tăng chiều rộng
                             onChange={(date) => {
                                 if (date) {
-                                    setFilter(`&filter=date~'${date.format("YYYY-MM-DD")}'`);
+                                    setFilter(` and date~'${date.format("YYYY-MM-DD")}'`);
                                 } else {
                                     setFilter(null);
                                 }

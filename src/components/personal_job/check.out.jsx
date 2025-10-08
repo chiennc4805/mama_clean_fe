@@ -43,7 +43,7 @@ export default function CheckOutJob(props) {
 
         //upload file
         const resUploadFile = await uploadImageAPI("booking_check_out", formData)
-        if (resUploadFile.data.split(".")[0] === dataDetail.id) {
+        if (resUploadFile.data !== "Upload failed!") {
             //create checkout object
             const resCreate = await createBookingCheckOutAPI(resUploadFile.data, notes, dataDetail.id)
             if (resCreate.data) {

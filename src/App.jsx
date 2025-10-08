@@ -145,7 +145,7 @@ function App() {
 												},
 												{
 													key: "feedback",
-													label: <Link to="/user">Đánh giá</Link>,
+													label: <Link to="/management/feedback/cleaner">Đánh giá</Link>,
 													icon: <TeamOutlined />
 												}
 											])
