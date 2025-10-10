@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Card, Col, Divider, message, notification, Row, Typography } from 'antd';
+import { Breadcrumb, Button, Card, Col, Divider, message, Modal, notification, Row, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +44,19 @@ const PaymentProgress = (props) => {
         // })
         setLoading(true)
 
+        if (user.balance < bookingInfo.price) {
+            Modal.error({
+                title: 'Đặt lịch thất bại',
+                content: 'Số dư tài khoản của bạn không đủ!',
+                centered: true,
+                onOk: () => navigate("/top-up"),
+                okText: "Nạp tiền",
+                maskClosable: true, // cho phép click ngoài
+            });
+            setLoading(false)
+            return;
+        }
+
         const coords = await getCoordsFromAddress(bookingInfo.address)
         if (coords) {
             const res = await createBookingAPI(bookingInfo.name, bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, bookingInfo.serviceId)
@@ -51,19 +64,20 @@ const PaymentProgress = (props) => {
             setTimeout(() => {
                 if (res.data) {
                     message.success("Đặt lịch thành công")
-                    setTimeout(() => navigate(0), 1500)
+                    setTimeout(() => { navigate(0); setLoading(false); }, 1500)
                 }
                 else {
                     notification.error({
                         message: "Đặt lịch thất bại",
                         description: JSON.stringify(res.message)
                     })
+                    setLoading(false)
                 }
             }, 1000)
         } else {
             message.error("Lấy địa chỉ thất bại")
+            setLoading(false)
         }
-        setLoading(false)
     }
 
 

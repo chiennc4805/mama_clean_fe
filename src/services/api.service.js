@@ -522,5 +522,42 @@ const deleteFeedbackAPI = (id) => {
     return axios.delete(URL_BACKEND)
 }
 
-export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI };
+const createPaymentAPI = (amount, type, userId) => {
+    const URL_BACKEND = "/payments"
+    const data = {
+        amount: amount,
+        type: type,
+        user: {
+            id: userId
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const fetchPaymentByIdAPI = id => {
+    const URL_BACKEND = `/payments/${id}`
+    return axios.get(URL_BACKEND)
+}
+
+const fetchAllPaymentsWithPaginationAPI = (page, pageSize, filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/payments?page=${page}&size=${pageSize}&filter=${filter}`
+    } else {
+        URL_BACKEND = `/payments?page=${page}&size=${pageSize}`
+    }
+    return axios.get(URL_BACKEND)
+}
+
+const fetchAllPaymentsWithoutPagination = (filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/payments?filter=${filter}`
+    } else {
+        URL_BACKEND = `/payments`
+    }
+    return axios.get(URL_BACKEND)
+}
+
+export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI, createPaymentAPI, fetchPaymentByIdAPI, fetchAllPaymentsWithPaginationAPI, fetchAllPaymentsWithoutPagination };
 

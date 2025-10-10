@@ -25,6 +25,7 @@ const BookingPage = () => {
                     bookingInfo={bookingInfo}
                     setBookingInfo={setBookingInfo}
                     setStep={setStep}
+                    step={step}
                 />
                 :
                 <PaymentProgress

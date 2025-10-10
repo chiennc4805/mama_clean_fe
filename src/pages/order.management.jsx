@@ -1,6 +1,6 @@
 import React, { act, useContext, useEffect, useState } from 'react';
-import { Tabs, Card, Button, Tag, Space, Empty, Popconfirm, message } from 'antd';
-import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CommentOutlined, DollarOutlined, DragOutlined, EditOutlined, EnvironmentOutlined, EyeOutlined, HomeOutlined } from '@ant-design/icons';
+import { Tabs, Card, Button, Tag, Space, Empty, Popconfirm, message, Col, Row } from 'antd';
+import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CommentOutlined, CreditCardOutlined, DollarOutlined, DragOutlined, EditOutlined, EnvironmentOutlined, EyeOutlined, FileTextOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllBookingsWithoutPaginationAPI, updateBookingAPI } from '../services/api.service';
 import { AuthContext } from '../components/context/auth.context';
@@ -227,6 +227,49 @@ const OrderManagement = () => {
         </Card>
     );
 
+    const walletTransactionHistory = [
+        {
+            title: 'Đơn đẹp tiêu chuẩn',
+            date: '15/07/2024',
+            time: '09:00 SA',
+            card: 'Thẻ Visa **** 1234',
+            amount: '500.000 VND',
+            status: 'completed'
+        },
+        {
+            title: 'Đơn đẹp sâu',
+            date: '22/07/2024',
+            time: '14:00 CH',
+            card: 'Chuyển khoản ngân hàng',
+            amount: '850.000 VND',
+            status: 'pending'
+        },
+        {
+            title: 'Đơn đẹp định kỳ hàng tuần',
+            date: '05/05/2024',
+            time: '08:30 SA',
+            card: 'Thẻ JCB **** 9012',
+            amount: '700.000 VND',
+            status: 'completed'
+        },
+        {
+            title: 'Đơn đẹp văn phòng',
+            date: '01/08/2024',
+            time: '10:00 SA',
+            card: 'Tiền mặt',
+            amount: '1.200.000 VND',
+            status: 'completed'
+        },
+        {
+            title: 'Đơn đẹp sau sự kiện',
+            date: '10/06/2024',
+            time: '11:00 SA',
+            card: 'Thẻ MasterCard **** 5678',
+            amount: '1.500.000 VND',
+            status: 'completed'
+        }
+    ];
+
     const items = [
         {
             key: '1',
@@ -311,8 +354,95 @@ const OrderManagement = () => {
             key: '2',
             label: 'Lịch sử thanh toán',
             children: (
-                <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                    <p style={{ color: '#999', fontSize: 16 }}>Chưa có lịch sử thanh toán</p>
+                <div style={{
+                    padding: '24px',
+                    backgroundColor: '#f5f5f5',
+                    minHeight: '100vh'
+                }}>
+                    <div style={{
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        paddingRight: '8px'
+                    }}>
+                        <Row gutter={[16, 16]}>
+                            {walletTransactionHistory.map((order, index) => (
+                                <Col xs={24} sm={24} md={12} lg={12} xl={12} key={index}>
+                                    <Card
+                                        hoverable
+                                        style={{
+                                            borderRadius: '8px',
+                                            height: '100%'
+                                        }}
+                                    >
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <h3 style={{
+                                                margin: 0,
+                                                fontSize: '16px',
+                                                fontWeight: 600,
+                                                color: '#262626'
+                                            }}>
+                                                {order.title}
+                                            </h3>
+                                        </div>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            gap: '16px',
+                                            marginBottom: '16px',
+                                            flexWrap: 'wrap'
+                                        }}>
+                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                                <CalendarOutlined style={{ marginRight: '6px' }} />
+                                                {order.date}
+                                            </span>
+                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                                <ClockCircleOutlined style={{ marginRight: '6px' }} />
+                                                {order.time}
+                                            </span>
+                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                                <CreditCardOutlined style={{ marginRight: '6px' }} />
+                                                {order.card}
+                                            </span>
+                                        </div>
+
+                                        <div style={{
+                                            fontSize: '24px',
+                                            fontWeight: 700,
+                                            color: '#262626',
+                                            marginBottom: '16px'
+                                        }}>
+                                            {order.amount}
+                                        </div>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            flexWrap: 'wrap'
+                                        }}>
+                                            {order.status === 'completed' ? (
+                                                <Tag color="success">Hoàn thành</Tag>
+                                            ) : (
+                                                <Tag color="warning">Đang chờ xử lý</Tag>
+                                            )}
+
+                                            <Button
+                                                type="text"
+                                                icon={<FileTextOutlined />}
+                                                style={{
+                                                    color: '#262626',
+                                                    fontWeight: 500
+                                                }}
+                                            >
+                                                Xem hóa đơn
+                                            </Button>
+                                        </div>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
                 </div>
             ),
         },
@@ -348,24 +478,6 @@ const OrderManagement = () => {
                         centered
                         size="large"
                     />
-
-                    <div style={{ textAlign: 'center', marginTop: 32 }}>
-                        <Button
-                            type="primary"
-                            size="large"
-                            style={{
-                                backgroundColor: '#41864D',
-                                borderColor: '#41864D',
-                                height: 48,
-                                padding: '0 48px',
-                                fontSize: 16,
-                                borderRadius: 24
-                            }}
-                            onClick={() => navigate("/booking")}
-                        >
-                            Đặt lại dịch vụ đơn đẹp
-                        </Button>
-                    </div>
                 </div>
             </div>
 

@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logoutAPI } from "../../services/api.service";
 import { AuthContext } from "../context/auth.context";
+import { formatterNumber } from "../../services/common.function";
 
 const { Text } = Typography
 
@@ -80,7 +81,7 @@ function HeaderLayOut() {
                         {user?.email || "abc"}
                     </Text>
                     <Text style={{ fontSize: '17px', color: '#8c8c8c', display: 'block' }}>
-                        Số dư tài khoản: {user?.balance} VNĐ
+                        Số dư tài khoản: {formatterNumber(user?.balance || "")} VNĐ
                     </Text>
                 </div>
             </div>

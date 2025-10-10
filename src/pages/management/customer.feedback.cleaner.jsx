@@ -133,7 +133,7 @@ const CustomerReviews = () => {
             const res = await fetchCleanerByUserIdAPI(user.id)
             if (res.data) {
                 setOverallRating(res.data.rating)
-                setTotalReviews(res.data.ratingCount)
+                setTotalReviews(res.data.ratingCount - 1)
             }
         }
         loadCleanerProfile()

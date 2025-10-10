@@ -9,7 +9,7 @@ const { TextArea } = Input;
 
 const BookingProgress = (props) => {
 
-    const { bookingInfo, setBookingInfo, setStep } = props
+    const { bookingInfo, setBookingInfo, setStep, step } = props
     const [form] = Form.useForm()
     const [servicesOption, setServicesOption] = useState([]);
     const [areasOption, setAreasOption] = useState([])
@@ -18,7 +18,7 @@ const BookingProgress = (props) => {
     useEffect(() => {
         form.setFieldsValue({
             name: bookingInfo.name,
-            service: bookingInfo.service || "",
+            service: bookingInfo.serviceName,
             area: bookingInfo.area,
             date: bookingInfo.date,
             time: bookingInfo.time,
@@ -39,7 +39,7 @@ const BookingProgress = (props) => {
             }
         }
         loadService()
-    }, [])
+    }, [bookingInfo])
 
     const handleBooking = async (values) => {
         const res = await fetchServiceById(values.area.value)
@@ -194,7 +194,17 @@ const BookingProgress = (props) => {
                                 <TimePicker
                                     size='large'
                                     format={"HH:mm"}
-                                />
+                                    disabledHours={() => {
+                                        const hours = [];
+                                        for (let i = 0; i < 8; i++) hours.push(i); // disable trước 8h
+                                        for (let i = 21; i < 24; i++) hours.push(i); // disable sau 20h
+                                        return hours;
+                                    }}
+                                    disabledMinutes={(selectedHour) => {
+                                        if (selectedHour === 8) return Array.from({ length: 60 }, (_, i) => i < 0 ? i : -1).filter(i => i < 0); // không disable phút nào lúc 8h
+                                        if (selectedHour === 20) return Array.from({ length: 60 }, (_, i) => i > 0 ? i : -1).filter(i => i > 0); // không disable phút nào lúc 20h
+                                        return [];
+                                    }} />
                             </Form.Item>
                         </Col>
                     </Row>

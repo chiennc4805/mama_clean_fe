@@ -1,14 +1,84 @@
 
 import { WarningOutlined } from '@ant-design/icons';
-import { Alert, Card, Col, Image, Row, Table, Typography } from 'antd';
-import { useContext } from 'react';
+import { Alert, Card, Col, Image, message, Modal, Row, Table, Typography } from 'antd';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/context/auth.context';
+import { createPaymentAPI, fetchAllPaymentsWithoutPagination, fetchPaymentByIdAPI, getAccountAPI } from '../services/api.service';
+import { formatterNumber } from '../services/common.function';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
 const TopUpPage = () => {
 
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
+    const [content, setContent] = useState(`MC${user.id}`)
+    const [paymentId, setPaymentId] = useState("")
+    const [paymentHistory, setPaymentHistory] = useState([])
+
+    useEffect(() => {
+        const createPayment = async () => {
+            const res = await createPaymentAPI(0, "DEPOSIT", user.id)
+            if (res.data) {
+                setContent(res.data.content)
+                setPaymentId(res.data.id)
+            }
+            else {
+                message.error("Tạo QR không thành công")
+            }
+        }
+        createPayment()
+    }, [])
+
+    useEffect(() => {
+        if (!paymentId) return
+        const interval = setInterval(async () => {
+            const res = await fetchPaymentByIdAPI(paymentId)
+            if (res.data.status === "SUCCESS") {
+                Modal.success({
+                    title: "Nạp tiền thành công!",
+                    content: "Số dư tài khoản của bạn đã được cập nhật.",
+                    centered: true,
+                    onOk: async () => {
+                        const newPayment = await createPaymentAPI(0, "DEPOSIT", user.id)
+                        if (newPayment.data) {
+                            setContent(newPayment.data.content)
+                            setPaymentId(newPayment.data.id)
+                        }
+                    }
+                })
+                clearInterval(interval)
+                setUser(prev => ({
+                    ...prev,
+                    balance: prev.balance + res.data.amount
+                }))
+            }
+        }, 10000)
+
+        const fetchListPaymentSuccess = async () => {
+            let filterParam = `user.id~'${user.id}' and status~'SUCCESS'`
+            const res = await fetchAllPaymentsWithoutPagination(encodeURIComponent(filterParam))
+            if (res.data) {
+                //         {
+                //             key: '1',
+                //                 code: 'D6B0807735918B',
+                //                     amount: '+100.010đ',
+                //                         method: 'Chuyển khoản ngân hàng',
+                //                             date: '27-09-2025 22:49',
+                // },
+                setPaymentHistory(res.data.result.map(item => ({
+                    key: item.id,
+                    code: item.id,
+                    amount: `+${formatterNumber(item.amount)}đ`,
+                    method: 'Chuyển khoản ngân hàng',
+                    date: dayjs(item.transactionTime).format("DD/MM/YYYY HH:mm")
+                })))
+            }
+        }
+        fetchListPaymentSuccess()
+
+        return () => clearInterval(interval)
+    }, [paymentId])
 
     const columns = [
         {
@@ -42,27 +112,6 @@ const TopUpPage = () => {
             method: 'Chuyển khoản ngân hàng',
             date: '27-09-2025 22:49',
         },
-        {
-            key: '2',
-            code: 'D6B0807524F39E8',
-            amount: '+100.010đ',
-            method: 'Chuyển khoản ngân hàng',
-            date: '27-09-2025 22:48',
-        },
-        {
-            key: '3',
-            code: 'A1B2C3D4E5F607',
-            amount: '+50.000đ',
-            method: 'Chuyển khoản ngân hàng',
-            date: '26-09-2025 10:30',
-        },
-        {
-            key: '4',
-            code: 'X9Y8Z7A6B5C4D3',
-            amount: '+200.000đ',
-            method: 'Chuyển khoản ngân hàng',
-            date: '25-09-2025 15:00',
-        },
     ];
 
     return (
@@ -83,7 +132,7 @@ const TopUpPage = () => {
                                     marginTop: '8px',
                                     borderRadius: '4px'
                                 }}>
-                                    <Text strong>{user.balance} VNĐ</Text>
+                                    <Text strong>{formatterNumber(user.balance)} VNĐ</Text>
                                 </div>
                             </div>
 
@@ -131,17 +180,11 @@ const TopUpPage = () => {
                                     borderRadius: '8px'
                                 }}>
                                     <Image
-                                        src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=LE MINH HAI 2120938947 BIDV-CN TAY HO"
+                                        src={content ? `https://qr.sepay.vn/img?bank=TPBank&acc=00000117045&&des=${content}` : ""}
                                         alt="QR Code"
                                         width={250}
                                         preview={false}
                                     />
-                                    <div style={{ marginTop: '16px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '8px' }}>
-                                            <img src="https://via.placeholder.com/60x20/FF0000/FFFFFF?text=Vietqr" alt="VietQR" style={{ height: '20px' }} />
-                                            <img src="https://via.placeholder.com/60x20/0066CC/FFFFFF?text=napas" alt="Napas" style={{ height: '20px' }} />
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div style={{ marginTop: '24px' }}>
@@ -160,9 +203,10 @@ const TopUpPage = () => {
                     <Title level={5} style={{ marginBottom: '16px' }}>Lịch sử nạp tiền</Title>
                     <Table
                         columns={columns}
-                        dataSource={data}
+                        dataSource={paymentHistory}
                         pagination={false}
                         scroll={{ x: 800 }}
+                        bordered
                     />
                 </Card>
             </div>

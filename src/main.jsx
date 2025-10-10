@@ -31,6 +31,7 @@ import store from './redux/store.js';
 import './styles/global.css';
 import OrderManagement from './pages/order.management.jsx';
 import CustomerReviews from './pages/management/customer.feedback.cleaner.jsx';
+import CleaningService from './pages/services.header.item.jsx';
 
 
 const router = createBrowserRouter([
@@ -98,6 +99,16 @@ const router = createBrowserRouter([
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CUSTOMER"]}>
 							<OrderManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "services",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CUSTOMER"]}>
+							<CleaningService />
 						</RoleRoute>
 					</RequireAuth>
 				)
