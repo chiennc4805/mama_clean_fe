@@ -1,6 +1,7 @@
 import { CalendarOutlined, ClockCircleOutlined, EnvironmentOutlined, HourglassOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Empty, Pagination, Row, Tag } from "antd";
 import { formatterNumber } from "../../services/common.function";
+import dayjs from "dayjs";
 
 const AvailableJobList = (props) => {
 
@@ -12,11 +13,11 @@ const AvailableJobList = (props) => {
         "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400&h=300&fit=crop",
         "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400&h=300&fit=crop",
         "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop",
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop", // Phòng khách hiện đại
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&h=300&fit=crop", // Phòng ngủ
-        "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=400&h=300&fit=crop", // Phòng tắm
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop", // Phòng khách sang trọng
-        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop"  // Căn hộ chung cư
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop"
     ];
 
     const onChangePagination = (page, pageSize) => {
@@ -86,7 +87,7 @@ const AvailableJobList = (props) => {
                                                     padding: '4px 12px',
                                                 }}
                                             >
-                                                {formatterNumber(booking.totalPrice) + " VNĐ"}
+                                                {formatterNumber(booking.totalPrice * (1 - Number(import.meta.env.VITE_INCOME_DEDUCTION))) + " VNĐ"}
                                             </Tag>
                                         </div>
 
@@ -121,7 +122,7 @@ const AvailableJobList = (props) => {
                                                 fontSize: '14px'
                                             }}>
                                                 <ClockCircleOutlined style={{ marginRight: '8px', color: '#4a8966' }} />
-                                                {booking.startTime}
+                                                {dayjs(booking.startTime, "HH:mm:ss").format("HH:mm")}
                                             </div>
 
                                             <div style={{
@@ -131,7 +132,7 @@ const AvailableJobList = (props) => {
                                                 fontSize: '14px'
                                             }}>
                                                 <HourglassOutlined style={{ marginRight: '8px', color: '#4a8966' }} />
-                                                1
+                                                {booking.service.duration} giờ
                                             </div>
                                         </div>
 

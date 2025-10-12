@@ -82,7 +82,7 @@ const CreateFeedbackComponent = (props) => {
                     <Form.Item
                         name={"content"}
                         rules={[
-                            { required: true, message: 'Vui lòng chọn dịch vụ!' },
+                            { required: true, message: 'Vui lòng điền phản hồi!' },
                         ]}
                     >
                         <TextArea
@@ -100,7 +100,7 @@ const CreateFeedbackComponent = (props) => {
                     <Form.Item
                         name={"rating"}
                         rules={[
-                            { required: true, message: 'Vui lòng chọn dịch vụ!' },
+                            { required: true, message: 'Vui lòng chọn số điểm bạn muốn nhận xét!' },
                         ]}
                     >
                         <Rate

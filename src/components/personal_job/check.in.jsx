@@ -5,7 +5,7 @@ import {
     EnvironmentOutlined,
     IdcardOutlined
 } from '@ant-design/icons';
-import { Button, Card, message, Space, Tag } from 'antd';
+import { Button, Card, Image, message, Space, Tag } from 'antd';
 import { useState } from 'react';
 import { checkInAPI, createBookingCheckInAPI, deleteBookingCheckInAPI, updateBookingAPI } from '../../services/api.service';
 
@@ -149,26 +149,37 @@ const CheckInJob = (props) => {
                         style={{ borderRadius: '8px' }}
                     >
                         {/* Map Image */}
-                        <div style={{
-                            position: 'relative',
-                            width: '100%',
-                            height: '200px',
-                            backgroundColor: '#e8f4f8',
-                            borderRadius: '8px',
-                            marginBottom: '16px',
-                            overflow: 'hidden',
-                            backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            opacity: '0.1'
-                        }}>
-                            <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                fontSize: '48px',
-                                color: '#ff4d4f'
-                            }}>
-                                📍
+                        <div
+                            style={{
+                                position: 'relative',
+                                width: '100%',
+                                height: '250px',
+                                backgroundColor: 'rgba(232, 244, 248, 0.1)', // dùng alpha thay cho opacity
+                                borderRadius: '8px',
+                                marginBottom: '16px',
+                                overflow: 'hidden',
+                                backgroundImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    fontSize: '48px',
+                                    color: '#ff4d4f',
+                                }}
+                            >
+                                <Image
+                                    width={400}
+                                    height={300}
+                                    src="/src/assets/check-in_page/static_map.png"
+                                    style={{
+                                        objectFit: 'cover', borderRadius: 8, transform: 'scale(1.3)'
+                                    }}
+                                    preview={false}
+                                />
                             </div>
                         </div>
 

@@ -27,11 +27,13 @@ const CleanerSchedulePage = () => {
                     .hour(Number(item.startTime.split(':')[0]))
                     .minute(Number(item.startTime.split(':')[1]))
                     .second(Number(item.startTime.split(':')[2]))
-                    .toISOString()
+
+                const endDateTime = startDateTime.add(item.service.duration, 'hour'); // tăng 2 tiếng
 
                 return {
                     title: item.name,
-                    start: startDateTime,
+                    start: startDateTime.toISOString(),
+                    end: endDateTime.toISOString(),
                     status: item.status
                 }
             }))

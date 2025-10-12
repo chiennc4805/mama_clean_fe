@@ -1,17 +1,43 @@
-import { EnvironmentOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Checkbox, Col, message, notification, Popconfirm, Row, Typography } from 'antd';
-import { useState } from 'react';
-import { updateBookingAPI } from '../../services/api.service';
+import { Button, Card, Checkbox, Col, Empty, Image, message, notification, Popconfirm, Row, Spin, Tag, Typography } from 'antd';
+import { useContext, useState } from 'react';
+import { fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, getAvailableJobAPI, updateBookingAPI } from '../../services/api.service';
 import { formatterNumber } from '../../services/common.function';
+import dayjs from 'dayjs';
+import "dayjs/locale/vi"; // để hiển thị thứ tiếng Việt
+import { AuthContext } from '../context/auth.context';
+dayjs.locale("vi");
 
 const { Title, Text } = Typography;
 
 const JobDetail = (props) => {
+
+    const { user } = useContext(AuthContext)
     const [isChecked, setIsChecked] = useState(false);
     const { dataDetail, setStep } = props
     const [loadingCancel, setLoadingCancel] = useState(false)
     const [loadingGet, setLoadingGet] = useState(false)
+    const [showDetail, setShowDetail] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [bookingCheckIn, setBookingCheckIn] = useState(null)
+    const [bookingCheckOut, setBookingCheckOut] = useState(null)
 
+    useState(() => {
+        const loadBookingCheckIn = async () => {
+            const res = await fetchBookingCheckInByBookingIdAPI(dataDetail.id)
+            if (res.data) {
+                setBookingCheckIn(res.data)
+            }
+        }
+        loadBookingCheckIn()
+
+        const loadBookingCheckOut = async () => {
+            const res = await fetchBookingCheckOutByBookingIdAPI(dataDetail.id)
+            if (res.data) {
+                setBookingCheckOut(res.data)
+            }
+        }
+        loadBookingCheckOut()
+    }, [dataDetail])
 
     const handleCancelJob = async () => {
         setLoadingCancel(true)
@@ -22,8 +48,6 @@ const JobDetail = (props) => {
             if (res.data) {
                 message.success("Huỷ bỏ thành công")
                 setTimeout(() => {
-                    // setStep("list");
-                    // setActiveTab("new");
                     window.location.reload()
                 }, 2000)
             }
@@ -37,17 +61,17 @@ const JobDetail = (props) => {
         }, 2000)
     }
 
+    useState()
+
     const handleGetJob = async () => {
         setLoadingGet(true)
 
-        const res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-in", dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
+        const res = await getAvailableJobAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-in", dataDetail.customer.id, user.id, dataDetail.service.id)
 
         setTimeout(() => {
             if (res.data) {
                 message.success("Nhận việc thành công")
                 setTimeout(() => {
-                    // setStep("list");
-                    // setActiveTab("new");
                     window.location.reload()
                 }, 2000)
             }
@@ -62,152 +86,421 @@ const JobDetail = (props) => {
     }
 
     return (
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0', backgroundColor: '#fff' }}>
-            <Breadcrumb
-                style={{ marginBottom: 30, marginLeft: -100 }}
-                separator=">"
-                items={[
-                    {
-                        title: 'Danh sách công việc',
-                        href: '',
-                        onClick: (e) => { e.preventDefault(); setStep("list") }
-                    },
-                    {
-                        title: 'Chi tiết công việc',
-                    }
-                ]}
-            />
-
-            {/* Header Section */}
-            <div style={{
-                background: 'linear-gradient(to bottom, #f5f0e8, #ede6d9)',
-                padding: '32px 24px',
-                position: 'relative'
-            }}>
-                <Row justify="space-between" align="start">
-                    <Col span={24}>
-                        <Title level={3} style={{ margin: 0, color: '#262626', fontSize: 22, fontWeight: 600 }}>
+        <Row gutter={[24, 24]}>
+            {/* Left Column - Main Content */}
+            <Col xs={24} lg={18}>
+                <Card style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                    {/* Header */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 16px 0' }}>
                             {dataDetail.name}
-                        </Title>
-                    </Col>
-                </Row>
-
-            </div>
-
-            {/* Booking Details Section */}
-            <div style={{ padding: '24px' }}>
-                {/* Service Section */}
-                <Row justify="space-between" align="middle" style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid #f0f0f0' }}>
-                    <Col>
-                        <Text style={{ color: '#8c8c8c', fontSize: 14 }}>Loại dịch vụ</Text>
-                    </Col>
-                    <Col>
-                        <Text style={{ color: '#262626', fontSize: 14 }}>{dataDetail.service.name}</Text>
-                    </Col>
-                </Row>
-
-                {/* Time Section */}
-                <Row justify="space-between" align="middle" style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid #f0f0f0' }}>
-                    <Col>
-                        <Text style={{ color: '#8c8c8c', fontSize: 14 }}>Thời gian bắt đầu</Text>
-                    </Col>
-                    <Col>
-                        <Text style={{ color: '#262626', fontSize: 14 }}>{dataDetail.date + " " + dataDetail.startTime}</Text>
-                    </Col>
-                </Row>
-
-                {/* Price Section */}
-                <Row justify="space-between" align="middle" style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid #f0f0f0' }}>
-                    <Col>
-                        <Text style={{ color: '#8c8c8c', fontSize: 14 }}>Giá tiền</Text>
-                    </Col>
-                    <Col>
-                        <Text style={{ fontSize: 14, color: '#52c41a', fontWeight: 600 }}>{formatterNumber(dataDetail.totalPrice)} VNĐ</Text>
-                    </Col>
-                </Row>
-
-                {/* Address Section */}
-                <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid #f0f0f0' }}>
-                    <Text style={{ color: '#8c8c8c', display: 'block', marginBottom: 12, fontSize: 14 }}>
-                        Địa chỉ khách hàng
-                    </Text>
-                    <Row justify="space-between" align="start">
-                        <Col span={22}>
-                            <Text style={{ color: '#262626', fontSize: 14, lineHeight: '22px' }}>
-                                {dataDetail.address}
-                            </Text>
-                        </Col>
-                        <Col span={2} style={{ textAlign: 'right' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4 }}>
-                                <EnvironmentOutlined style={{ color: '#52c41a', fontSize: 14 }} />
-                                <Text style={{ fontSize: 13, color: '#52c41a' }}>Bản đồ</Text>
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
-
-                {/* Customer Notes Section */}
-                <div style={{ marginBottom: 24 }}>
-                    <Text style={{ color: '#8c8c8c', display: 'block', marginBottom: 12, fontSize: 14 }}>
-                        Ghi chú của khách hàng
-                    </Text>
-                    <div style={{
-                        backgroundColor: '#fafafa',
-                        padding: 16,
-                        borderRadius: 4,
-                        border: '1px solid #f0f0f0'
-                    }}>
-                        <Text style={{ color: '#595959', fontSize: 14, lineHeight: '22px' }}>
-                            {dataDetail.note}
-                        </Text>
+                        </h1>
                     </div>
-                </div>
 
-                {/* Action Buttons */}
-                {dataDetail.status === "Chờ xác nhận" ?
+                    {/* Banner Image */}
+                    <div
+                        style={{
+                            width: '100%',
+                            height: '280px',
+                            backgroundColor: '#e8dcc8',
+                            borderRadius: '8px',
+                            marginBottom: '24px',
+                            backgroundImage:
+                                'linear-gradient(135deg, #e8dcc8 0%, #f0e6d2 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#999',
+                        }}
+                    >
+                        <img
+                            alt={""}
+                            src="/src/assets/job_detail/demo_pic.jpg"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                            }}
+                        />
+                    </div>
 
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Text style={{ color: '#262626', fontSize: 14, fontWeight: 600, display: 'block', marginBottom: 10 }}>
-                                Xác nhận và Hành động
-                            </Text>
-                            <Checkbox
-                                checked={isChecked}
-                                onChange={(e) => setIsChecked(e.target.checked)}
-                                style={{ fontSize: 14, marginBottom: 20 }}
+                    {/* Details Section */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingBottom: '16px',
+                                borderBottom: '1px solid #e8e8e8',
+                                marginBottom: '16px',
+                            }}
+                        >
+                            <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                Thời gian bắt đầu
+                            </p>
+                            <p style={{ fontSize: '14px', fontWeight: '500', margin: 0 }}>
+                                {dayjs(`${dataDetail.date} ${dataDetail.startTime}`, "DD/MM/YYYY HH:mm:ss")
+                                    .format("dddd, D [tháng] M, YYYY [lúc] HH:mm A").replace("AM", "SA")
+                                    .replace("PM", "CH")}
+                            </p>
+                        </div>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingBottom: '16px',
+                                borderBottom: '1px solid #e8e8e8',
+                                marginBottom: '16px',
+                            }}
+                        >
+                            <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                Diện tích
+                            </p>
+                            <p style={{ fontSize: '14px', fontWeight: '500', margin: 0 }}>
+                                {dataDetail.service.area} m2
+                            </p>
+                        </div>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingBottom: '16px',
+                                borderBottom: '1px solid #e8e8e8',
+                                marginBottom: '16px',
+                            }}
+                        >
+                            <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                Giá tiền
+                            </p>
+                            <p
+                                style={{
+                                    fontSize: '16px',
+                                    fontWeight: 'bold',
+                                    margin: 0,
+                                    color: '#41864D',
+                                }}
                             >
-                                Đã đọc kỹ chi tiết công việc
-                            </Checkbox>
-                        </Col>
-                        <Col span={12}>
-                            <Row gutter={8}>
-                                <Col span={12}>
+                                {formatterNumber(Math.round(dataDetail.totalPrice * (1 - import.meta.env.VITE_INCOME_DEDUCTION)))} VNĐ
+                            </p>
+                        </div>
 
-                                    <Popconfirm
-                                        title="Bỏ qua công việc"
-                                        description="Bạn có chắc chắn bỏ qua công việc này?"
-                                        onConfirm={handleCancelJob}
-                                        okText="Yes"
-                                        cancelText="No"
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingBottom: '16px',
+                                borderBottom: '1px solid #e8e8e8',
+                                marginBottom: '16px',
+                            }}
+                        >
+                            <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                Địa chỉ
+                            </p>
+                            <p
+                                style={{
+                                    fontSize: '16px',
+                                    margin: 0,
+                                    fontWeight: '500'
+                                }}
+                            >
+                                {dataDetail.address}
+                            </p>
+                        </div>
+
+                        <div style={{ marginBottom: '24px' }}>
+                            <p
+                                style={{
+                                    color: '#999',
+                                    fontSize: '14px',
+                                    margin: '0 0 8px 0',
+                                }}
+                            >
+                                Ghi chú của khách hàng
+                            </p>
+                            <div
+                                style={{
+                                    backgroundColor: '#f5f5f5',
+                                    padding: '12px',
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    lineHeight: '1.6',
+                                }}
+                            >
+                                {dataDetail.note}
+                            </div>
+                        </div>
+                    </div>
+
+                    {showDetail && (
+                        <>
+                            {/* check-in */}
+                            <div style={{
+                                marginTop: 50,
+                                marginBottom: '24px',
+                                paddingTop: 10,
+                                borderTop: '1px solid #e8e8e8',
+                            }}>
+                                <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 16px 0' }}>
+                                    Thông tin Check-in
+                                </h1>
+                            </div>
+                            {bookingCheckIn ?
+                                <>
+
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
                                     >
-                                        <Button
-                                            block
-                                            size="large"
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Vị trí
+                                        </p>
+                                        <p style={{ fontSize: '14px', fontWeight: '500', margin: 0 }}>
+
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
+                                    >
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Thời gian
+                                        </p>
+                                        <p
                                             style={{
-                                                height: 48,
-                                                borderRadius: 6,
-                                                borderColor: isChecked ? '#ff4d4f' : '#d9d9d9',
-                                                color: isChecked ? '#ff4d4f' : '#d9d9d9',
-                                                fontSize: 14
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                margin: 0,
                                             }}
-                                            loading={loadingCancel}
-                                            disabled={!isChecked}
                                         >
-                                            Bỏ qua
-                                        </Button>
-                                    </Popconfirm>
-                                </Col>
-                                <Col span={12}>
+                                            {dayjs(`${bookingCheckIn.createdAt}`)
+                                                .format("dddd, D [tháng] M, YYYY [lúc] HH:mm A").replace("AM", "SA")
+                                                .replace("PM", "CH")}                                </p>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
+                                    >
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Trạng thái
+                                        </p>
+                                        <p
+                                            style={{
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                margin: 0,
+                                            }}
+                                        >
+                                            {
+                                                new Date(bookingCheckIn.createdAt) <= new Date(dayjs(bookingCheckIn.booking.date, "DD/MM/YYYY").format("YYYY-MM-DD") + "T" + bookingCheckIn.booking.startTime) ?
+                                                    <Tag color='#87d068'>Đúng giờ</Tag>
+                                                    :
+                                                    <Tag color='#f50'>Muộn</Tag>
+                                            }
+                                        </p>
+                                    </div>
+                                </>
+                                :
+                                <Empty
+                                    description="Không có thông tin Check-in"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    style={{ marginTop: 50 }}
+                                />
+                            }
+
+                            {/* check-out */}
+                            <div style={{
+                                marginTop: 50,
+                                marginBottom: '24px',
+                                paddingTop: 10,
+                            }}>
+                                <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 16px 0' }}>
+                                    Thông tin Check-out
+                                </h1>
+                            </div>
+                            {bookingCheckOut ?
+                                <>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
+                                    >
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Thời gian
+                                        </p>
+                                        <p
+                                            style={{
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                margin: 0,
+                                            }}
+                                        >
+                                            {dayjs(`${bookingCheckOut.createdAt}`)
+                                                .format("dddd, D [tháng] M, YYYY [lúc] HH:mm A").replace("AM", "SA")
+                                                .replace("PM", "CH")}                                </p>
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
+                                    >
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Ảnh sau khi hoàn thành
+                                        </p>
+                                        <Image
+                                            width={400}
+                                            height={300}
+                                            src={`http://localhost:8080/upload/booking_check_out/${bookingCheckOut.checkOutImageName}`}
+                                            style={{ objectFit: 'cover', borderRadius: 8 }}
+                                        />
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            paddingBottom: '16px',
+                                            borderBottom: '1px solid #e8e8e8',
+                                            marginBottom: '16px',
+                                        }}
+                                    >
+                                        <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>
+                                            Ghi chú
+                                        </p>
+                                        <p
+                                            style={{
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                margin: 0,
+                                            }}
+                                        >
+
+                                        </p>
+                                    </div>
+                                </>
+                                :
+                                <Empty
+                                    description="Không có thông tin Check-out"
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    style={{ marginTop: 50 }}
+                                />
+                            }
+                        </>
+                    )}
+
+                    {/* Action Button */}
+                    {!["Mới", "Chờ xác nhận"].includes(dataDetail.status) ?
+                        <Button
+                            block
+                            style={{
+                                color: '#41864D',
+                                borderColor: '#41864D',
+                                height: '44px',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                            }}
+                            onClick={() => setShowDetail(!showDetail)}
+                        >
+                            📋 {showDetail ? "Ẩn mô tả chi tiết công việc" : "Xem mô tả chi tiết công việc"}
+                        </Button>
+
+                        :
+                        ""
+                    }
+                </Card>
+            </Col>
+
+            {/* Right Column - Sidebar */}
+            <Col xs={24} lg={6}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                    }}
+                >
+                    <Card
+                        style={{
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: '100%',
+                        }}
+                        bodyStyle={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flex: 1,
+                        }}
+                    >
+                        <div>
+                            <h2
+                                style={{
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                    margin: '0 0 16px 0',
+                                }}
+                            >
+                                Xác nhận & Hành động
+                            </h2>
+
+                            <div style={{ marginBottom: '16px' }}>
+                                <Checkbox
+                                    checked={isChecked | (!["Chờ xác nhận", "Mới"].includes(dataDetail.status))}
+                                    onChange={(e) => setIsChecked(e.target.checked)}
+                                    style={{ fontSize: 14, marginBottom: 20 }}
+                                >
+                                    Đã đọc kỹ chi tiết công việc
+                                </Checkbox>
+                            </div>
+                        </div>
+
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '12px',
+                                marginTop: 'auto',
+                            }}
+                        >
+                            {["Chờ xác nhận", "Mới"].includes(dataDetail.status) ?
+                                <>
                                     <Button
                                         block
                                         type="primary"
@@ -227,17 +520,62 @@ const JobDetail = (props) => {
                                     >
                                         Nhận việc
                                     </Button>
-                                </Col>
-                            </Row>
-                        </Col>
 
+                                    {dataDetail.status !== "Mới" ?
+                                        <Popconfirm
+                                            title="Bỏ qua công việc"
+                                            description="Bạn có chắc chắn bỏ qua công việc này?"
+                                            onConfirm={handleCancelJob}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <Button
+                                                block
+                                                size="large"
+                                                style={{
+                                                    height: 48,
+                                                    borderRadius: 6,
+                                                    borderColor: isChecked ? '#ff4d4f' : '#d9d9d9',
+                                                    color: isChecked ? '#ff4d4f' : '#d9d9d9',
+                                                    fontSize: 14
+                                                }}
+                                                loading={loadingCancel}
+                                                disabled={!isChecked}
+                                            >
+                                                Bỏ qua
+                                            </Button>
+                                        </Popconfirm>
+                                        :
+                                        ""
+                                    }
+                                </>
+                                :
+                                <Button
+                                    block
+                                    type="primary"
+                                    size="large"
+                                    style={{
+                                        height: 48,
+                                        borderRadius: 6,
+                                        backgroundColor: '#41864D',
+                                        borderColor: '#41864D',
+                                        fontSize: 14,
+                                        color: '#fff',
+                                        fontWeight: 500
+                                    }}
+                                    disabled={!isChecked}
+                                    onClick={() => handleGetJob()}
+                                    loading={loadingGet}
+                                >
+                                    Công việc đã được xác nhận
+                                </Button>
+                            }
+                        </div>
 
-                    </Row>
-                    :
-                    <span></span>
-                }
-            </div>
-        </div>
+                    </Card>
+                </div>
+            </Col>
+        </Row>
     );
 }
 

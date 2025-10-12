@@ -32,7 +32,6 @@ const AuthWrapper = ({ children }) => {
             if (token) {
                 try {
                     const res = await getAccountAPI();
-                    console.log(res.data.user)
                     setUser(res.data.user);
                 } catch (err) {
                     setUser(null);

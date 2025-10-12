@@ -15,23 +15,26 @@ import UnauthorizedPage from './pages/error/403.jsx';
 import FeedbackPage from './pages/feedback.jsx';
 import HomePage from './pages/home.jsx';
 import LoginPage from './pages/login.jsx';
-import AvailableJobPage from './pages/management/available.job.jsx';
-import BookingManagement from './pages/management/booking_management.jsx';
+import AvailableJobPage from './pages/management/cleaner.available.job.jsx';
+import BookingManagement from './pages/management/admin.booking.management.jsx';
 import CleanerProfile from './pages/management/cleaner.profile.jsx';
 import CleanerSchedulePage from './pages/management/cleaner.schedule.jsx';
-import CleanerManagement from './pages/management/cleaner_management.jsx';
-import CustomerManagement from './pages/management/customer_management.jsx';
-import HomeManagement from './pages/management/home_management.jsx';
-import ManualAssignment from './pages/management/manual.assignment.jsx';
-import PersonalJob from './pages/management/personal.job.jsx';
-import ServiceManagement from './pages/management/service_management.jsx';
+import CleanerManagement from './pages/management/admin.cleaner.management.jsx';
+import CustomerManagement from './pages/management/admin.customer.management.jsx';
+import HomeManagement from './pages/management/home.management.jsx';
+import ManualAssignment from './pages/management/admin.manual.assignment.jsx';
+import PersonalJob from './pages/management/cleaner.personal.job.jsx';
+import ServiceManagement from './pages/management/admin.service.management.jsx';
 import TopUpPage from './pages/top.up.jsx';
 import UserProfile from './pages/user.profile.jsx';
 import store from './redux/store.js';
 import './styles/global.css';
 import OrderManagement from './pages/order.management.jsx';
-import CustomerReviews from './pages/management/customer.feedback.cleaner.jsx';
+import CustomerReviews from './pages/management/cleaner.feedback.jsx';
 import CleaningService from './pages/services.header.item.jsx';
+import IncomePaymentPage from './pages/management/cleaner.income.jsx';
+import AdminTransactionManagementPage from './pages/management/admin.transaction.management.jsx';
+import FeedbackManagement from './pages/management/admin.feedback.management.jsx';
 
 
 const router = createBrowserRouter([
@@ -124,7 +127,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/manage-customer",
+				path: "management/customers",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
@@ -134,7 +137,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/manage-cleaner",
+				path: "management/cleaners",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
@@ -144,7 +147,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/manage-order",
+				path: "/management/orders",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
@@ -154,7 +157,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/manage-service",
+				path: "management/services",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
@@ -164,7 +167,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "/management/manage-assignment",
+				path: "management/assignments",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
@@ -174,7 +177,27 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "/management/jobs",
+				path: "management/feedbacks",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<FeedbackManagement />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "management/transactions",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["SUPER_ADMIN"]}>
+							<AdminTransactionManagementPage />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "cleaner/jobs",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
@@ -184,7 +207,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "/management/available-jobs",
+				path: "cleaner/avjobs",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
@@ -194,7 +217,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "/management/schedule",
+				path: "cleaner/schedules",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
@@ -204,7 +227,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/cleaner-profile",
+				path: "cleaner/profiles",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
@@ -214,11 +237,21 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "management/feedback/cleaner",
+				path: "cleaner/feedbacks",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CLEANER"]}>
 							<CustomerReviews />
+						</RoleRoute>
+					</RequireAuth>
+				)
+			},
+			{
+				path: "cleaner/incomes",
+				element: (
+					<RequireAuth>
+						<RoleRoute allowedRoles={["CLEANER"]}>
+							<IncomePaymentPage />
 						</RoleRoute>
 					</RequireAuth>
 				)

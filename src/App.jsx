@@ -81,38 +81,38 @@ function App() {
 											[
 												{
 													key: "customer-management",
-													label: <Link to={"/management/manage-customer"}>Quản lý khách hàng</Link>,
+													label: <Link to={"/management/customers"}>Quản lý khách hàng</Link>,
 													icon: <UserOutlined />
 												},
 												{
 													key: "cleaner_management",
-													label: <Link to={"/management/manage-cleaner"}>Quản lý người dọn dẹp</Link>,
+													label: <Link to={"/management/cleaners"}>Quản lý người dọn dẹp</Link>,
 													icon: <UserOutlined />
 												},
 												{
 													key: "order_management",
-													label: <Link to={"/management/manage-order"}>Quản lý đơn hàng</Link>,
+													label: <Link to={"/management/orders"}>Quản lý đơn hàng</Link>,
 													icon: <UserOutlined />
 												},
 												{
 													key: "service_management",
-													label: <Link to={"/management/manage-service"}>Quản lý dịch vụ</Link>,
+													label: <Link to={"/management/services"}>Quản lý dịch vụ</Link>,
 													icon: <UserOutlined />
 												},
 												{
-													key: "assignment",
-													label: <Link to={"/management/manage-assignment"}>Phân công thủ công</Link>,
+													key: "assignments",
+													label: <Link to={"/management/assignments"}>Phân công thủ công</Link>,
 													icon: <UserOutlined />
 												},
 
 												{
 													key: "profit_management",
-													label: "Quản lý Thanh toán & Thu nhập",
+													label: <Link to={"/management/transactions"}>Quản lý Thanh toán & Thu nhập</Link>,
 													icon: <UserOutlined />
 												},
 												{
 													key: "feedback_report_management",
-													label: "Quản lý Đánh giá & Báo cáo Vi phạm",
+													label: <Link to={"/management/feedbacks"}>Quản lý đánh giá</Link>,
 													icon: <UserOutlined />
 												}
 											]
@@ -120,32 +120,32 @@ function App() {
 											[
 												{
 													key: "personal_job",
-													label: <Link to="/management/jobs">Công việc cá nhân</Link>,
+													label: <Link to="/cleaner/jobs">Công việc cá nhân</Link>,
 													icon: <UserOutlined />,
 												},
 												{
 													key: "schedule",
-													label: <Link to="/management/schedule">Lịch làm việc</Link>,
+													label: <Link to="/cleaner/schedules">Lịch làm việc</Link>,
 													icon: <ReadOutlined />
 												},
 												{
 													key: "available_job",
-													label: <Link to="/management/available-jobs">Việc có sẵn</Link>,
+													label: <Link to="/cleaner/avjobs">Việc có sẵn</Link>,
 													icon: <BankOutlined />
 												},
 												{
 													key: "profit",
-													label: <Link to="/attendance">Thu nhập & Thanh toán</Link>,
+													label: <Link to="/cleaner/incomes">Thu nhập & Thanh toán</Link>,
 													icon: <ClockCircleOutlined />,
 												},
 												{
 													key: "cleaner_profile",
-													label: <Link to="/management/cleaner-profile">Hồ sơ</Link>,
+													label: <Link to="/cleaner/profiles">Hồ sơ</Link>,
 													icon: <DollarOutlined />
 												},
 												{
 													key: "feedback",
-													label: <Link to="/management/feedback/cleaner">Đánh giá</Link>,
+													label: <Link to="/cleaner/feedbacks">Đánh giá</Link>,
 													icon: <TeamOutlined />
 												}
 											])

@@ -38,20 +38,7 @@ const AvailableJobDetail = (props) => {
 
     return (
         <div style={{ maxWidth: 900, margin: '0 auto', padding: '0', backgroundColor: '#fff' }}>
-            <Breadcrumb
-                style={{ marginBottom: 30, marginLeft: -100 }}
-                separator=">"
-                items={[
-                    {
-                        title: 'Danh sách công việc',
-                        href: '',
-                        onClick: (e) => { e.preventDefault(); setStep("list") }
-                    },
-                    {
-                        title: 'Chi tiết công việc',
-                    }
-                ]}
-            />
+
 
             {/* Header Section */}
             <div style={{
@@ -97,7 +84,7 @@ const AvailableJobDetail = (props) => {
                         <Text style={{ color: '#8c8c8c', fontSize: 14 }}>Giá tiền</Text>
                     </Col>
                     <Col>
-                        <Text style={{ fontSize: 14, color: '#52c41a', fontWeight: 600 }}>{formatterNumber(dataDetail.totalPrice)} VNĐ</Text>
+                        <Text style={{ fontSize: 14, color: '#52c41a', fontWeight: 600 }}>{formatterNumber(dataDetail.totalPrice * (1 - Number(import.meta.env.VITE_INCOME_DEDUCTION)))} VNĐ</Text>
                     </Col>
                 </Row>
 

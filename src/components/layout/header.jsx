@@ -129,9 +129,9 @@ function HeaderLayOut() {
                     alt="Logo"
                     style={{ height: 65, marginRight: 8 }}
                 />
-                <span style={{ fontWeight: "bold", color: "#21823b", fontSize: 35, letterSpacing: 1 }}>
+                <a href="/" style={{ fontWeight: "bold", color: "#21823b", fontSize: 35, letterSpacing: 1 }}>
                     MAMA’S CLEAN
-                </span>
+                </a>
             </div>
 
             {/* Menu */}
@@ -139,7 +139,7 @@ function HeaderLayOut() {
                 <NavLink to="/" style={navLinkStyle} end>Trang chủ</NavLink>
                 <NavLink to="/booking" style={navLinkStyle}>Đặt lịch</NavLink>
                 <NavLink to="/services" style={navLinkStyle}>Dịch vụ</NavLink>
-                <NavLink to="/contact" style={navLinkStyle}>Liên hệ</NavLink>
+                {/* <NavLink to="/contact" style={navLinkStyle}>Liên hệ</NavLink> */}
                 <NavLink to="/feedback" style={navLinkStyle}>Phản hồi</NavLink>
             </div>
 

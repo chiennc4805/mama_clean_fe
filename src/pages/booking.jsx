@@ -7,9 +7,9 @@ const BookingPage = () => {
 
     const [bookingInfo, setBookingInfo] = useState({
         name: "",
-        serviceId: "",
         serviceName: "",
         area: "",
+        duration: "",
         date: "",
         time: "",
         address: "",

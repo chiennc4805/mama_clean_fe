@@ -1,6 +1,7 @@
 import { Button, Col, message, notification, Row, Select, Table } from 'antd';
 import { assignCleanerJobManuallyAPI } from '../../services/api.service';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 
 
 const AssignmentTable = (props) => {
@@ -8,31 +9,24 @@ const AssignmentTable = (props) => {
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
         current, setCurrent, total, cleanersOption, loadBooking } = props
-
-    const formatterNumber = (val) => {
-        if (!val) return "0";
-        return Number(val).toLocaleString("en-US");
-    };
-
-    const openNotificationWithIcon = (type, message, description) => {
-        api[type]({
-            message: message,
-            description: description
-        });
-    };
+    const [loadingId, setLoadingId] = useState(null)
 
     const assignCleaner = async (record) => {
+        setLoadingId(record.id)
+
         const res = await assignCleanerJobManuallyAPI(record.id, record.name, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, "Chờ xác nhận", record.customer.id, record.cleaner.id, record.service.id)
 
         setTimeout(() => {
             if (res.data) {
                 message.success("Phân công thành công")
+                setLoadingId(null)
             }
             else {
                 notification.error({
                     message: "Phân công thất bại",
                     description: JSON.stringify(res.message)
                 })
+                setLoadingId(null)
             }
             loadCleaner()
             loadBooking()
@@ -116,10 +110,9 @@ const AssignmentTable = (props) => {
                     type="primary"
                     size="small"
                     onClick={() => {
-                        // Gọi API phân công cleaner
-                        console.log("Phân công:", record);
                         assignCleaner(record)
                     }}
+                    loading={loadingId === record.id ? true : false}
                 >
                     Phân công
                 </Button>

@@ -1,4 +1,4 @@
-import { Divider, Select } from 'antd';
+import { Breadcrumb, Divider, Select } from 'antd';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../components/context/auth.context';
 import CheckInJob from '../../components/personal_job/check.in';
@@ -20,7 +20,6 @@ const PersonalJob = () => {
     const [dataDetail, setDataDetail] = useState({})
     const [filter, setFilter] = useState("")
     const [activeTab, setActiveTab] = useState('all');
-
 
     useEffect(() => {
         let rawFilter = "";
@@ -63,10 +62,32 @@ const PersonalJob = () => {
                 padding: 20
             }}>
                 {/* title */}
-                <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
+                <div xs={24} style={{ display: "flex", margin: "1%", background: "#fff", paddingBottom: "5px", gap: 20, alignItems: "center" }}>
                     <h1>
                         Công việc cá nhân
                     </h1>
+                    {step !== "list" ?
+                        <Breadcrumb
+                            separator=">"
+                            items={[
+                                {
+                                    title: 'Danh sách',
+                                    href: '',
+                                    onClick: ((e) => { e.preventDefault(); setStep("list") })
+                                },
+                                {
+                                    title: step === "detail"
+                                        ? "Chi tiết công việc"
+                                        : step === "check-in"
+                                            ? "Check-in công việc"
+                                            : step === "check-out"
+                                                ? "Check-out công việc" : ""
+                                },
+                            ]}
+                        />
+                        :
+                        ""
+                    }
                 </div>
 
                 <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />

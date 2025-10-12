@@ -52,20 +52,23 @@ export default function CheckOutJob(props) {
                 if (resUpdate.data) {
                     message.success('Đã xác nhận hoàn thành công việc thành công!');
                     setTimeout(() => {
+                        setLoading(false)
                         window.location.reload()
                     }, 2000)
                 }
                 else {
                     await deleteBookingCheckOutAPI(resCreate.data.id)
                     message.error(resUpdate.message.trim())
+                    setLoading(false)
                 }
             } else {
                 message.error(resCreate.message.trim())
+                setLoading(false)
             }
         } else {
             message.error("Lưu ảnh thất bại. Vui lòng thử lại!")
+            setLoading(false)
         }
-        setLoading(false)
     };
 
     return (

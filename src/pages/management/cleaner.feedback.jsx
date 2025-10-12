@@ -156,7 +156,13 @@ const CustomerReviews = () => {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 40 }}>
                     {/* Left side - Overall rating */}
-                    <Card>
+                    <Card
+                        style={{
+                            height: '100%',
+                            borderRadius: 8,
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                        }}
+                    >
                         <div>
                             <Text strong style={{ fontSize: 16, display: 'block', marginBottom: 12 }}>
                                 Tổng quan đánh giá

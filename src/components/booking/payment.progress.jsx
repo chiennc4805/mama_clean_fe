@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Card, Col, Divider, message, Modal, notification, R
 import dayjs from 'dayjs';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createBookingAPI } from '../../services/api.service';
+import { createBookingAPI, createServiceAPI } from '../../services/api.service';
 import { getCoordsFromAddress } from '../../services/common.function';
 import { AuthContext } from '../context/auth.context';
 
@@ -24,18 +24,19 @@ const PaymentProgress = (props) => {
     const bookingDetails = [
         { label: 'Công việc:', value: bookingInfo.name },
         { label: 'Loại dịch vụ:', value: bookingInfo.serviceName },
-        { label: 'Diện tích:', value: bookingInfo.area },
+        { label: 'Diện tích:', value: bookingInfo.area + " m²" },
+        { label: 'Thời lượng:', value: bookingInfo.duration + " giờ" },
         { label: 'Ngày:', value: dayjs(bookingInfo.date).format('DD/MM/YYYY') },
-        { label: 'Thời gian:', value: dayjs(bookingInfo.time).format('HH:mm:ss') || "" },
+        { label: 'Thời gian:', value: dayjs(bookingInfo.time).format('HH:mm') || "" },
         { label: 'Địa chỉ:', value: bookingInfo.address },
         { label: 'Phí dịch vụ:', value: formatterNumber(bookingInfo.price) + " VNĐ" },
     ];
 
     const handlePayBooking = async () => {
         // setBookingInfo({
-        //     serviceId: values.area.value,
         //     serviceName: values.service.label,
         //     area: values.area.label,
+        // duration
         //     date: values.date,
         //     time: values.time,
         //     address: values.address,
@@ -51,32 +52,37 @@ const PaymentProgress = (props) => {
                 centered: true,
                 onOk: () => navigate("/top-up"),
                 okText: "Nạp tiền",
-                maskClosable: true, // cho phép click ngoài
+                maskClosable: true,
             });
             setLoading(false)
             return;
         }
 
-        const coords = await getCoordsFromAddress(bookingInfo.address)
-        if (coords) {
-            const res = await createBookingAPI(bookingInfo.name, bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, bookingInfo.serviceId)
+        const createService = await createServiceAPI(bookingInfo.serviceName, bookingInfo.duration, bookingInfo.area, "", bookingInfo.price)
+        if (createService.data) {
+            const coords = await getCoordsFromAddress(bookingInfo.address)
+            if (coords) {
+                const res = await createBookingAPI(bookingInfo.name, bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, createService.data.id)
 
-            setTimeout(() => {
-                if (res.data) {
-                    message.success("Đặt lịch thành công")
-                    setTimeout(() => { navigate(0); setLoading(false); }, 1500)
-                }
-                else {
-                    notification.error({
-                        message: "Đặt lịch thất bại",
-                        description: JSON.stringify(res.message)
-                    })
-                    setLoading(false)
-                }
-            }, 1000)
+                setTimeout(() => {
+                    if (res.data) {
+                        message.success("Đặt lịch thành công")
+                        setTimeout(() => { navigate(0); setLoading(false); }, 1500)
+                    }
+                    else {
+                        notification.error({
+                            message: "Đặt lịch thất bại",
+                            description: JSON.stringify(res.message)
+                        })
+                        setLoading(false)
+                    }
+                }, 1000)
+            } else {
+                message.error("Lấy địa chỉ thất bại")
+                setLoading(false)
+            }
         } else {
-            message.error("Lấy địa chỉ thất bại")
-            setLoading(false)
+            message.error(res.message.trim())
         }
     }
 
@@ -85,7 +91,7 @@ const PaymentProgress = (props) => {
     return (
         <div style={{ padding: '24px', backgroundColor: '#F6F6F6', minHeight: '100vh' }}>
             <Breadcrumb
-                style={{ marginBottom: 50, fontSize: "20px", paddingLeft: "50px" }}
+                style={{ marginBottom: 20, fontSize: "15px", paddingLeft: "50px" }}
                 separator=">"
                 items={[
                     {
@@ -100,22 +106,22 @@ const PaymentProgress = (props) => {
             />
 
             <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-                <Title style={{ fontSize: "50px", textAlign: 'center', marginBottom: '32px' }}>
+                <Title style={{ fontSize: "35px", textAlign: 'center', marginBottom: '32px' }}>
                     Hoàn tất thanh toán
                 </Title>
 
                 <Card>
-                    <Title level={2} style={{ marginBottom: '24px' }}>
+                    <Title level={4} style={{ marginBottom: '24px' }}>
                         Tóm tắt đặt phòng
                     </Title>
 
                     {bookingDetails.map((item, index) => (
                         <Row key={index} style={{ marginBottom: '16px' }}>
                             <Col span={12}>
-                                <Text style={{ fontSize: "18px" }}>{item.label}</Text>
+                                <Text>{item.label}</Text>
                             </Col>
                             <Col span={12} style={{ textAlign: 'right' }}>
-                                <Text style={{ fontSize: "18px" }} strong>{item.value}</Text>
+                                <Text style={{ fontSize: "16px" }} strong>{item.value}</Text>
                             </Col>
                         </Row>
                     ))}

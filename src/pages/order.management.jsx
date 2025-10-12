@@ -1,22 +1,24 @@
 import React, { act, useContext, useEffect, useState } from 'react';
 import { Tabs, Card, Button, Tag, Space, Empty, Popconfirm, message, Col, Row } from 'antd';
-import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CommentOutlined, CreditCardOutlined, DollarOutlined, DragOutlined, EditOutlined, EnvironmentOutlined, EyeOutlined, FileTextOutlined, HomeOutlined } from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CommentOutlined, CreditCardOutlined, DollarOutlined, DragOutlined, EditOutlined, EnvironmentOutlined, EyeOutlined, FileTextOutlined, HomeOutlined, HourglassOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { fetchAllBookingsWithoutPaginationAPI, updateBookingAPI } from '../services/api.service';
+import { fetchAllBookingsWithoutPaginationAPI, fetchAllWalletTransactionsWithoutPagination, fetchBookingByIdAPI, updateBookingAPI } from '../services/api.service';
 import { AuthContext } from '../components/context/auth.context';
 import { formatterNumber } from '../services/common.function';
 import EditBooking from '../components/order_management/edit.booking';
 import EditBookingComponent from '../components/order_management/edit.booking';
 import CreateFeedbackComponent from '../components/order_management/creat.feedback';
 import ViewFeedbackComponent from '../components/order_management/view.feedback';
+import dayjs from 'dayjs';
 
 const OrderManagement = () => {
 
     const navigate = useNavigate()
-    const { user } = useContext(AuthContext)
+    const { user, setUser } = useContext(AuthContext)
     const [activeTab, setActiveTab] = useState('1');
     const [upcomingOrders, setUpcomingOrders] = useState([])
     const [historyOrders, setHistoryOrders] = useState([])
+    const [historyTransactions, setHistoryTransactions] = useState([])
     const [openEdit, setOpenEdit] = useState(false);
     const [openCreateFeedback, setOpenCreateFeedback] = useState(false);
     const [openViewFeedback, setOpenViewFeedback] = useState(false);
@@ -43,6 +45,7 @@ const OrderManagement = () => {
                         title: item.name,
                         service: item.service.name,
                         totalPrice: item.totalPrice,
+                        duration: item.service.duration,
                         area: item.service.area,
                         date: item.date,
                         time: item.startTime,
@@ -73,11 +76,12 @@ const OrderManagement = () => {
                     }
                     return {
                         id: item.id,
-                        cleanerUserId: item.cleaner.id,
+                        cleanerUserId: item?.cleaner?.id || "",
                         title: item.name,
                         service: item.service.name,
                         totalPrice: item.totalPrice,
                         area: item.service.area,
+                        duration: item.service.duration,
                         date: item.date,
                         time: item.startTime,
                         location: item.address,
@@ -89,6 +93,31 @@ const OrderManagement = () => {
         }
         loadHistoryOrders()
     }, [refreshHistory])
+
+    useEffect(() => {
+        const loadWalletTransaction = async () => {
+            const res = await fetchAllWalletTransactionsWithoutPagination("type~'BOOKING_PAYMENT'")
+            if (res.data) {
+                const bookingList = await fetchAllBookingsWithoutPaginationAPI(encodeURIComponent(`id in [${res.data.result.map(item => '\'' + item.ref_id + '\'')}]`));
+
+                const transactions = await Promise.all(
+                    res.data.result.map(async (item) => {
+                        return {
+                            title: bookingList.data.result.find(b => b.id === item.ref_id)?.name || "",
+                            date: dayjs(item.createdAt).format("DD/MM/YYYY"),
+                            time: dayjs(item.createdAt).format("HH:mm"),
+                            card: "Sử dụng tiền trong tài khoản",
+                            amount: formatterNumber(item.amount) + " VND",
+                            status: "completed"
+                        };
+                    })
+                );
+                setHistoryTransactions(transactions);
+
+            }
+        }
+        loadWalletTransaction()
+    }, [])
 
     const confirm = e => {
         console.log(e);
@@ -105,8 +134,13 @@ const OrderManagement = () => {
             setTimeout(() => {
                 message.success("Huỷ đặt lịch thành công!")
                 setTimeout(() => {
+                    setUser
                     setRefreshHistory(prev => !prev);
                     setRefreshUpcoming(prev => !prev);
+                    setUser(prev => ({
+                        ...prev,
+                        balance: prev.balance + cancelBooking.totalPrice
+                    }))
                 }, 1000)
             }, 2000)
         } else {
@@ -133,19 +167,18 @@ const OrderManagement = () => {
                 <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
                     <CalendarOutlined style={{ marginRight: 8 }} />
                     <span>{order.date}</span>
-                    <ClockCircleOutlined style={{ marginLeft: 16, marginRight: 8 }} />
-                    <span>{order.time}</span>
-
+                    <ClockCircleOutlined style={{ marginLeft: 20, marginRight: 8 }} />
+                    <span>{dayjs(order.time, "HH:mm:ss").format("HH:mm")}</span>
+                    <DragOutlined style={{ marginLeft: 20, marginRight: 8 }} />
+                    <span>{order.area} m²</span>
+                    <HourglassOutlined style={{ marginLeft: 20, marginRight: 8 }} />
+                    <span>{order.duration} giờ</span>
+                    <DollarOutlined style={{ marginLeft: 20, marginRight: 8 }} />
+                    <span>{formatterNumber(order.totalPrice)} VNĐ</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
                     <HomeOutlined style={{ marginRight: 8 }} />
                     <span>{order.service}</span>
-
-                    <DragOutlined style={{ marginLeft: 16, marginRight: 8 }} />
-                    <span>{order.area} m2</span>
-
-                    <DollarOutlined style={{ marginLeft: 16, marginRight: 8 }} />
-                    <span>{formatterNumber(order.totalPrice)} VNĐ</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
                     <EnvironmentOutlined style={{ marginRight: 8 }} />
@@ -226,49 +259,6 @@ const OrderManagement = () => {
             </div>
         </Card>
     );
-
-    const walletTransactionHistory = [
-        {
-            title: 'Đơn đẹp tiêu chuẩn',
-            date: '15/07/2024',
-            time: '09:00 SA',
-            card: 'Thẻ Visa **** 1234',
-            amount: '500.000 VND',
-            status: 'completed'
-        },
-        {
-            title: 'Đơn đẹp sâu',
-            date: '22/07/2024',
-            time: '14:00 CH',
-            card: 'Chuyển khoản ngân hàng',
-            amount: '850.000 VND',
-            status: 'pending'
-        },
-        {
-            title: 'Đơn đẹp định kỳ hàng tuần',
-            date: '05/05/2024',
-            time: '08:30 SA',
-            card: 'Thẻ JCB **** 9012',
-            amount: '700.000 VND',
-            status: 'completed'
-        },
-        {
-            title: 'Đơn đẹp văn phòng',
-            date: '01/08/2024',
-            time: '10:00 SA',
-            card: 'Tiền mặt',
-            amount: '1.200.000 VND',
-            status: 'completed'
-        },
-        {
-            title: 'Đơn đẹp sau sự kiện',
-            date: '10/06/2024',
-            time: '11:00 SA',
-            card: 'Thẻ MasterCard **** 5678',
-            amount: '1.500.000 VND',
-            status: 'completed'
-        }
-    ];
 
     const items = [
         {
@@ -365,7 +355,7 @@ const OrderManagement = () => {
                         paddingRight: '8px'
                     }}>
                         <Row gutter={[16, 16]}>
-                            {walletTransactionHistory.map((order, index) => (
+                            {historyTransactions.map((order, index) => (
                                 <Col xs={24} sm={24} md={12} lg={12} xl={12} key={index}>
                                     <Card
                                         hoverable
@@ -427,7 +417,7 @@ const OrderManagement = () => {
                                                 <Tag color="warning">Đang chờ xử lý</Tag>
                                             )}
 
-                                            <Button
+                                            {/* <Button
                                                 type="text"
                                                 icon={<FileTextOutlined />}
                                                 style={{
@@ -436,7 +426,7 @@ const OrderManagement = () => {
                                                 }}
                                             >
                                                 Xem hóa đơn
-                                            </Button>
+                                            </Button> */}
                                         </div>
                                     </Card>
                                 </Col>

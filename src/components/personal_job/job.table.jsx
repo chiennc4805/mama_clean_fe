@@ -174,40 +174,26 @@ const PersonalJobTable = (props) => {
                     </Col>
                 ))}
             </Row>
-            <div
-                style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", // đổ bóng nhẹ
-                    padding: "16px",
-                }}
-            >
-                <div xs={24} style={{ display: "flex", justifyContent: "space-between", margin: "1%", background: "#fff", paddingBottom: "5px" }}>
-                    <h2>
-                        Danh sách công việc
-                    </h2>
-                </div>
 
-                <Row style={{ margin: "1%" }}>
-                    <Col xs={24} style={{ width: "100vw" }}>
-                        <Table
-                            rowKey={"id"}
-                            columns={columns}
-                            dataSource={dataJobs}
-                            size='large'
-                            pagination={
-                                {
-                                    current: current,
-                                    pageSize: pageSize,
-                                    showSizeChanger: true,
-                                    total: total,
-                                    showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
-                                }}
-                            onChange={onChange}
-                        />
-                    </Col>
-                </Row>
-            </div>
+            <Row style={{ margin: "1%" }}>
+                <Col xs={24} style={{ width: "100vw" }}>
+                    <Table
+                        rowKey={"id"}
+                        columns={columns}
+                        dataSource={dataJobs}
+                        size='large'
+                        pagination={
+                            {
+                                current: current,
+                                pageSize: pageSize,
+                                showSizeChanger: true,
+                                total: total,
+                                showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            }}
+                        onChange={onChange}
+                    />
+                </Col>
+            </Row>
         </>
 
     )

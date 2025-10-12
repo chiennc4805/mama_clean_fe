@@ -77,14 +77,13 @@ const FooterLayout = () => {
                         <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Câu hỏi thường gặp</div>
                         <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Chính sách bảo mật</div>
                         <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>Điều khoản dịch vụ</div>
-                        <div style={{ color: "#555", fontSize: 12 }}>Sitemap</div>
                     </div>
                     {/* Liên hệ */}
                     <div style={{ minWidth: 220, flex: "1 1 220px" }}>
                         <div style={{ fontWeight: 600, marginBottom: 18, fontSize: 16, color: "#222" }}>Liên hệ</div>
-                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>1900-1234</div>
+                        <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>0392-686-152</div>
                         <div style={{ color: "#555", marginBottom: 10, fontSize: 12 }}>hotro@mamasclean.vn</div>
-                        <div style={{ color: "#555", fontSize: 12 }}>123 Đường ABC, Quận 1, TP.HCM</div>
+                        <div style={{ color: "#555", fontSize: 12 }}>Thôn 8, Thạch Thất, Hà Nội</div>
                     </div>
                 </div>
                 {/* Copyright */}

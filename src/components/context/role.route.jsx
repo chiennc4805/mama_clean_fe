@@ -6,9 +6,6 @@ import { AuthContext } from "./auth.context";
 const RoleRoute = ({ allowedRoles, children }) => {
     const { user, isAppLoading } = useContext(AuthContext);
 
-    console.log(user.role.name)
-    console.log(allowedRoles)
-
     if (isAppLoading) return <div>Đang tải quyền...</div>;
 
     if (!user) return <Navigate to="/login" replace />;

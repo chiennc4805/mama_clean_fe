@@ -173,7 +173,7 @@ const HomePage = () => {
                             Đặt lịch ngay
                         </button>
 
-                        <button
+                        {/* <button
                             style={{
                                 border: "1px solid #fff",
                                 padding: "12px 28px",
@@ -183,7 +183,7 @@ const HomePage = () => {
                                 cursor: "pointer"
                             }}>
                             Tìm hiểu thêm
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>
@@ -547,10 +547,9 @@ const HomePage = () => {
                             <Col span={11}>
                                 <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Loại dịch vụ</div>
                                 <Form.Item
-                                    name="username"
+                                    name="service"
                                     rules={[
-                                        { required: true, message: 'Vui lòng nhập email!' },
-                                        { type: "email", message: "Email không đúng định dạng!" }
+                                        { required: true, message: 'Vui lòng chọn loại dịch vụ!' },
                                     ]}
                                     style={{ marginBottom: 30 }}
                                 >
@@ -558,6 +557,7 @@ const HomePage = () => {
                                         placeholder="Chọn dịch vụ"
                                         allowClear={true}
                                         options={servicesOption}
+                                        size="large"
                                     />
                                 </Form.Item>
                             </Col>
@@ -565,10 +565,9 @@ const HomePage = () => {
                             <Col span={11}>
                                 <div style={{ width: "100%", marginBottom: 8, fontWeight: 500, fontSize: 17 }}>Ngày</div>
                                 <Form.Item
-                                    name="username"
+                                    name="date"
                                     rules={[
-                                        { required: true, message: 'Vui lòng nhập email!' },
-                                        { type: "email", message: "Email không đúng định dạng!" }
+                                        { required: true, message: 'Vui lòng chọn ngày!' },
                                     ]}
                                     style={{ marginBottom: 30 }}
                                 >
@@ -586,14 +585,13 @@ const HomePage = () => {
                                 <Form.Item
                                     name="username"
                                     rules={[
-                                        { required: true, message: 'Vui lòng nhập email!' },
-                                        { type: "email", message: "Email không đúng định dạng!" }
+                                        { required: true, message: 'Vui lòng chọn khung giờ!' },
                                     ]}
                                     style={{ marginBottom: 30 }}
                                 >
                                     <Input
                                         size="large"
-                                        placeholder="Nhập địa chỉ của bạn"
+                                        placeholder="Chọn khung giờ"
                                         style={{ borderRadius: 8 }}
                                     />
                                 </Form.Item>
@@ -604,8 +602,7 @@ const HomePage = () => {
                                 <Form.Item
                                     name="username"
                                     rules={[
-                                        { required: true, message: 'Vui lòng nhập email!' },
-                                        { type: "email", message: "Email không đúng định dạng!" }
+                                        { required: true, message: 'Vui lòng điền địa chỉ!' },
                                     ]}
                                     style={{ marginBottom: 30 }}
                                 >

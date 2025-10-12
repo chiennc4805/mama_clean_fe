@@ -40,7 +40,14 @@ const CustomerTable = (props) => {
                 orders: user.orders?.length || 0, // nếu có trường orders
                 status: isOnline ? "Hoạt động" : "Không hoạt động",
                 lastActivity: lastActivityDate
-                    ? lastActivityDate.toLocaleString()
+                    ? lastActivityDate.toLocaleString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false
+                    })
                     : "Chưa có hoạt động",
                 role: user.role
             };
