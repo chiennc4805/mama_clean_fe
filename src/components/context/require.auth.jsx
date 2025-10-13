@@ -7,9 +7,9 @@ const RequireAuth = ({ children }) => {
     const location = useLocation();
 
     if (!user) {
-        // nhớ lại trang hiện tại bằng state
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" replace state={{ from: location.pathname }} />;
     }
+
     return children;
 };
 

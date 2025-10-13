@@ -446,7 +446,7 @@ const OrderManagement = () => {
                 padding: '24px'
             }}>
                 <div style={{
-                    maxWidth: 1200,
+                    maxWidth: 1300,
                     margin: '0 auto',
                     backgroundColor: '#F6F6F6',
                     borderRadius: 12,

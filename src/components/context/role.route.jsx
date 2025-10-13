@@ -1,17 +1,18 @@
 // RoleRoute.jsx
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./auth.context";
 
 const RoleRoute = ({ allowedRoles, children }) => {
+
     const { user, isAppLoading } = useContext(AuthContext);
+    const location = useLocation();
+
 
     if (isAppLoading) return <div>Đang tải quyền...</div>;
 
-    if (!user) return <Navigate to="/login" replace />;
-
     if (!allowedRoles.includes(user.role.name)) {
-        return <Navigate to="/403" replace />; // hoặc trang lỗi 403
+        return <Navigate to="/403" replace />;
     }
 
     return children;

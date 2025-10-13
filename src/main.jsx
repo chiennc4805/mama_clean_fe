@@ -87,7 +87,7 @@ const router = createBrowserRouter([
 				)
 			},
 			{
-				path: "feedback",
+				path: "feedbacks",
 				element: (
 					<RequireAuth>
 						<RoleRoute allowedRoles={["CUSTOMER"]}>
@@ -256,10 +256,6 @@ const router = createBrowserRouter([
 					</RequireAuth>
 				)
 			},
-			{
-				path: "403",
-				element: <UnauthorizedPage />
-			},
 
 
 			// {
@@ -268,6 +264,10 @@ const router = createBrowserRouter([
 			// },
 
 		]
+	},
+	{
+		path: "403",
+		element: <UnauthorizedPage />
 	},
 ]);
 

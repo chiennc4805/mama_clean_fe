@@ -24,21 +24,9 @@ function HeaderLayOut() {
         if (res.data) {
             //clear data
             localStorage.removeItem("access_token")
-            setUser({
-                id: "",
-                name: "",
-                email: "",
-                balance: 0,
-                role: {
-                    name: ""
-                },
-                avatar: ""
-            })
+            setUser(null)
             message.success("Đăng xuất thành công.")
             setOpenDropDown(false)
-            setTimeout(() => {
-                window.location.href = "/login"
-            }, 800)
         }
     }
 
@@ -140,7 +128,7 @@ function HeaderLayOut() {
                 <NavLink to="/booking" style={navLinkStyle}>Đặt lịch</NavLink>
                 <NavLink to="/services" style={navLinkStyle}>Dịch vụ</NavLink>
                 {/* <NavLink to="/contact" style={navLinkStyle}>Liên hệ</NavLink> */}
-                <NavLink to="/feedback" style={navLinkStyle}>Phản hồi</NavLink>
+                <NavLink to="/feedbacks" style={navLinkStyle}>Phản hồi</NavLink>
             </div>
 
 

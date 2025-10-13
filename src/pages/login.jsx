@@ -1,6 +1,6 @@
 import { Button, Form, Input, message, notification } from "antd";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
 import { loginAPI } from "../services/api.service";
 
@@ -13,14 +13,11 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-
-    useEffect(() => {
-        if (user && user.id) {
-            navigate("/")
-        }
-    })
+    const location = useLocation();
 
     const onFinish = async (values) => {
+        const from = location.state?.from || "";
+
         setLoading(true)
         const res = await loginAPI(values.username, values.password)
         setTimeout(() => {
@@ -28,11 +25,10 @@ const LoginPage = () => {
                 message.success("Đăng nhập thành công")
                 localStorage.setItem("access_token", res.data.access_token)
                 setUser(res.data.user)
-                if (res.data.user.role.name === "CUSTOMER") {
-                    navigate("/");
-                } else {
-                    navigate("/management");
-                }
+                Promise.resolve().then(() => {
+                    navigate(from || (res.data.user.role.name === "CUSTOMER" ? "/" : "/management"), { replace: true });
+                });
+
             }
             else {
                 setLoading(false)

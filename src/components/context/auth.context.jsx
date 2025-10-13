@@ -13,16 +13,17 @@ const AuthContext = createContext({
 });
 
 const AuthWrapper = ({ children }) => {
-    const [user, setUser] = useState({
-        id: "",
-        name: "",
-        email: "",
-        balance: 0,
-        role: {
-            name: ""
-        },
-        avatar: ""
-    })
+    // {
+    //     id: "",
+    //     name: "",
+    //     email: "",
+    //     balance: 0,
+    //     role: {
+    //         name: ""
+    //     },
+    //     avatar: ""
+    // }
+    const [user, setUser] = useState(null)
 
     const [isAppLoading, setIsAppLoading] = useState(true)
 

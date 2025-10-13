@@ -95,7 +95,7 @@ const FooterLayout = () => {
                     fontSize: 12,
                     textAlign: "left"
                 }}>
-                    © 2024 Mama's Clean. Bảo lưu mọi quyền.
+                    © 2025 Mama's Clean. Bảo lưu mọi quyền.
                 </div>
             </div>
         </footer>

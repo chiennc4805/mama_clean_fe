@@ -17,20 +17,9 @@ const AdminHeader = () => {
         if (res.data) {
             //clear data
             localStorage.removeItem("access_token")
-            setUser({
-                id: "",
-                name: "",
-                email: "",
-                balance: 0,
-                role: {
-                    name: ""
-                },
-                avatar: ""
-            })
+            setUser(null)
             message.success("Đăng xuất thành công.")
-            setTimeout(() => {
-                window.location.href = "/login"
-            }, 800)
+            setOpenDropDown(false)
         }
     }
 

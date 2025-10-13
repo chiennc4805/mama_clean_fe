@@ -40,6 +40,7 @@ const EditBookingComponent = (props) => {
                 form.setFieldsValue({
                     service: res.data.service.name,
                     name: res.data.name,
+                    duration: res.data.service.duration,
                     area: res.data.service.area,
                     date: dayjs(res.data.date, "DD/MM/YYYY"),
                     time: dayjs(res.data.startTime, "HH:mm"),
@@ -154,15 +155,12 @@ const EditBookingComponent = (props) => {
 
                             </Col>
 
-                            <Col span={9}>
+                            <Col span={6}>
                                 <Text strong style={{ display: 'block', marginBottom: 10 }}>
-                                    Diện tích (m2)
+                                    Diện tích (m²)
                                 </Text>
                                 <Form.Item
                                     name={"area"}
-                                    rules={[
-                                        { required: true, message: 'Vui lòng điền diện tích!' },
-                                    ]}
                                 >
                                     <Input
                                         disabled
@@ -173,7 +171,23 @@ const EditBookingComponent = (props) => {
                                 </Form.Item>
 
                             </Col>
-                            <Col span={9}>
+                            <Col span={6}>
+                                <Text strong style={{ display: 'block', marginBottom: 10 }}>
+                                    Thời lượng (giờ)
+                                </Text>
+                                <Form.Item
+                                    name={"duration"}
+                                >
+                                    <Input
+                                        disabled
+                                        style={{ width: '100%' }}
+                                        size="large"
+                                    >
+                                    </Input>
+                                </Form.Item>
+
+                            </Col>
+                            <Col span={7}>
                                 <Text strong style={{ display: 'block', marginBottom: 10 }}>
                                     Ngày
                                 </Text>
@@ -194,7 +208,7 @@ const EditBookingComponent = (props) => {
                                 </Form.Item>
 
                             </Col>
-                            <Col span={6}>
+                            <Col span={5}>
                                 <Text strong style={{ display: 'block', marginBottom: 10 }}>
                                     Giờ
                                 </Text>

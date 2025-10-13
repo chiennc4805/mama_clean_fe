@@ -74,71 +74,95 @@ const BookingProgress = (props) => {
         setSelectedPackageIdx(null);
         setPrice(null);
         setDuration(null);
-        setFormData({ ...formData, area: null, duration: null, totalPrice: null, serviceName: service.name });
-        form.resetFields(["area", "duration"])
+        form.setFieldsValue({
+            area: null,
+            duration: null,
+            areaFake: null,
+            durationFake: null,
+            serviceName: service.name,
+            totalPrice: null
+        });
     };
 
     const handlePackageSelect = (index) => {
         setSelectedPackageIdx(index);
         const pkg = selectedService.package[index];
-        setFormData({ ...formData, area: pkg.area, duration: pkg.duration });
+        form.setFieldsValue({
+            area: pkg.area,
+            duration: pkg.duration,
+            totalPrice: pkg.price
+        });
         setPrice(pkg.price);
         setDuration(pkg.duration);
     };
 
     const handleAreaChange = (value) => {
-        setFormData({ ...formData, area: value });
-        if (!isPackageType && selectedService && value && formData.duration) {
+        form.setFieldsValue({ area: value })
+        const duration = form.getFieldValue("duration");
+        const selectedService = serviceOptions[selectedServiceIdx];
+        if (!isPackageType && selectedService && value && duration) {
             const basePrice = selectedService.package[0].price;
-            const totalPrice = basePrice * value * formData.duration;
+            const totalPrice = basePrice * value * duration;
+            form.setFieldsValue({ totalPrice: totalPrice });
             setPrice(totalPrice);
-            setDuration(formData.duration);
-            setFormData(prev => ({ ...prev, totalPrice: totalPrice }))
         } else {
+            form.setFieldsValue({ totalPrice: null });
             setPrice(null);
-            setDuration(null);
         }
     };
 
     const handleDurationChange = (value) => {
-        setFormData({ ...formData, duration: value });
-        if (!isPackageType && selectedService && formData.area && value) {
+        form.setFieldsValue({ duration: value })
+        setDuration(value)
+        const area = form.getFieldValue("area");
+        const selectedService = serviceOptions[selectedServiceIdx];
+        if (!isPackageType && selectedService && area && value) {
             const basePrice = selectedService.package[0].price;
-            const totalPrice = Math.round(basePrice * formData.area * value);
+            const totalPrice = basePrice * area * value;
+            form.setFieldsValue({ totalPrice: totalPrice });
             setPrice(totalPrice);
-            setDuration(value);
-            setFormData(prev => ({ ...prev, totalPrice: totalPrice }))
         } else {
+            form.setFieldsValue({ totalPrice: null });
             setPrice(null);
-            setDuration(null);
         }
     };
 
 
     useEffect(() => {
+        setSelectedServiceIdx(bookingInfo.selectedServiceIdx)
+        setSelectedPackageIdx(bookingInfo.selectedPackageIdx)
+        setPrice(bookingInfo.price)
+        setDuration(bookingInfo.duration)
         form.setFieldsValue({
             jobName: bookingInfo.name,
-            service: bookingInfo.serviceName,
-            area: bookingInfo.area,
             date: bookingInfo.date,
             time: bookingInfo.time,
             address: bookingInfo.address,
-            note: bookingInfo.note
+            note: bookingInfo.note,
+            totalPrice: bookingInfo.price,
+            area: bookingInfo.area,
+            duration: bookingInfo.duration,
+            serviceName: bookingInfo.serviceName,
+            areaFake: bookingInfo.selectedPackageIdx ? "" : bookingInfo.area,
+            durationFake: bookingInfo.selectedPackageIdx ? "" : bookingInfo.duration,
         })
-    }, [bookingInfo])
+    }, [step])
 
-    const handleBooking = async () => {
-        console.log(formData)
+    const handleBooking = async (values) => {
+        console.log(selectedServiceIdx)
+        console.log(values)
         setBookingInfo({
-            name: formData.jobName,
-            serviceName: formData.serviceName,
-            duration: formData.duration,
-            area: formData.area,
-            date: formData.date,
-            time: formData.time,
-            address: formData.address,
-            note: formData.note,
-            price: formData.totalPrice
+            selectedServiceIdx: selectedServiceIdx,
+            selectedPackageIdx: selectedPackageIdx,
+            name: values.jobName,
+            serviceName: values.serviceName,
+            duration: values.duration,
+            area: values.area,
+            date: values.date,
+            time: values.time,
+            address: values.address,
+            note: values.note,
+            price: values.totalPrice
         })
         setStep("payment")
     }
@@ -191,7 +215,7 @@ const BookingProgress = (props) => {
                 {/* Chọn gói hoặc diện tích */}
                 {selectedService && (
                     <Card style={{ marginBottom: 20 }}>
-                        <div style={{ marginBottom: 10, fontSize: 30, fontWeight: 500 }}>
+                        <div style={{ marginBottom: 10, fontSize: 25, fontWeight: 500 }}>
                             {isPackageType ? "Chọn gói dịch vụ" : "Điền số liệu dọn dẹp"}
                         </div>
 
@@ -228,7 +252,7 @@ const BookingProgress = (props) => {
                                         Diện tích (m²) **Tối thiểu 10 m²
                                     </div>
                                     <Form.Item
-                                        name={"area"}
+                                        name={"areaFake"}
                                         rules={[
                                             { required: true, message: "Vui lòng nhập diện tích" },
                                         ]}
@@ -249,7 +273,7 @@ const BookingProgress = (props) => {
                                         Thời lượng (theo giờ) **Tối thiểu 1 giờ
                                     </div>
                                     <Form.Item
-                                        name={"duration"}
+                                        name={"durationFake"}
                                         rules={[
                                             { required: true, message: "Vui lòng nhập thời lượng" },
                                         ]}
@@ -293,12 +317,27 @@ const BookingProgress = (props) => {
                 {selectedService && (
                     <>
                         <Card style={{ marginBottom: 20 }}>
-                            <div style={{ marginBottom: 10, fontSize: 30, fontWeight: 500 }}>
+                            <div style={{ marginBottom: 10, fontSize: 25, fontWeight: 500 }}>
                                 Điền thông tin lịch đặt
                             </div>
                             <div style={{ marginBottom: 20, color: '#666' }}>
                                 Chọn ngày và khung giờ bạn muốn dịch vụ được đặt
                             </div>
+                            <Form.Item name="area" hidden>
+                                <Input type="hidden" />
+                            </Form.Item>
+
+                            <Form.Item name="duration" hidden>
+                                <Input type="hidden" />
+                            </Form.Item>
+
+                            <Form.Item name="serviceName" hidden>
+                                <Input type="hidden" />
+                            </Form.Item>
+
+                            <Form.Item name="totalPrice" hidden>
+                                <Input type="hidden" />
+                            </Form.Item>
 
                             <Row gutter={24}>
                                 <Col span={24}>
@@ -380,7 +419,7 @@ const BookingProgress = (props) => {
 
                         {/* Địa chỉ */}
                         <Card style={{ marginBottom: 20 }}>
-                            <div style={{ marginBottom: 10, fontSize: 30, fontWeight: 500 }}>
+                            <div style={{ marginBottom: 10, fontSize: 25, fontWeight: 500 }}>
                                 Địa chỉ dọn dẹp
                             </div>
                             <Form.Item
@@ -397,7 +436,7 @@ const BookingProgress = (props) => {
                                 />
                             </Form.Item>
 
-                            <div style={{ marginBottom: 10, fontSize: 30, fontWeight: 500 }}>
+                            <div style={{ marginBottom: 10, fontSize: 25, fontWeight: 500 }}>
                                 Chi tiết bổ sung
                             </div>
                             <div style={{ marginBottom: 15, color: '#666' }}>
