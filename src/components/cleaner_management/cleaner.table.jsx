@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Col, message, notification, Popconfirm, Row, Table } from 'antd';
 import { useState } from 'react';
-import { deleteCleanerProfileAPI, deleteUserAPI } from '../../services/api.service';
+import { deleteUserAPI } from '../../services/api.service';
 import { useNavigate } from 'react-router-dom';
 
 

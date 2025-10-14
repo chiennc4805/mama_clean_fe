@@ -11,6 +11,7 @@ const { Option } = Select;
 
 const CleanerDetail = (props) => {
 
+    const { user } = useContext(AuthContext)
     const { dataDetail, setActiveComponent } = props
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
@@ -114,7 +115,7 @@ const CleanerDetail = (props) => {
                     }}>
                         <Avatar
                             size={80}
-                            src="https://i.pravatar.cc/150?img=47"
+                            src={`http://localhost:8080/upload/avatar/${user.avatar}`}
                         />
                         <Button
                             type="link"
@@ -172,7 +173,7 @@ const CleanerDetail = (props) => {
                                 size="large"
                                 style={{ width: '100%' }}
                                 value={formData.dob}
-                                onChange={(value) => handleChange('dob', value)}
+                                onChange={(date, dateString) => handleChange('dob', date)}
                             />
                         </Col>
 

@@ -153,7 +153,7 @@ const TopUpPage = () => {
                                 message="LƯU Ý QUAN TRỌNG"
                                 description={
                                     <div>
-                                        <p>• Vui lòng chuyển đúng nội dung để trạm trương hợp giao dịch bị chậm: hỗ trợ qua liên hệ trực tuyến</p>
+                                        <p>• Vui lòng chuyển đúng nội dung để tránh trường hợp giao dịch bị chậm xử lý vì phải kiểm tra thủ công</p>
                                         <p>• Sau khi chuyển tiền, vui lòng chờ 5-10 phút để hệ thống xử lý</p>
                                         <p style={{ marginBottom: 0 }}>• Liên hệ hỗ trợ: 0374098225</p>
                                     </div>
@@ -188,10 +188,13 @@ const TopUpPage = () => {
                                 </div>
 
                                 <div style={{ marginTop: '24px' }}>
-                                    <Text strong style={{ fontSize: '16px', display: 'block' }}>LÊ MINH HẢI</Text>
-                                    <Text style={{ display: 'block', marginTop: '4px' }}>2120938947</Text>
+                                    <Text strong style={{ fontSize: '16px', display: 'block' }}>LE MINH HAI</Text>
+                                    <Text style={{ display: 'block', marginTop: '4px' }}>Số tài khoản: 00000117045</Text>
                                     <Text type="secondary" style={{ display: 'block', marginTop: '4px' }}>
-                                        BIDV-CN TÂY HỒ
+                                        Ngân hàng: TPBank
+                                    </Text>
+                                    <Text type="secondary" style={{ display: 'block', marginTop: '4px' }}>
+                                        Nội dung: {content}
                                     </Text>
                                 </div>
                             </div>

@@ -410,7 +410,7 @@ const JobDetail = (props) => {
                                                 margin: 0,
                                             }}
                                         >
-
+                                            {bookingCheckOut.note}
                                         </p>
                                     </div>
                                 </>

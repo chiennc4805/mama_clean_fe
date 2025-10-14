@@ -52,32 +52,6 @@ const AdminHeader = () => {
 
             {/* Right side - Search, Notifications, Profile */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {/* Search Icon */}
-                <Button
-                    type="text"
-                    icon={<SearchOutlined />}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '40px',
-                        height: '40px'
-                    }}
-                />
-
-                {/* Bell Icon */}
-                <Button
-                    type="text"
-                    icon={<BellOutlined />}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '40px',
-                        height: '40px'
-                    }}
-                />
-
                 {/* Exit/Logout Button */}
                 <Button
                     type="text"

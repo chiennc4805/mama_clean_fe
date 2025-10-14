@@ -92,7 +92,7 @@ const ViewDetailBookingInFeedback = (props) => {
                             <Text style={{ color: '#8c8c8c', fontSize: 14 }}>Giá tiền</Text>
                         </Col>
                         <Col>
-                            <Text style={{ fontSize: 14, color: '#52c41a', fontWeight: 600 }}>{formatterNumber(dataDetail.totalPrice)} VNĐ</Text>
+                            <Text style={{ fontSize: 14, color: '#52c41a', fontWeight: 600 }}>{formatterNumber(Math.round(dataDetail.totalPrice * (1 - import.meta.env.VITE_INCOME_DEDUCTION)))} VNĐ</Text>
                         </Col>
                     </Row>
 
