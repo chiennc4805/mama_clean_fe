@@ -174,7 +174,7 @@ const CheckInJob = (props) => {
                                 <Image
                                     width={400}
                                     height={300}
-                                    src="/src/assets/check-in_page/static_map.png"
+                                    src="/check-in_page/static_map.png"
                                     style={{
                                         objectFit: 'cover', borderRadius: 8, transform: 'scale(1.3)'
                                     }}

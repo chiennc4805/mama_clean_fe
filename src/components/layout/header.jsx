@@ -10,7 +10,7 @@ const { Text } = Typography
 
 function HeaderLayOut() {
 
-    const { user, setUser } = useContext(AuthContext)
+    const { user, setUser, setIsAppLogout } = useContext(AuthContext)
     const [openDropdown, setOpenDropDown] = useState(false)
     const navigate = useNavigate()
 
@@ -27,6 +27,7 @@ function HeaderLayOut() {
             setUser(null)
             message.success("Đăng xuất thành công.")
             setOpenDropDown(false)
+            setIsAppLogout(true)
         }
     }
 
@@ -55,7 +56,7 @@ function HeaderLayOut() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <Avatar
                     size={75}
-                    src={`http://localhost:8080/upload/avatar/${user?.avatar}` || ""}
+                    src={`https://mamasclean.com/upload/avatar/${user?.avatar}` || ""}
                 />
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -113,7 +114,7 @@ function HeaderLayOut() {
             {/* Logo và tên */}
             <div style={{ display: "flex", alignItems: "center" }}>
                 <img
-                    src="src\assets\logo.png"
+                    src="logo.png"
                     alt="Logo"
                     style={{ height: 65, marginRight: 8 }}
                 />

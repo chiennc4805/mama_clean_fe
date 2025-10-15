@@ -228,7 +228,7 @@ const CustomerReviews = () => {
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
                                     <div style={{ display: 'flex', gap: 12 }}>
-                                        <Avatar size={40} icon={<UserOutlined />} src={`http://localhost:8080/upload/avatar/${review.avatar}`} />
+                                        <Avatar size={40} icon={<UserOutlined />} src={`https://mamasclean.com/upload/avatar/${review.avatar}`} />
                                         <div>
                                             <Text strong style={{ display: 'block' }}>{review.name}</Text>
                                             <Text type="secondary" style={{ fontSize: 12 }}>{review.time}</Text>

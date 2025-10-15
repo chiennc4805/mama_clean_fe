@@ -120,7 +120,6 @@ const OrderManagement = () => {
     }, [])
 
     const confirm = e => {
-        console.log(e);
         message.success('Click on Yes');
     };
 

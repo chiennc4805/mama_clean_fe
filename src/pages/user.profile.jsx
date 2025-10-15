@@ -44,7 +44,6 @@ const UserProfile = () => {
             let formData = new FormData()
             formData.append("file", avatarImageFile)
             const resUploadAPI = await uploadImageAPI("avatar", formData)
-            console.log("upload res: " + resUploadAPI)
             if (resUploadAPI.data != "Upload failed!") {
                 const res = await updateUserAPI(user.id, values.name, values.email, values.phone, gender, user.role?.id, resUploadAPI.data)
                 setTimeout(() => {
@@ -156,7 +155,7 @@ const UserProfile = () => {
                                     showUploadList={false}
                                     beforeUpload={handleBeforeUpload}
                                 >
-                                    <Avatar size={100} src={avatarPreviewUrl || `http://localhost:8080/upload/avatar/${user.avatar}`} />
+                                    <Avatar size={100} src={avatarPreviewUrl || `https://mamasclean.com/upload/avatar/${user.avatar}`} />
                                 </Upload>
                                 <div style={{ marginTop: '8px', color: '#1890ff' }}>
                                     Thay đổi ảnh đại diện

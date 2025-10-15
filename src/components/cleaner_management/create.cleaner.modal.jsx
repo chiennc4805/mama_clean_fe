@@ -15,7 +15,6 @@ const CleanerForm = (props) => {
     };
 
     const onFinish = async (values) => {
-        console.log(values)
         const res = await createCleanerAPI(values.fullname, values.email, values.phone, values.gender, values.password, "CLEANER", values.dob, values.idNumber, values.idDate, values.idPlace)
         if (res.data) {
             openNotificationWithIcon('success', 'Thành công', 'Thêm mới nhân viên thành công')

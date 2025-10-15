@@ -149,8 +149,6 @@ const BookingProgress = (props) => {
     }, [step])
 
     const handleBooking = async (values) => {
-        console.log(selectedServiceIdx)
-        console.log(values)
         setBookingInfo({
             selectedServiceIdx: selectedServiceIdx,
             selectedPackageIdx: selectedPackageIdx,

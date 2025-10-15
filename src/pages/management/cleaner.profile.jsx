@@ -43,8 +43,6 @@ const CleanerProfile = () => {
     }, []);
 
     const handlePersonalInfoSubmit = async (values) => {
-        console.log('Form values:', values);
-
         setLoading(true);
         const gender = values.gender === "1" ? true : false;
 
@@ -165,7 +163,7 @@ const CleanerProfile = () => {
                                     showUploadList={false}
                                     beforeUpload={handleBeforeUpload}
                                 >
-                                    <Avatar size={100} src={avatarPreviewUrl || `http://localhost:8080/upload/avatar/${user.avatar}`} />
+                                    <Avatar size={100} src={avatarPreviewUrl || `https://mamasclean.com/upload/avatar/${user.avatar}`} />
                                 </Upload>
                                 <div style={{ marginTop: '8px', color: '#1890ff' }}>
                                     Thay đổi ảnh đại diện

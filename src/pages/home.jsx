@@ -105,7 +105,7 @@ const HomePage = () => {
             }}>
                 {/* Ảnh nền làm mờ */}
                 <img
-                    src="src/assets/homepage/banner.jpg"
+                    src="homepage/banner.jpg"
                     alt="banner"
                     style={{
                         width: "100%",
@@ -313,7 +313,7 @@ const HomePage = () => {
                             justifyContent: "center",
                         }}>
                             <img
-                                src="src/assets/homepage/why_choose.png"
+                                src="homepage/why_choose.png"
                                 alt="Mama's Clean Team"
                                 style={{
                                     width: "100%",
@@ -986,7 +986,7 @@ const HomePage = () => {
                                 background: '#fff'
                             }}>
                                 <img
-                                    src="src/assets/homepage/student_cleaning_service.jpg"
+                                    src="homepage/student_cleaning_service.jpg"
                                     alt="Clean living space"
                                     style={{
                                         width: '100%',

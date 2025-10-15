@@ -1,5 +1,5 @@
 import { BellOutlined, LogoutOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Button, Layout } from 'antd';
+import { Avatar, Button, Layout, message } from 'antd';
 import { useContext } from 'react';
 import { logoutAPI } from '../../../services/api.service';
 import { AuthContext } from '../../context/auth.context';
@@ -9,7 +9,7 @@ const { Header } = Layout;
 
 const AdminHeader = () => {
 
-    const { user, setUser } = useContext(AuthContext)
+    const { user, setUser, setIsAppLogout } = useContext(AuthContext)
     const navigate = useNavigate()
 
     const handleLogout = async () => {
@@ -19,7 +19,7 @@ const AdminHeader = () => {
             localStorage.removeItem("access_token")
             setUser(null)
             message.success("Đăng xuất thành công.")
-            setOpenDropDown(false)
+            setIsAppLogout(true)
         }
     }
 
@@ -81,7 +81,7 @@ const AdminHeader = () => {
                         color: '#666'
                     }}
                     icon={<UserOutlined />}
-                    src={`http://localhost:8080/upload/avatar/${user.avatar}`}
+                    src={`https://mamasclean.com/upload/avatar/${user.avatar}`}
                 />
             </div>
         </Header>

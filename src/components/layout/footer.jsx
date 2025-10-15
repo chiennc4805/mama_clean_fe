@@ -30,7 +30,7 @@ const FooterLayout = () => {
                     {/* Logo + slogan + social */}
                     <div style={{ minWidth: 300, flex: "1 1 320px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
-                            <img src="src/assets/logo.png" alt="Mama's Clean" style={{ height: 55 }} />
+                            <img src="logo.png" alt="Mama's Clean" style={{ height: 55 }} />
                             <span style={{
                                 fontWeight: 700,
                                 color: "#21823b",

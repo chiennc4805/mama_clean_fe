@@ -127,7 +127,6 @@ const FeedbackPage = () => {
 
         if (validateForm()) {
             setLoading(true);
-            console.log('Form values:', formData);
 
             setTimeout(() => {
                 setLoading(false);
@@ -182,7 +181,7 @@ const FeedbackPage = () => {
                             justifyContent: 'center'
                         }}>
                             <div style={{ color: '#999', fontSize: '16px' }}>
-                                <img src="src/assets/feedbackpage/header.png" alt="" />
+                                <img src="feedbackpage/header.png" alt="" />
                             </div>
                         </div>
                     </Col>

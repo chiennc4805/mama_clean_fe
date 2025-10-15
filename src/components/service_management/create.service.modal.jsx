@@ -17,8 +17,6 @@ const ServiceForm = (props) => {
     };
 
     const onFinish = (values) => {
-
-        console.log(values)
         values.prices.forEach(async e => {
             const res = await createServiceAPI(values.name, values.description, e.area, e.price)
             if (res.data) {

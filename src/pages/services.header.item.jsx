@@ -10,28 +10,28 @@ const CleaningService = () => {
             title: 'Dọn dẹp cơ bản theo gói, dành cho các phòng trọ',
             price: 'Chỉ từ 180,000 VNĐ',
             description: 'Quét, lau nhà, sắp xếp giường chiếu (có thể thay ga chăn gối nếu được yêu cầu), cọ rửa lavabo, toilet, gương, đổ rác (nếu được yêu cầu). Rửa chén bát đĩa, lau bếp, cọ lau bồn rửa bát, lau đơn tủ lạnh (nếu được yêu cầu), lau sàn. Lau bàn ghế học (nếu được yêu cầu).',
-            imageUrl: 'src/assets/service_page/image.png'
+            imageUrl: 'service_page/image.png'
         },
         {
             id: 2,
             title: 'Dọn dẹp cơ bản theo giờ, dành cho nhà ở, văn phòng',
             price: 'Chỉ từ 7,500 VNĐ/mét vuông',
             description: 'Quét, lau nhà, sắp xếp giường chiếu (có thể thay ga chăn gối nếu được yêu cầu), cọ rửa lavabo, toilet, gương, đổ rác ( nếu được yêu cầu). Rửa chén bát đĩa, lau bếp, cọ lau bồn rửa bát, lau đơn tủ lạnh (nếu được yêu cầu), lau bàn ghế học (nếu được yêu cầu).',
-            imageUrl: 'src/assets/service_page/image.png'
+            imageUrl: 'service_page/image.png'
         },
         {
             id: 3,
             title: 'Dọn dẹp trung bình theo giờ, dành cho nhà ở, văn phòng',
             price: 'Chỉ từ 8,000 VNĐ/mét vuông',
             description: 'Quét lau nhà Sắp xếp giường chiếu (có thể thay ga chăn gối nếu được yêu cầu), cọ rửa lavabo, toilet, gương, đổ rác (nếu được yêu cầu). Rửa chén bát đĩa, lau bếp, cọ lau bồn rửa bát, lau đơn tủ lạnh (nếu được yêu cầu), lau tivi, bàn ghế (nếu được yêu cầu), lau cửa sổ, cửa ra vào.',
-            imageUrl: 'src/assets/service_page/image.png'
+            imageUrl: 'service_page/image.png'
         },
         {
             id: 4,
             title: 'Dọn dẹp chuyên sâu theo giờ, dành cho nhà ở, văn phòng',
             price: 'Chỉ từ 10,000 VNĐ/mét vuông',
             description: 'Quét lau nhà Sắp xếp giường chiếu (có thể thay ga chăn gối nếu được yêu cầu), cọ rửa lavabo, toilet, gương, dó rác (nếu được yêu cầu). Rửa chén bát đĩa, lau bếp, cọ lau bồn rửa bát, lau đơn tủ lạnh (nếu được yêu cầu), lau tivi, bàn ghế (nếu được yêu cầu), lau cửa sổ, cửa ra vào.',
-            imageUrl: 'src/assets/service_page/image.png'
+            imageUrl: 'service_page/image.png'
         }
     ];
 

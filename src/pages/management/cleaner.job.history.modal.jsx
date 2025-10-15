@@ -18,7 +18,6 @@ const JobHistoryModal = (props) => {
     const [historicalJobs, setHistoricalJobs] = useState([])
 
     useEffect(() => {
-        console.log(filter)
         let filterParam = `cleaner.id~'${user.id}'`
         if (filter.status) {
             filterParam += ` and status~'${filter.status}'`

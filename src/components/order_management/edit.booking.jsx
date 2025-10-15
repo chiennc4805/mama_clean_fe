@@ -58,7 +58,6 @@ const EditBookingComponent = (props) => {
     }, [bookingId])
 
     const handleUpdate = async (values) => {
-        console.log(values)
         setLoading(true)
         const res = await updateBookingAPI(dataDetail.id, values.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, values.date.format("DD/MM/YYYY"), values.time.format("HH:mm:ss"), dataDetail.totalPrice, values.note, dataDetail.status, dataDetail.customer.id, dataDetail?.cleaner?.id || "", dataDetail.service.id)
         if (res.data) {

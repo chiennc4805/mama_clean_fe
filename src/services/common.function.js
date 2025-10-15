@@ -13,7 +13,6 @@ const getCoordsFromAddress = async (address) => {
         });
     const data = await res.json();
     if (data.length > 0) {
-        console.log("Lat:", data[0].lat, "Lng:", data[0].lon);
         return { lat: data[0].lat, lon: data[0].lon };
     } else {
         console.error("Không tìm thấy tọa độ cho địa chỉ:", address);

@@ -32,10 +32,7 @@ const LoginPage = () => {
             }
             else {
                 setLoading(false)
-                notification.error({
-                    message: "Error login",
-                    description: JSON.stringify(res.message)
-                })
+                message.error(res.message.trim())
             }
         }, 2000)
     }

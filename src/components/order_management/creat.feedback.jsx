@@ -19,7 +19,6 @@ const CreateFeedbackComponent = (props) => {
     const [loading, setLoading] = useState(false)
 
     const handleCreate = async (values) => {
-        console.log(values)
         setLoading(true)
         const res = await createFeedBackAPI(values.content, values.rating, bookingId)
         if (res.data) {

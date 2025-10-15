@@ -36,7 +36,6 @@ const CleanerDetail = (props) => {
     };
 
     useEffect(() => {
-        console.log(dataDetail)
         setFormData({
             id: dataDetail.user.id,
             name: dataDetail.user.name,
@@ -56,8 +55,6 @@ const CleanerDetail = (props) => {
     }, [])
 
     const handleSubmit = async () => {
-        console.log('Form values:', formData);
-
         setLoading(true)
         const gender = formData.gender === "1" ? true : false
         const resUser = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, dataDetail.user.role?.id)
@@ -115,7 +112,7 @@ const CleanerDetail = (props) => {
                     }}>
                         <Avatar
                             size={80}
-                            src={`http://localhost:8080/upload/avatar/${user.avatar}`}
+                            src={`https://mamasclean.com/upload/avatar/${user.avatar}`}
                         />
                         <Button
                             type="link"

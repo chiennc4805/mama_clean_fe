@@ -24,7 +24,6 @@ const CustomerDetail = (props) => {
     };
 
     useEffect(() => {
-        console.log(dataDetail)
         setFormData({
             id: dataDetail.id,
             name: dataDetail.name,
@@ -35,7 +34,6 @@ const CustomerDetail = (props) => {
     }, [])
 
     const handleSubmit = async () => {
-        console.log('Form values:', formData);
 
         setLoading(true)
         const gender = formData.gender === "1" ? true : false

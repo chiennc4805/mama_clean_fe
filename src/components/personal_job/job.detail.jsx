@@ -114,8 +114,8 @@ const JobDetail = (props) => {
                         }}
                     >
                         <img
-                            alt={""}
-                            src="/src/assets/job_detail/demo_pic.jpg"
+                            src="/job_detail/demo_pic.jpg"
+                            alt=""
                             style={{
                                 width: '100%',
                                 height: '100%',
@@ -385,7 +385,7 @@ const JobDetail = (props) => {
                                         <Image
                                             width={400}
                                             height={300}
-                                            src={`http://localhost:8080/upload/booking_check_out/${bookingCheckOut.checkOutImageName}`}
+                                            src={`https://mamasclean.com/upload/booking_check_out/${bookingCheckOut.checkOutImageName}`}
                                             style={{ objectFit: 'cover', borderRadius: 8 }}
                                         />
                                     </div>

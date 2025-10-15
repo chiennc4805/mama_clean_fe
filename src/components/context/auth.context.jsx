@@ -24,7 +24,7 @@ const AuthWrapper = ({ children }) => {
     //     avatar: ""
     // }
     const [user, setUser] = useState(null)
-
+    const [isAppLogout, setIsAppLogout] = useState(false)
     const [isAppLoading, setIsAppLoading] = useState(true)
 
     useEffect(() => {
@@ -44,7 +44,7 @@ const AuthWrapper = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, isAppLoading }}>
+        <AuthContext.Provider value={{ user, setUser, isAppLoading, isAppLogout, setIsAppLogout }}>
             {children}
         </AuthContext.Provider>
     )
