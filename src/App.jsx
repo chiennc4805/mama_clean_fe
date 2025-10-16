@@ -138,7 +138,7 @@ function App() {
 								width: "100%",
 								background: "#fff",
 								padding: 0,
-								height: "13vh"
+								height: isMobile ? "10vh" : "13vh"
 							}}>
 							<HeaderLayOut />
 						</Header>

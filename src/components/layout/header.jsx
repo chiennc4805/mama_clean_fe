@@ -213,8 +213,15 @@ function HeaderLayOut() {
                     type="text"
                     icon={<MenuOutlined style={{ fontSize: 24, color: "#21823b" }} />}
                     onClick={() => setMobileMenuOpen(true)}
-                    style={{ display: 'none' }}
-                />
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 0,
+                        height: "40px",
+                        width: "40px",
+                        paddingBottom: 55
+                    }} />
             </div>
 
             {/* Mobile Drawer */}
