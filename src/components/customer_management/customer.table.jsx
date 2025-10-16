@@ -143,8 +143,9 @@ const CustomerTable = (props) => {
                             rowKey={"id"}
                             columns={columns}
                             dataSource={dataTable}
-                            bordered={true}
-                            size='large'
+                            bordered
+                            size='medium'
+                            scroll={{ x: "max-content" }}
                             pagination={
                                 {
                                     current: current,
@@ -154,6 +155,10 @@ const CustomerTable = (props) => {
                                     showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                                 }}
                             onChange={onChange}
+                            style={{
+                                fontSize: "14px",
+                                overflowX: "auto",
+                            }}
                         />
                     </Col>
                 </Row>

@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Divider, Input, Select } from 'antd';
+import { Button, Col, DatePicker, Divider, Input, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import BookingTable from '../../components/booking_management/booking.table';
 import BookingForm from '../../components/booking_management/create.booking.modal';
@@ -72,7 +72,7 @@ const BookingManagement = () => {
                         Quản Lý Đơn Hàng
                     </h1>
 
-                    <Button
+                    {/* <Button
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={() => setIsFormOpen(true)}
@@ -84,26 +84,25 @@ const BookingManagement = () => {
                         }}
                     >
                         Thêm mới
-                    </Button>
+                    </Button> */}
                 </div>
 
                 <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
                 {/* filter */}
-                <div style={{
+                <Row gutter={[16, 24]} style={{
                     display: 'flex',
-                    gap: 50,
                     marginBottom: '20px',
                     padding: "0px 20px"
                 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Trạng thái
                         </div>
                         <Select
                             defaultValue=""
                             placeholder="Chọn trạng thái"
-                            style={{ width: 200, height: 40 }}  // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(value) => setFilter({ ...filter, status: value })}
                         >
                             <Option value="">Chọn trạng thái</Option>
@@ -114,43 +113,43 @@ const BookingManagement = () => {
                             <Option value="đã hoàn thành">Đã hoàn thành</Option>
                             <Option value="đã huỷ">Đã huỷ</Option>
                         </Select>
-                    </div>
+                    </Col>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Ngày làm việc
                         </div>
                         <DatePicker
                             placeholder="Tìm kiếm theo ngày"
-                            style={{ width: 200, height: 40 }} // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(date, dateString) => setFilter({ ...filter, date: dateString })}
                         />
-                    </div>
+                    </Col>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Tên khách hàng
                         </div>
                         <Input
                             placeholder="Tìm kiếm theo tên khách hàng"
                             prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                            style={{ width: 250, height: 40 }} // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(e) => setFilter({ ...filter, customerName: e.target.value })}
                         />
-                    </div>
+                    </Col>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Tên nhân viên
                         </div>
                         <Input
                             placeholder="Tìm kiếm theo tên nhân viên"
                             prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                            style={{ width: 250, height: 40 }} // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(e) => setFilter({ ...filter, cleanerName: e.target.value })}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
 
                 <BookingForm
                     loadBooking={loadBooking}

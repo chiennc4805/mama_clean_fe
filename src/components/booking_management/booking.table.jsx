@@ -154,20 +154,26 @@ const BookingTable = (props) => {
                 <Row style={{ margin: "1%" }}>
                     <Col xs={24} style={{ width: "100vw" }}>
                         <Table
-                            rowKey={"id"}
+                            rowKey="id"
                             columns={columns}
                             dataSource={dataBookings}
-                            bordered={true}
-                            size='large'
-                            pagination={
-                                {
-                                    current: current,
-                                    pageSize: pageSize,
-                                    showSizeChanger: true,
-                                    total: total,
-                                    showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
-                                }}
+                            bordered
+                            size="middle"
+                            scroll={{ x: "max-content" }}
+                            pagination={{
+                                current,
+                                pageSize,
+                                showSizeChanger: true,
+                                total,
+                                showTotal: (total, range) => (
+                                    <div>{range[0]}-{range[1]} trên {total} rows</div>
+                                ),
+                            }}
                             onChange={onChange}
+                            style={{
+                                fontSize: "14px",
+                                overflowX: "auto",
+                            }}
                         />
                     </Col>
                 </Row>

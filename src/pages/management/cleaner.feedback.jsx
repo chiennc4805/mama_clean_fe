@@ -154,7 +154,14 @@ const CustomerReviews = () => {
                 <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginBottom: 40 }}>
+                <div
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr',
+                        gap: 48,
+                        marginBottom: 40,
+                    }}
+                >
                     {/* Left side - Overall rating */}
                     <Card
                         style={{
@@ -217,7 +224,13 @@ const CustomerReviews = () => {
                 <div>
                     <Title level={5} style={{ marginBottom: 24 }}>Nhận xét từ khách hàng (mới nhất)</Title>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr',
+                            gap: 24,
+                        }}
+                    >
                         {reviews && reviews.length > 0 ? reviews.map((review, index) => (
                             <Card
                                 key={index}

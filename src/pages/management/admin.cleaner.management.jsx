@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Divider, Input, InputNumber, Select } from 'antd';
+import { Button, Col, DatePicker, Divider, Input, InputNumber, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import CleanerTable from '../../components/cleaner_management/cleaner.table';
 import CleanerForm from '../../components/cleaner_management/create.cleaner.modal';
@@ -83,25 +83,24 @@ const CleanerManagement = () => {
                     <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
                     {/* filter */}
-                    <div style={{
+                    <Row gutter={[16, 24]} style={{
                         display: 'flex',
-                        gap: 50,
                         marginBottom: '20px',
                         padding: "0px 20px"
                     }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                                 Họ và tên
                             </div>
                             <Input
                                 placeholder="Tìm kiếm theo tên"
                                 prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                                style={{ width: 250, height: 40 }} // tăng chiều rộng
+                                style={{ width: "100%" }}
                                 onChange={(e) => setFilter({ name: e.target.value, rating: filter.rating })}
                             />
-                        </div>
+                        </Col>
 
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                                 Rating (min)
                             </div>
@@ -109,11 +108,11 @@ const CleanerManagement = () => {
                                 placeholder="Tìm kiếm rating >="
                                 min={0}
                                 max={5}
-                                style={{ width: 250, height: 40 }} // tăng chiều rộng
+                                style={{ width: "100%" }}
                                 onChange={(value) => setFilter({ name: filter.name, rating: value || 0 })}
                             />
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
 
                     <CleanerForm
                         loadCleaner={loadCleaner}

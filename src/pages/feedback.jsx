@@ -170,18 +170,30 @@ const FeedbackPage = () => {
                         </Paragraph>
                     </Col>
                     <Col xs={24} md={12} lg={10}>
-                        <div style={{
-                            backgroundColor: '#d4e4e8',
-                            borderRadius: '16px',
-                            padding: '40px',
-                            textAlign: 'center',
-                            minHeight: '250px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            <div style={{ color: '#999', fontSize: '16px' }}>
-                                <img src="feedbackpage/header.png" alt="" />
+                        <div
+                            style={{
+                                backgroundColor: "#d4e4e8",
+                                borderRadius: "16px",
+                                padding: "40px",
+                                textAlign: "center",
+                                minHeight: "250px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                            }}
+                        >
+                            <div style={{ width: "100%" }}>
+                                <img
+                                    src="/feedbackpage/header.png"
+                                    alt="feedback header"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto",
+                                        borderRadius: "12px",
+                                        objectFit: "contain",
+                                    }}
+                                />
                             </div>
                         </div>
                     </Col>
@@ -324,7 +336,6 @@ const FeedbackPage = () => {
                                     value={formData.rating}
                                     onChange={(value) => handleChange('rating', value)}
                                     style={{ fontSize: '32px' }}
-                                    allowHalf
                                 />
                                 {errors.rating && (
                                     <div style={{ color: '#ff4d4f', fontSize: '12px', marginTop: '4px' }}>

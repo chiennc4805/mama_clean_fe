@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { DatePicker, Divider, Input, Select } from 'antd';
+import { Col, DatePicker, Divider, Input, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import AssignmentTable from '../../components/manual_assignment/assignment.table';
 import { fetchAllBookingsWithPaginationAPI, fetchAllUsersWithoutPagination } from '../../services/api.service';
@@ -73,36 +73,35 @@ const ManualAssignment = () => {
                 <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
                 {/* filter */}
-                <div style={{
+                <Row gutter={[16, 24]} style={{
                     display: 'flex',
-                    gap: 50,
                     marginBottom: '20px',
                     padding: "0px 20px"
                 }}>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Ngày làm việc
                         </div>
                         <DatePicker
                             placeholder="Tìm kiếm theo ngày"
-                            style={{ width: 200, height: 40 }} // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(date, dateString) => setFilter({ ...filter, date: dateString })}
                         />
-                    </div>
+                    </Col>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                             Tên khách hàng
                         </div>
                         <Input
                             placeholder="Tìm kiếm theo tên khách hàng"
                             prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                            style={{ width: 250, height: 40 }} // tăng chiều rộng
+                            style={{ width: "100%" }}
                             onChange={(e) => setFilter({ ...filter, customerName: e.target.value })}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
 
                 <AssignmentTable
                     dataCleaners={dataCleaners}

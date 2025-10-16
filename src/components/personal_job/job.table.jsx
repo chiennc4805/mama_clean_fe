@@ -177,7 +177,7 @@ const PersonalJobTable = (props) => {
 
             <Row style={{ margin: "1%" }}>
                 <Col xs={24} style={{ width: "100vw" }}>
-                    <Table
+                    {/* <Table
                         rowKey={"id"}
                         columns={columns}
                         dataSource={dataJobs}
@@ -191,6 +191,26 @@ const PersonalJobTable = (props) => {
                                 showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                             }}
                         onChange={onChange}
+                    /> */}
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={dataJobs}
+                        bordered
+                        size="middle"
+                        scroll={{ x: "max-content" }} // Cho phép cuộn ngang nếu quá nhiều cột
+                        pagination={{
+                            current,
+                            pageSize,
+                            showSizeChanger: true,
+                            total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }}
+                        onChange={onChange}
+                        style={{
+                            fontSize: "14px",
+                            overflowX: "auto",
+                        }}
                     />
                 </Col>
             </Row>

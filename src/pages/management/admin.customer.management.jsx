@@ -1,5 +1,5 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Divider, Input, Select } from 'antd';
+import { Button, Col, DatePicker, Divider, Input, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import CustomerForm from '../../components/customer_management/create.customer.modal';
 import CustomerTable from '../../components/customer_management/customer.table';
@@ -82,37 +82,36 @@ const CustomerManagement = () => {
                     <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
                     {/* filter */}
-                    <div style={{
+                    <Row gutter={[16, 24]} style={{
                         display: 'flex',
-                        gap: 50,
                         marginBottom: '20px',
                         padding: "0px 20px"
                     }}>
 
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                                 Họ và tên
                             </div>
                             <Input
                                 placeholder="Tìm kiếm theo tên"
                                 prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                                style={{ width: 250, height: 40 }} // tăng chiều rộng
+                                style={{ width: "100%" }}
                                 onChange={(e) => setFilter({ ...filter, name: e.target.value })}
                             />
-                        </div>
+                        </Col>
 
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Col xs={12} md={6} lg={6} style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
                                 Email
                             </div>
                             <Input
                                 placeholder="Tìm kiếm theo email"
                                 prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                                style={{ width: 250, height: 40 }} // tăng chiều rộng
+                                style={{ width: "100%" }}
                                 onChange={(e) => setFilter({ ...filter, email: e.target.value })}
                             />
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
 
                     <CustomerForm
                         loadUser={loadUser}

@@ -159,7 +159,8 @@ const AssignmentTable = (props) => {
                             columns={columns}
                             dataSource={dataCleaners}
                             bordered={true}
-                            size='large'
+                            size='medium'
+                            scroll={{ x: "max-content" }}
                             pagination={
                                 {
                                     current: current,
@@ -169,6 +170,10 @@ const AssignmentTable = (props) => {
                                     showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                                 }}
                             onChange={onChange}
+                            style={{
+                                fontSize: "14px",
+                                overflowX: "auto",
+                            }}
                         />
                     </Col>
                 </Row>

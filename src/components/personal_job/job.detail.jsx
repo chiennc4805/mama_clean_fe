@@ -383,7 +383,7 @@ const JobDetail = (props) => {
                                             Ảnh sau khi hoàn thành
                                         </p>
                                         <Image
-                                            width={400}
+                                            width="50%"
                                             height={300}
                                             src={`https://mamasclean.com/upload/booking_check_out/${bookingCheckOut.checkOutImageName}`}
                                             style={{ objectFit: 'cover', borderRadius: 8 }}

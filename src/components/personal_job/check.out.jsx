@@ -1,100 +1,142 @@
-import React, { useState } from 'react';
-import { Card, Button, Typography, Space, Image, Upload, message } from 'antd';
-import { UploadOutlined, ArrowLeftOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Button, Typography, Space, Image, Upload, message, Input } from 'antd';
+import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import {
+    createBookingCheckOutAPI,
+    deleteBookingCheckOutAPI,
+    updateBookingAPI,
+    uploadImageAPI
+} from '../../services/api.service';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-import { Input } from 'antd';
-import { createBookingCheckOutAPI, deleteBookingCheckOutAPI, updateBookingAPI, uploadImageAPI } from '../../services/api.service';
-
 
 export default function CheckOutJob(props) {
-
     const [notes, setNotes] = useState('');
     const [checkOutImage, setCheckOutImage] = useState(null);
     const [checkOutFile, setCheckOutFile] = useState(null);
-    const { dataDetail, setStep } = props
-    const [loading, setLoading] = useState(false)
+    const { dataDetail, setStep } = props;
+    const [loading, setLoading] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    // Upload handler
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handleAfterUpload = (file) => {
         const newName = `${dataDetail.id}.${file.name.split('.').pop()}`;
         const renamedFile = new File([file], newName, { type: file.type });
-
         const reader = new FileReader();
         reader.onload = (e) => {
-            setCheckOutImage(e.target.result); // ghi đè ảnh cũ
+            setCheckOutImage(e.target.result);
         };
         reader.readAsDataURL(renamedFile);
         setCheckOutFile(renamedFile);
-        return false; // ngăn upload mặc định
+        return false;
     };
 
     const handleSubmit = async () => {
         if (!checkOutImage) {
-            message.error("Vui lòng tải lên ảnh sau khi dọn dẹp!");
+            message.error('Vui lòng tải lên ảnh sau khi dọn dẹp!');
             return;
         }
 
-        setLoading(true)
+        setLoading(true);
+        const formData = new FormData();
+        formData.append('file', checkOutFile);
 
-        const formData = new FormData()
-        formData.append("file", checkOutFile)
-
-        //upload file
-        const resUploadFile = await uploadImageAPI("booking_check_out", formData)
-        if (resUploadFile.data !== "Upload failed!") {
-            //create checkout object
-            const resCreate = await createBookingCheckOutAPI(resUploadFile.data, notes, dataDetail.id)
+        const resUploadFile = await uploadImageAPI('booking_check_out', formData);
+        if (resUploadFile.data !== 'Upload failed!') {
+            const resCreate = await createBookingCheckOutAPI(resUploadFile.data, notes, dataDetail.id);
             if (resCreate.data) {
-                //update booking status
-                const resUpdate = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Đã hoàn thành", dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
+                const resUpdate = await updateBookingAPI(
+                    dataDetail.id,
+                    dataDetail.name,
+                    dataDetail.address,
+                    dataDetail.addressLat,
+                    dataDetail.addressLon,
+                    dataDetail.date,
+                    dataDetail.startTime,
+                    dataDetail.totalPrice,
+                    dataDetail.note,
+                    'Đã hoàn thành',
+                    dataDetail.customer.id,
+                    dataDetail.cleaner.id,
+                    dataDetail.service.id
+                );
                 if (resUpdate.data) {
                     message.success('Đã xác nhận hoàn thành công việc thành công!');
                     setTimeout(() => {
-                        setLoading(false)
-                        window.location.reload()
-                    }, 2000)
-                }
-                else {
-                    await deleteBookingCheckOutAPI(resCreate.data.id)
-                    message.error(resUpdate.message.trim())
-                    setLoading(false)
+                        setLoading(false);
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    await deleteBookingCheckOutAPI(resCreate.data.id);
+                    message.error(resUpdate.message.trim());
+                    setLoading(false);
                 }
             } else {
-                message.error(resCreate.message.trim())
-                setLoading(false)
+                message.error(resCreate.message.trim());
+                setLoading(false);
             }
         } else {
-            message.error("Lưu ảnh thất bại. Vui lòng thử lại!")
-            setLoading(false)
+            message.error('Lưu ảnh thất bại. Vui lòng thử lại!');
+            setLoading(false);
         }
     };
 
     return (
-        <div style={{
-            maxWidth: 900,
-            margin: '0 auto',
-            padding: '40px 20px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)"
-        }}>
+        <div
+            style={{
+                maxWidth: 900,
+                margin: '0 auto',
+                padding: isMobile ? '20px 12px' : '40px 20px',
+                fontFamily:
+                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+            }}
+        >
             {/* Header */}
-            <div style={{ marginBottom: 40 }}>
-                <Title level={2} style={{ marginBottom: 8, fontSize: 28, fontWeight: 600 }}>
+            <div style={{ marginBottom: isMobile ? 24 : 40 }}>
+                <Title
+                    level={2}
+                    style={{
+                        marginBottom: 8,
+                        fontSize: isMobile ? 22 : 28,
+                        fontWeight: 600,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Xác nhận hoàn thành công việc
                 </Title>
-                <Text style={{ color: '#666', fontSize: 14 }}>
-                    Vui lòng tải lên ảnh trước/sau và ghi chú cuối cùng.
+                <Text
+                    style={{
+                        color: '#666',
+                        fontSize: isMobile ? 13 : 14,
+                        display: 'block',
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
+                    Vui lòng tải lên ảnh sau khi dọn dẹp và ghi chú cuối cùng.
                 </Text>
             </div>
 
             {/* Thông tin công việc */}
             <div style={{ marginBottom: 40 }}>
-                <Title level={5} style={{ marginBottom: 16, fontSize: 20, fontWeight: 600 }}>
+                <Title
+                    level={5}
+                    style={{
+                        marginBottom: 16,
+                        fontSize: isMobile ? 18 : 20,
+                        fontWeight: 600,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Thông tin công việc
                 </Title>
-                <div style={{ fontSize: 14 }}>
+                <div style={{ fontSize: isMobile ? 13 : 14 }}>
                     <div style={{ marginBottom: 8 }}>
                         <Text style={{ color: '#666' }}>Mã công việc: </Text>
                         <Text style={{ color: '#000' }}>{dataDetail.id}</Text>
@@ -105,38 +147,59 @@ export default function CheckOutJob(props) {
                     </div>
                     <div>
                         <Text style={{ color: '#666' }}>Thời gian: </Text>
-                        <Text style={{ color: '#000' }}>{dataDetail.date}, {dataDetail.startTime}</Text>
+                        <Text style={{ color: '#000' }}>
+                            {dataDetail.date}, {dataDetail.startTime}
+                        </Text>
                     </div>
                 </div>
             </div>
 
-            {/* Ảnh sau khi đọn dẹp */}
+            {/* Ảnh sau khi dọn dẹp */}
             <div style={{ marginBottom: 40 }}>
-                <Title level={5} style={{ marginBottom: 8, fontSize: 20, fontWeight: 600 }}>
+                <Title
+                    level={5}
+                    style={{
+                        marginBottom: 8,
+                        fontSize: isMobile ? 18 : 20,
+                        fontWeight: 600,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Ảnh sau khi dọn dẹp (1 ảnh)
                 </Title>
-                <Text style={{ display: 'block', color: '#666', fontSize: 14, marginBottom: 16 }}>
+                <Text
+                    style={{
+                        display: 'block',
+                        color: '#666',
+                        fontSize: isMobile ? 13 : 14,
+                        marginBottom: 16,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Tải lên ảnh tình trạng sau khi bạn đã hoàn tất công việc.
                 </Text>
 
-                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space
+                    direction="vertical"
+                    size="middle"
+                    style={{
+                        width: '100%',
+                        alignItems: 'center',
+                    }}
+                >
                     {checkOutImage && (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                             <Image
-                                width={500}
-                                height={300}
+                                width={isMobile ? 280 : 500}
+                                height={isMobile ? 180 : 300}
                                 src={checkOutImage}
                                 style={{ objectFit: 'cover', borderRadius: 8 }}
                             />
                         </div>
                     )}
 
-                    <Upload
-                        beforeUpload={handleAfterUpload}
-                        showUploadList={false}
-                        accept="image/*"
-                    >
-                        <Button icon={<UploadOutlined />} block>
+                    <Upload beforeUpload={handleAfterUpload} showUploadList={false} accept="image/*">
+                        <Button icon={<UploadOutlined />} block={isMobile}>
                             Tải ảnh lên
                         </Button>
                     </Upload>
@@ -145,10 +208,26 @@ export default function CheckOutJob(props) {
 
             {/* Ghi chú cuối cùng */}
             <div style={{ marginBottom: 40 }}>
-                <Title level={5} style={{ marginBottom: 8, fontSize: 16, fontWeight: 600 }}>
+                <Title
+                    level={5}
+                    style={{
+                        marginBottom: 8,
+                        fontSize: isMobile ? 16 : 18,
+                        fontWeight: 600,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Ghi chú cuối cùng (Tùy chọn)
                 </Title>
-                <Text style={{ display: 'block', color: '#666', fontSize: 14, marginBottom: 12 }}>
+                <Text
+                    style={{
+                        display: 'block',
+                        color: '#666',
+                        fontSize: isMobile ? 13 : 14,
+                        marginBottom: 12,
+                        textAlign: isMobile ? 'center' : 'left',
+                    }}
+                >
                     Thêm bất kỳ ghi chú quan trọng nào về công việc.
                 </Text>
                 <TextArea
@@ -158,24 +237,33 @@ export default function CheckOutJob(props) {
                     style={{
                         fontSize: 14,
                         borderRadius: 8,
-                        padding: 12
+                        padding: 12,
                     }}
                     onChange={(e) => setNotes(e.target.value)}
                 />
             </div>
 
             {/* Action buttons */}
-            <div style={{ display: 'flex', justifyContent: "end", gap: 20 }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: isMobile ? 'column-reverse' : 'row',
+                    justifyContent: isMobile ? 'center' : 'end',
+                    alignItems: 'center',
+                    gap: isMobile ? 12 : 20,
+                }}
+            >
                 <Button
                     size="large"
                     icon={<ArrowLeftOutlined />}
                     style={{
                         height: 48,
                         borderRadius: 8,
-                        fontSize: 15,
+                        fontSize: isMobile ? 14 : 15,
                         fontWeight: 500,
+                        width: isMobile ? '100%' : 'auto',
                     }}
-                    onClick={() => setStep("list")}
+                    onClick={() => setStep('list')}
                 >
                     Quay lại chi tiết công việc
                 </Button>
@@ -185,10 +273,11 @@ export default function CheckOutJob(props) {
                     style={{
                         height: 48,
                         borderRadius: 8,
-                        fontSize: 15,
+                        fontSize: isMobile ? 14 : 15,
                         fontWeight: 500,
                         backgroundColor: '#41864D',
-                        borderColor: '#41864D'
+                        borderColor: '#41864D',
+                        width: isMobile ? '100%' : 'auto',
                     }}
                     onClick={() => handleSubmit()}
                     loading={loading}
@@ -199,140 +288,3 @@ export default function CheckOutJob(props) {
         </div>
     );
 }
-
-// export default function CheckOutJob() {
-
-//     const [beforeImages, setBeforeImages] = useState([
-//         'https://images.unsplash.com/photo-1556912167-f556f1f39fdf?w=400&h=300&fit=crop'
-//     ]);
-//     const [afterImages, setAfterImages] = useState([
-//         'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=400&h=300&fit=crop'
-//     ]);
-
-//     const handleBeforeUpload = (file) => {
-//         const reader = new FileReader();
-//         reader.onload = (e) => {
-//             setBeforeImages([...beforeImages, e.target.result]);
-//         };
-//         reader.readAsDataURL(file);
-//         return false;
-//     };
-
-//     const handleAfterUpload = (file) => {
-//         const reader = new FileReader();
-//         reader.onload = (e) => {
-//             setAfterImages([...afterImages, e.target.result]);
-//         };
-//         reader.readAsDataURL(file);
-//         return false;
-//     };
-
-//     const handleSubmit = () => {
-//         message.success('Đã xác nhận hoàn thành công việc thành công!');
-//     };
-
-//     const handleBack = () => {
-//         message.info('Quay lại chi tiết công việc');
-//     };
-
-//     return (
-//             {/* Ảnh trước khi đọn dẹp */}
-//             <div style={{ marginBottom: 40 }}>
-//                 <Title level={5} style={{ marginBottom: 8, fontSize: 20, fontWeight: 600 }}>
-//                     Ảnh trước khi đọn dẹp
-//                 </Title>
-//                 <Text style={{ display: 'block', color: '#666', fontSize: 14, marginBottom: 16 }}>
-//                     Tải lên ảnh tình trạng trước khi bạn bắt đầu công việc.
-//                 </Text>
-
-//                 <div style={{ display: 'flex', gap: 16, marginBottom: 0 }}>
-//                     {/* Image preview */}
-//                     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-//                         <Image.PreviewGroup>
-//                             <Space wrap size="middle">
-//                                 {beforeImages.map((img, idx) => (
-//                                     <div key={idx} style={{ position: 'relative', display: 'inline-block' }}>
-//                                         <Image
-//                                             width={150}
-//                                             height={120}
-//                                             src={img}
-//                                             style={{ objectFit: 'cover', borderRadius: 8 }}
-//                                         />
-//                                         <CloseCircleOutlined
-//                                             onClick={() => {
-//                                                 setBeforeImages(beforeImages.filter((_, i) => i !== idx));
-//                                             }}
-//                                             style={{
-//                                                 position: 'absolute',
-//                                                 top: 4,
-//                                                 right: 4,
-//                                                 fontSize: 18,
-//                                                 color: 'gray',
-//                                                 cursor: 'pointer',
-//                                                 background: 'white',
-//                                                 borderRadius: '50%'
-//                                             }}
-//                                         />
-//                                     </div>
-//                                 ))}
-//                             </Space>
-//                         </Image.PreviewGroup>
-//                         <Upload
-//                             beforeUpload={handleBeforeUpload}
-//                             showUploadList={false}
-//                             accept="image/*"
-//                         >
-//                             <Button icon={<UploadOutlined />} block>Tải ảnh lên</Button>
-//                         </Upload>
-//                     </Space>
-//                 </div>
-//             </div>
-
-//             {/* Ảnh sau khi đọn dẹp */}
-//             <div style={{ marginBottom: 40 }}>
-//                 <Title level={5} style={{ marginBottom: 8, fontSize: 20, fontWeight: 600 }}>
-//                     Ảnh sau khi đọn dẹp
-//                 </Title>
-//                 <Text style={{ display: 'block', color: '#666', fontSize: 14, marginBottom: 16 }}>
-//                     Tải lên ảnh tình trạng sau khi bạn đã hoàn tát công việc.
-//                 </Text>
-
-//                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-//                     <Image.PreviewGroup>
-//                         <Space wrap size="middle">
-//                             {afterImages.map((img, idx) => (
-//                                 <div key={idx} style={{ position: 'relative', display: 'inline-block' }}>
-//                                     <Image
-//                                         width={150}
-//                                         height={120}
-//                                         src={img}
-//                                         style={{ objectFit: 'cover', borderRadius: 8 }}
-//                                     />
-//                                     <CloseCircleOutlined
-//                                         onClick={() => {
-//                                             setAfterImages(afterImages.filter((_, i) => i !== idx));
-//                                         }}
-//                                         style={{
-//                                             position: 'absolute',
-//                                             top: 4,
-//                                             right: 4,
-//                                             fontSize: 18,
-//                                             color: 'gray',
-//                                             cursor: 'pointer',
-//                                             background: 'white',
-//                                             borderRadius: '50%'
-//                                         }}
-//                                     />
-//                                 </div>
-//                             ))}
-//                         </Space>
-//                     </Image.PreviewGroup>
-//                     <Upload
-//                         beforeUpload={handleAfterUpload}
-//                         showUploadList={false}
-//                         accept="image/*"
-//                     >
-//                         <Button icon={<UploadOutlined />} block>Tải ảnh lên</Button>
-//                     </Upload>
-//                 </Space>
-//             </div>

@@ -128,13 +128,12 @@ const FeedbackManagement = () => {
                 <Divider size="large" style={{ minWidth: "50%", width: "95%", margin: "0 auto", paddingBottom: "40px" }} />
 
                 {/* filter */}
-                <div style={{
+                <Row gutter={[16, 24]} style={{
                     display: 'flex',
-                    gap: 50,
                     marginBottom: 20,
                     padding: "0px 20px"
                 }}>
-                    <Col xs={24} sm={12} md={6}>
+                    <Col xs={12} md={6} lg={6}>
                         <InputNumber
                             placeholder="Xếp hạng"
                             style={{ width: '100%' }}
@@ -143,7 +142,7 @@ const FeedbackManagement = () => {
                             max={5}
                         />
                     </Col>
-                    <Col xs={24} sm={12} md={6}>
+                    <Col xs={12} md={6} lg={6}>
                         <DatePicker
                             style={{ width: '100%' }}
                             placeholder="Ngày giao dịch"
@@ -151,7 +150,7 @@ const FeedbackManagement = () => {
                             onChange={(date, dateString) => setFilter(prev => ({ ...prev, date: date }))}
                         />
                     </Col>
-                </div>
+                </Row>
 
                 <div
                     style={{
@@ -164,6 +163,8 @@ const FeedbackManagement = () => {
                     <Table
                         columns={columns}
                         dataSource={feedbacks}
+                        size='medium'
+                        scroll={{ x: "max-content" }}
                         pagination={
                             {
                                 current: current,
@@ -173,6 +174,10 @@ const FeedbackManagement = () => {
                                 showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                             }}
                         onChange={onChange}
+                        style={{
+                            fontSize: "14px",
+                            overflowX: "auto",
+                        }}
                     />
                 </div>
             </div>

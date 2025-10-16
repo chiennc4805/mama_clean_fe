@@ -288,6 +288,8 @@ const AdminTransactionManagementPage = () => {
                 <Table
                     columns={columns}
                     dataSource={transactions}
+                    size="middle"
+                    scroll={{ x: "max-content" }}
                     pagination={
                         {
                             current: current,
@@ -297,6 +299,10 @@ const AdminTransactionManagementPage = () => {
                             showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }}
                     onChange={onChange}
+                    style={{
+                        fontSize: "14px",
+                        overflowX: "auto",
+                    }}
                 />
             </Card>
         </div>

@@ -96,7 +96,7 @@ const OrderManagement = () => {
 
     useEffect(() => {
         const loadWalletTransaction = async () => {
-            const res = await fetchAllWalletTransactionsWithoutPagination("type~'BOOKING_PAYMENT'")
+            const res = await fetchAllWalletTransactionsWithoutPagination(`user.id~'${user.id}' and type~'BOOKING_PAYMENT'`)
             if (res.data) {
                 const bookingList = await fetchAllBookingsWithoutPaginationAPI(encodeURIComponent(`id in [${res.data.result.map(item => '\'' + item.ref_id + '\'')}]`));
 
@@ -159,33 +159,51 @@ const OrderManagement = () => {
             }}
         >
             <div style={{ marginBottom: 12 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>{order.title}</h3>
+                <h3 className="order-card-title">{order.title}</h3>
             </div>
 
             <Space direction="vertical" size={8} style={{ width: '100%', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
-                    <CalendarOutlined style={{ marginRight: 8 }} />
-                    <span>{order.date}</span>
-                    <ClockCircleOutlined style={{ marginLeft: 20, marginRight: 8 }} />
-                    <span>{dayjs(order.time, "HH:mm:ss").format("HH:mm")}</span>
-                    <DragOutlined style={{ marginLeft: 20, marginRight: 8 }} />
-                    <span>{order.area} m²</span>
-                    <HourglassOutlined style={{ marginLeft: 20, marginRight: 8 }} />
-                    <span>{order.duration} giờ</span>
-                    <DollarOutlined style={{ marginLeft: 20, marginRight: 8 }} />
-                    <span>{formatterNumber(order.totalPrice)} VNĐ</span>
+                <div className="order-info-row">
+                    <div className="order-info-item">
+                        <CalendarOutlined className="order-info-icon" />
+                        <span>{order.date}</span>
+                    </div>
+                    <div className="order-info-item">
+                        <ClockCircleOutlined className="order-info-icon" />
+                        <span>{dayjs(order.time, "HH:mm:ss").format("HH:mm")}</span>
+                    </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
-                    <HomeOutlined style={{ marginRight: 8 }} />
-                    <span>{order.service}</span>
+                <div className="order-info-row">
+                    <div className="order-info-item">
+                        <DragOutlined className="order-info-icon" />
+                        <span>{order.area} m²</span>
+                    </div>
+                    <div className="order-info-item">
+                        <HourglassOutlined className="order-info-icon" />
+                        <span>{order.duration} giờ</span>
+                    </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', color: '#666', fontSize: 14 }}>
-                    <EnvironmentOutlined style={{ marginRight: 8 }} />
-                    <span>{order.location}</span>
+                <div className="order-info-row">
+                    <div className="order-info-item">
+                        <DollarOutlined className="order-info-icon" />
+                        <span>{formatterNumber(order.totalPrice)} VNĐ</span>
+                    </div>
+                </div>
+                <div className="order-info-row">
+                    <div className="order-info-item full-width">
+                        <HomeOutlined className="order-info-icon" />
+                        <span>{order.service}</span>
+                    </div>
+                </div>
+                <div className="order-info-row">
+                    <div className="order-info-item full-width">
+                        <EnvironmentOutlined className="order-info-icon" />
+                        <span>{order.location}</span>
+                    </div>
                 </div>
             </Space>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="order-card-footer">
                 <div>
                     {order.status === 'Chờ xác nhận' && (
                         <Tag color="magenta" style={{ margin: 0 }}>Chờ xác nhận</Tag>
@@ -207,10 +225,11 @@ const OrderManagement = () => {
                     )}
                 </div>
 
-                <Space>
+                <Space className="order-actions" wrap>
                     {order.actions.includes('edit') && (
                         <Button
                             size="small"
+                            className="order-btn"
                             style={{
                                 borderColor: '#41864D',
                                 color: '#41864D'
@@ -218,7 +237,7 @@ const OrderManagement = () => {
                             icon={<EditOutlined />}
                             onClick={() => { setBookingIdDetail(order.id); setOpenEdit(true) }}
                         >
-                            Chỉnh sửa
+                            <span className="btn-text">Chỉnh sửa</span>
                         </Button>
                     )}
                     {order.actions.includes('cancel') && (
@@ -229,29 +248,38 @@ const OrderManagement = () => {
                             okText="Chắc chắn"
                             cancelText="Không"
                         >
-                            <Button loading={loadingId === order.id} size="small" danger icon={<CloseOutlined />} onClick={() => handleCancelBooking(order.id)}>
-                                Hủy
+                            <Button
+                                loading={loadingId === order.id}
+                                size="small"
+                                danger
+                                icon={<CloseOutlined />}
+                                onClick={() => handleCancelBooking(order.id)}
+                                className="order-btn"
+                            >
+                                <span className="btn-text">Hủy</span>
                             </Button>
                         </Popconfirm>
                     )}
                     {order.actions.includes('rate') && (
                         <Button
                             size="small"
+                            className="order-btn"
                             style={{ borderColor: '#E98B20', color: '#E98B20' }}
                             icon={<CommentOutlined />}
                             onClick={() => { setBookingIdDetail(order.id); setCleanerUserId(order.cleanerUserId); setOpenCreateFeedback(true) }}
                         >
-                            Đánh giá
+                            <span className="btn-text">Đánh giá</span>
                         </Button>
                     )}
                     {order.actions.includes('view-rate') && (
                         <Button
                             size="small"
+                            className="order-btn"
                             style={{ borderColor: '#E98B20', color: '#E98B20' }}
                             icon={<EyeOutlined />}
                             onClick={() => { setBookingIdDetail(order.id); setOpenViewFeedback(true) }}
                         >
-                            Xem đánh giá
+                            <span className="btn-text">Xem đánh giá</span>
                         </Button>
                     )}
                 </Space>
@@ -264,23 +292,15 @@ const OrderManagement = () => {
             key: '1',
             label: 'Đặt chỗ của tôi',
             children: (
-                <div style={{ padding: '24px 0' }}>
-                    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                        {/* Card Đặt chỗ sắp tới - Màu xanh */}
-                        <div style={{
-                            flex: '1 1 calc(50% - 12px)',
-                            minWidth: '300px'
-                        }}>
+                <div className="booking-tab-content">
+                    <div className="booking-cards-container">
+                        {/* Card Đặt chỗ sắp tới */}
+                        <div className="booking-card-wrapper">
                             <Card
                                 title="Đặt chỗ sắp tới"
-                                style={{
-                                    backgroundColor: '#F6FEF8',
-                                    borderRadius: 12,
-                                    border: 'none',
-                                    height: '100%'
-                                }}
+                                className="upcoming-card"
                                 headStyle={{
-                                    fontSize: 18,
+                                    fontSize: 'clamp(16px, 2vw, 18px)',
                                     fontWeight: 600,
                                     borderBottom: 'none',
                                     paddingBottom: 8
@@ -288,7 +308,7 @@ const OrderManagement = () => {
                                 bodyStyle={{
                                     maxHeight: '500px',
                                     overflowY: 'auto',
-                                    padding: '16px'
+                                    padding: 'clamp(12px, 2vw, 16px)'
                                 }}
                             >
                                 {upcomingOrders && upcomingOrders.length > 0 ?
@@ -301,21 +321,13 @@ const OrderManagement = () => {
                             </Card>
                         </div>
 
-                        {/* Card Lịch sử dịch vụ - Màu trắng */}
-                        <div style={{
-                            flex: '1 1 calc(50% - 12px)',
-                            minWidth: '300px'
-                        }}>
+                        {/* Card Lịch sử dịch vụ */}
+                        <div className="booking-card-wrapper">
                             <Card
                                 title="Lịch sử dịch vụ"
-                                style={{
-                                    backgroundColor: '#ffffff',
-                                    borderRadius: 12,
-                                    border: '1px solid #f0f0f0',
-                                    height: '100%'
-                                }}
+                                className="history-card"
                                 headStyle={{
-                                    fontSize: 18,
+                                    fontSize: 'clamp(16px, 2vw, 18px)',
                                     fontWeight: 600,
                                     borderBottom: 'none',
                                     paddingBottom: 8
@@ -323,7 +335,7 @@ const OrderManagement = () => {
                                 bodyStyle={{
                                     maxHeight: '500px',
                                     overflowY: 'auto',
-                                    padding: '16px'
+                                    padding: 'clamp(12px, 2vw, 16px)'
                                 }}
                             >
                                 {historyOrders && historyOrders.length > 0 ?
@@ -343,89 +355,46 @@ const OrderManagement = () => {
             key: '2',
             label: 'Lịch sử thanh toán',
             children: (
-                <div style={{
-                    padding: '24px',
-                    backgroundColor: '#f5f5f5',
-                    minHeight: '100vh'
-                }}>
-                    <div style={{
-                        maxHeight: '90vh',
-                        overflowY: 'auto',
-                        paddingRight: '8px'
-                    }}>
+                <div className="payment-history-content">
+                    <div className="payment-history-scroll">
                         <Row gutter={[16, 16]}>
                             {historyTransactions.map((order, index) => (
                                 <Col xs={24} sm={24} md={12} lg={12} xl={12} key={index}>
                                     <Card
                                         hoverable
-                                        style={{
-                                            borderRadius: '8px',
-                                            height: '100%'
-                                        }}
+                                        className="payment-card"
                                     >
                                         <div style={{ marginBottom: '16px' }}>
-                                            <h3 style={{
-                                                margin: 0,
-                                                fontSize: '16px',
-                                                fontWeight: 600,
-                                                color: '#262626'
-                                            }}>
+                                            <h3 className="payment-card-title">
                                                 {order.title}
                                             </h3>
                                         </div>
 
-                                        <div style={{
-                                            display: 'flex',
-                                            gap: '16px',
-                                            marginBottom: '16px',
-                                            flexWrap: 'wrap'
-                                        }}>
-                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                        <div className="payment-info-container">
+                                            <span className="payment-info-item">
                                                 <CalendarOutlined style={{ marginRight: '6px' }} />
                                                 {order.date}
                                             </span>
-                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                            <span className="payment-info-item">
                                                 <ClockCircleOutlined style={{ marginRight: '6px' }} />
                                                 {order.time}
                                             </span>
-                                            <span style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                                            <span className="payment-info-item">
                                                 <CreditCardOutlined style={{ marginRight: '6px' }} />
                                                 {order.card}
                                             </span>
                                         </div>
 
-                                        <div style={{
-                                            fontSize: '24px',
-                                            fontWeight: 700,
-                                            color: '#262626',
-                                            marginBottom: '16px'
-                                        }}>
+                                        <div className="payment-amount">
                                             {order.amount}
                                         </div>
 
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            gap: '8px',
-                                            flexWrap: 'wrap'
-                                        }}>
+                                        <div className="payment-footer">
                                             {order.status === 'completed' ? (
                                                 <Tag color="success">Hoàn thành</Tag>
                                             ) : (
                                                 <Tag color="warning">Đang chờ xử lý</Tag>
                                             )}
-
-                                            {/* <Button
-                                                type="text"
-                                                icon={<FileTextOutlined />}
-                                                style={{
-                                                    color: '#262626',
-                                                    fontWeight: 500
-                                                }}
-                                            >
-                                                Xem hóa đơn
-                                            </Button> */}
                                         </div>
                                     </Card>
                                 </Col>
@@ -439,24 +408,9 @@ const OrderManagement = () => {
 
     return (
         <>
-            <div style={{
-                minHeight: '100vh',
-                backgroundColor: '#F6F6F6',
-                padding: '24px'
-            }}>
-                <div style={{
-                    maxWidth: 1300,
-                    margin: '0 auto',
-                    backgroundColor: '#F6F6F6',
-                    borderRadius: 12,
-                    padding: '32px',
-                }}>
-                    <h1 style={{
-                        textAlign: 'center',
-                        fontSize: 40,
-                        fontWeight: 700,
-                        marginBottom: 32
-                    }}>
+            <div className="order-management-container">
+                <div className="order-management-inner">
+                    <h1 className="order-management-title">
                         Quản lý đơn hàng
                     </h1>
 
@@ -466,6 +420,7 @@ const OrderManagement = () => {
                         items={items}
                         centered
                         size="large"
+                        className="order-tabs"
                     />
                 </div>
             </div>
@@ -490,6 +445,269 @@ const OrderManagement = () => {
                 setOpen={setOpenViewFeedback}
                 bookingId={bookingIdDetail}
             />
+
+            <style jsx>{`
+                /* Container */
+                .order-management-container {
+                    min-height: 100vh;
+                    background-color: #F6F6F6;
+                    padding: clamp(16px, 3vw, 24px);
+                }
+
+                .order-management-inner {
+                    max-width: 1300px;
+                    margin: 0 auto;
+                    background-color: #F6F6F6;
+                    border-radius: 12px;
+                    padding: clamp(16px, 4vw, 32px);
+                }
+
+                .order-management-title {
+                    text-align: center;
+                    font-size: clamp(28px, 5vw, 40px);
+                    font-weight: 700;
+                    margin-bottom: clamp(20px, 4vw, 32px);
+                }
+
+                /* Booking Tab */
+                .booking-tab-content {
+                    padding: clamp(16px, 3vw, 24px) 0;
+                }
+
+                .booking-cards-container {
+                    display: flex;
+                    gap: 24px;
+                    flex-wrap: wrap;
+                }
+
+                .booking-card-wrapper {
+                    flex: 1 1 calc(50% - 12px);
+                    min-width: 300px;
+                }
+
+                .upcoming-card {
+                    background-color: #F6FEF8;
+                    border-radius: 12px;
+                    border: none;
+                    height: 100%;
+                }
+
+                .history-card {
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    border: 1px solid #f0f0f0;
+                    height: 100%;
+                }
+
+                /* Order Card */
+                .order-card-title {
+                    margin: 0;
+                    font-size: clamp(14px, 2vw, 16px);
+                    font-weight: 600;
+                }
+
+                .order-info-row {
+                    display: flex;
+                    gap: clamp(12px, 2vw, 20px);
+                    flex-wrap: wrap;
+                    color: #666;
+                    font-size: clamp(12px, 1.5vw, 14px);
+                }
+
+                .order-info-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    flex: 0 0 auto;
+                }
+
+                .order-info-item.full-width {
+                    flex: 1 1 100%;
+                }
+
+                .order-info-icon {
+                    font-size: clamp(12px, 1.5vw, 14px);
+                    flex-shrink: 0;
+                }
+
+                .order-card-footer {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                }
+
+                .order-actions {
+                    flex-wrap: wrap;
+                    gap: 8px;
+                }
+
+                .order-btn {
+                    font-size: clamp(12px, 1.5vw, 14px);
+                }
+
+                .btn-text {
+                    display: inline;
+                }
+
+                /* Payment History */
+                .payment-history-content {
+                    padding: clamp(16px, 3vw, 24px);
+                    background-color: #f5f5f5;
+                    min-height: 100vh;
+                }
+
+                .payment-history-scroll {
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    padding-right: 8px;
+                }
+
+                .payment-card {
+                    border-radius: 8px;
+                    height: 100%;
+                }
+
+                .payment-card-title {
+                    margin: 0;
+                    font-size: clamp(14px, 2vw, 16px);
+                    font-weight: 600;
+                    color: #262626;
+                }
+
+                .payment-info-container {
+                    display: flex;
+                    gap: clamp(8px, 2vw, 16px);
+                    margin-bottom: 16px;
+                    flex-wrap: wrap;
+                }
+
+                .payment-info-item {
+                    color: #8c8c8c;
+                    font-size: clamp(12px, 1.5vw, 14px);
+                    white-space: nowrap;
+                }
+
+                .payment-amount {
+                    font-size: clamp(20px, 3vw, 24px);
+                    font-weight: 700;
+                    color: #262626;
+                    margin-bottom: 16px;
+                }
+
+                .payment-footer {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                }
+
+                /* Tabs */
+                .order-tabs .ant-tabs-tab {
+                    font-size: clamp(14px, 2vw, 16px);
+                }
+
+                /* Responsive Breakpoints */
+                @media (max-width: 992px) {
+                    .booking-card-wrapper {
+                        flex: 1 1 100%;
+                        min-width: unset;
+                    }
+
+                    .booking-cards-container {
+                        gap: 16px;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .order-management-container {
+                        padding: 12px;
+                    }
+
+                    .order-management-inner {
+                        padding: 16px;
+                    }
+
+                    .booking-tab-content {
+                        padding: 16px 0;
+                    }
+
+                    .payment-history-content {
+                        padding: 16px;
+                    }
+
+                    .order-info-row {
+                        gap: 12px;
+                    }
+                }
+
+                @media (max-width: 576px) {
+                    .order-management-container {
+                        padding: 8px;
+                    }
+
+                    .order-management-inner {
+                        padding: 12px;
+                        border-radius: 8px;
+                    }
+
+                    .booking-tab-content {
+                        padding: 12px 0;
+                    }
+
+                    .payment-history-content {
+                        padding: 12px;
+                    }
+
+                    .order-card-footer {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+
+                    .order-actions {
+                        width: 100%;
+                        justify-content: flex-start;
+                    }
+
+                    .btn-text {
+                        display: none;
+                    }
+
+                    .order-btn {
+                        min-width: 36px;
+                    }
+
+                    .payment-info-container {
+                        flex-direction: column;
+                        gap: 8px;
+                    }
+
+                    .payment-info-item {
+                        white-space: normal;
+                        word-break: break-word;
+                    }
+                }
+
+                /* Scrollbar */
+                .payment-history-scroll::-webkit-scrollbar {
+                    width: 6px;
+                }
+
+                .payment-history-scroll::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+
+                .payment-history-scroll::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 3px;
+                }
+
+                .payment-history-scroll::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+            `}</style>
         </>
     );
 };
