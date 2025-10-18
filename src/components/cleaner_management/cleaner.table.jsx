@@ -76,7 +76,7 @@ const CleanerTable = (props) => {
                         Xem chi tiết
                     </Button>
 
-                    <Popconfirm
+                    {/* <Popconfirm
                         title="Xoá nguời dùng"
                         description="Bạn chắc chắn xoá nguời dùng này?"
                         onConfirm={() => handleDeleteUser(record.user.id, record.id)}
@@ -85,7 +85,7 @@ const CleanerTable = (props) => {
                         placement='left'
                     >
                         <DeleteOutlined style={{ cursor: "pointer", color: "red", marginLeft: 10 }} />
-                    </Popconfirm>
+                    </Popconfirm> */}
                 </>
 
 

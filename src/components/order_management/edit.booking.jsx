@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Card, Col, DatePicker, Drawer, Form, Input, message, Row, Space, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import { Typography } from "antd";
 import TextArea from 'antd/es/input/TextArea';
-import { fetchBookingByIdAPI, updateBookingAPI } from '../../services/api.service';
+import { createBookingActionAPI, fetchBookingByIdAPI, updateBookingAPI } from '../../services/api.service';
+import { AuthContext } from '../context/auth.context';
 
 const { Text } = Typography;
 
 const EditBookingComponent = (props) => {
+
+    const { user } = useContext(AuthContext)
     const { open, setOpen, bookingId, setRefreshUpcoming } = props;
     const [dataDetail, setDataDetail] = useState({});
     const [form] = Form.useForm();
@@ -55,12 +58,19 @@ const EditBookingComponent = (props) => {
         );
 
         if (res.data) {
-            message.success("Chỉnh sửa đặt lịch thành công!");
-            setTimeout(() => {
-                setRefreshUpcoming(prev => !prev);
-                setOpen(false);
+            const resCreate = await createBookingActionAPI("UPDATE", dataDetail.status, dataDetail.id, user.id)
+            if (resCreate.data) {
+                message.success("Chỉnh sửa đặt lịch thành công!");
+                setTimeout(() => {
+                    setRefreshUpcoming(prev => !prev);
+                    setOpen(false);
+                    setLoading(false);
+                }, 1500);
+            }
+            else {
+                message.error(res.message.trim());
                 setLoading(false);
-            }, 1500);
+            }
         } else {
             message.error(res.message.trim());
             setLoading(false);
