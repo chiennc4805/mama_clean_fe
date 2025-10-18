@@ -39,8 +39,7 @@ function HeaderLayOut() {
             backgroundColor: 'white',
             borderRadius: '8px',
             padding: '16px',
-            width: '100%',
-            maxWidth: '400px',
+            width: '400px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
         }}>
             {/* Icon giỏ hàng góc trên phải */}

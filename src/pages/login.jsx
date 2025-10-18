@@ -1,8 +1,10 @@
-import { Button, Form, Input, message, notification } from "antd";
+import { Button, Form, Input, message, notification, Spin } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
-import { loginAPI } from "../services/api.service";
+import { loginAPI, loginByGoogleAPI } from "../services/api.service";
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOutlined } from '@ant-design/icons';
 
 const LoginPage = () => {
 
@@ -12,6 +14,7 @@ const LoginPage = () => {
     const navigate = useNavigate()
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loadingGg, setLoadingGg] = useState(false)
 
     const location = useLocation();
 
@@ -167,10 +170,9 @@ const LoginPage = () => {
                             style={{
                                 background: "#41894b",
                                 borderColor: "#41894b",
-                                borderRadius: 8,
+                                borderRadius: 4,
                                 fontWeight: 600,
                                 fontSize: 20,
-                                marginBottom: 18
                             }}
                             htmlType="submit"
                             loading={loading}
@@ -178,7 +180,70 @@ const LoginPage = () => {
                             Đăng nhập
                         </Button>
                     </Form.Item>
-                    <div style={{ textAlign: "center", marginTop: 8 }}>
+
+                    {/* Đăng nhập bằng Google */}
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        margin: "12px 0 8px 0"
+                    }}>
+                        <div style={{ width: "50%", borderTop: "1px solid #ddd" }}></div>
+                        <div style={{ margin: "0 12px", color: "#888" }}>hoặc</div>
+                        <div style={{ width: "50%", borderTop: "1px solid #ddd" }}></div>
+                    </div>
+
+                    <div style={{ marginBottom: 18, position: 'relative', display: 'inline-block', width: "100%" }}>
+                        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                            <GoogleLogin
+                                onSuccess={async credentialResponse => {
+                                    try {
+                                        setLoadingGg(true)
+                                        const token = credentialResponse.credential;
+                                        const from = location.state?.from || "";
+                                        const res = await loginByGoogleAPI(token)
+                                        setTimeout(() => {
+                                            if (res.data) {
+                                                message.success("Đăng nhập thành công")
+                                                localStorage.setItem("access_token", res.data.access_token)
+                                                setUser(res.data.user)
+                                                Promise.resolve().then(() => {
+                                                    navigate(from || (res.data.user.role.name === "CUSTOMER" ? "/" : "/management"), { replace: true });
+                                                });
+                                                setLoadingGg(false)
+                                            }
+                                            else {
+                                                message.error(res.message.trim())
+                                                setLoadingGg(false)
+                                            }
+                                        }, 2000)
+                                    } catch (err) {
+                                        message.error("Lỗi kết nối máy chủ");
+                                        setLoadingGg(false)
+                                    }
+                                }}
+                                onError={() => message.error("Đăng nhập Google thất bại!")}
+                            />
+                        </GoogleOAuthProvider>
+                        {loadingGg && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    background: 'rgba(255,255,255,0.6)',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    borderRadius: 8,
+                                }}
+                            >
+                                <Spin />
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{ textAlign: "center", marginTop: 30 }}>
                         <Button
                             style={{ color: "#41894b", fontWeight: 500, fontSize: 17 }}
                             onClick={() => navigate("/forget-password")}>

@@ -10,6 +10,14 @@ const loginAPI = (email, password) => {
     return axios.post(URL_BACKEND, data, { headers: { "Content-Type": "application/json" } })
 }
 
+const loginByGoogleAPI = (token) => {
+    const URL_BACKEND = "/auth/google"
+    const data = {
+        token: token
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
 const getAccountAPI = () => {
     const URL_BACKEND = "/auth/account"
     return axios.get(URL_BACKEND)
@@ -581,7 +589,5 @@ const fetchAllBookingActionsWithoutPaginationAPI = (filter = null) => {
 }
 
 
-export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI, createPaymentAPI, fetchPaymentByIdAPI, fetchAllPaymentsWithPaginationAPI, fetchAllPaymentsWithoutPagination, fetchAllWalletTransactionsWithoutPagination, fetchAllWalletTransactionsWithPaginationAPI, createWalletTransactionAPI, getTotalOfAllBookingIncomeAPI, updateWalletTransactionAPI, fetchAllFeedbacksWithPaginationAPI, fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, createBookingActionAPI, fetchAllBookingActionsWithoutPaginationAPI };
-
-//deleteUserAPI, deleteCleanerProfileAPI, deleteBookingCheckInAPI, deleteFeedbackAPI
+export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI, createPaymentAPI, fetchPaymentByIdAPI, fetchAllPaymentsWithPaginationAPI, fetchAllPaymentsWithoutPagination, fetchAllWalletTransactionsWithoutPagination, fetchAllWalletTransactionsWithPaginationAPI, createWalletTransactionAPI, getTotalOfAllBookingIncomeAPI, updateWalletTransactionAPI, fetchAllFeedbacksWithPaginationAPI, fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, createBookingActionAPI, fetchAllBookingActionsWithoutPaginationAPI, loginByGoogleAPI };
 
