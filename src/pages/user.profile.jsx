@@ -211,7 +211,7 @@ const UserProfile = () => {
 
                                 <Form.Item>
                                     <div style={{ display: 'flex', justifyContent: "center" }}>
-                                        <Button type="primary" size="large" htmlType="submit" loading={loading}>
+                                        <Button style={{ backgroundColor: "#41864D" }} type="primary" size="large" htmlType="submit" loading={loading}>
                                             Lưu thay đổi
                                         </Button>
                                     </div>
@@ -283,7 +283,7 @@ const UserProfile = () => {
                                         <Button size="large" onClick={() => passwordForm.resetFields()}>
                                             Reset
                                         </Button>
-                                        <Button type="primary" size="large" htmlType="submit" loading={loading}>
+                                        <Button style={{ backgroundColor: "#41864D" }} type="primary" size="large" htmlType="submit" loading={loading}>
                                             Đổi mật khẩu
                                         </Button>
                                     </div>

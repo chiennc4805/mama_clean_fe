@@ -72,7 +72,7 @@ const CleanerTable = (props) => {
             width: 130,
             render: (record) => (
                 <>
-                    <Button type="primary" size="small" onClick={() => { setDataDetail(record); setActiveComponent("detail") }}>
+                    <Button style={{ backgroundColor: "#41864D" }} type="primary" size="small" onClick={() => { setDataDetail(record); setActiveComponent("detail") }}>
                         Xem chi tiết
                     </Button>
 

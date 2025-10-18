@@ -138,6 +138,7 @@ const CleanerManagement = () => {
                 <CleanerDetail
                     dataDetail={dataDetail}
                     setActiveComponent={setActiveComponent}
+                    loadCleaner={loadCleaner}
                 />
             }
         </>

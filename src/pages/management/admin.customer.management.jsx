@@ -7,9 +7,6 @@ import { fetchAllUserWithPaginationAPI } from '../../services/api.service';
 import { debounce } from "lodash";
 import CustomerDetail from '../../components/customer_management/customer.detail';
 
-
-const { Option } = Select;
-
 const CustomerManagement = () => {
 
     const [dataUsers, setDataUsers] = useState([])
@@ -136,6 +133,7 @@ const CustomerManagement = () => {
                 </div >
                 :
                 <CustomerDetail
+                    loadUser={loadUser}
                     dataDetail={dataDetail}
                     setActiveComponent={setActiveComponent}
                 />

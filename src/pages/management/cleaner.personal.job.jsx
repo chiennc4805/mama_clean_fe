@@ -130,6 +130,7 @@ const PersonalJob = () => {
                             <CheckOutJob
                                 dataDetail={dataDetail}
                                 setStep={setStep}
+                                loadJobs={loadJobs}
                             />
                         )
                     }

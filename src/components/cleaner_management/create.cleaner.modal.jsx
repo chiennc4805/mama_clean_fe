@@ -139,7 +139,7 @@ const CleanerForm = (props) => {
                                 name="dob"
                                 rules={[{ required: true, message: "Chọn ngày sinh!" }]}
                             >
-                                <DatePicker size="large" style={{ width: "100%" }} />
+                                <DatePicker size="large" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
                             </Form.Item>
                         </Col>
 
@@ -163,7 +163,7 @@ const CleanerForm = (props) => {
                                 name="idDate"
                                 rules={[{ required: true, message: "Vui lòng chọn ngày cấp!" }]}
                             >
-                                <DatePicker size="large" style={{ width: "100%" }} />
+                                <DatePicker size="large" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
                             </Form.Item>
                         </Col>
 

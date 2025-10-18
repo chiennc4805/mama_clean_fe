@@ -1,6 +1,6 @@
-import { Avatar, Button, Card, Col, DatePicker, Input, message, notification, Row, Select, Space, Typography } from 'antd';
-import { useContext, useEffect, useState } from 'react';
-import { fetchUserByIdAPI, updateUserAPI } from '../../services/api.service';
+import { Avatar, Button, Col, Input, message, notification, Row, Select, Space, Typography } from 'antd';
+import { useEffect, useState } from 'react';
+import { updateUserAPI } from '../../services/api.service';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
@@ -8,9 +8,8 @@ const { Option } = Select;
 
 const CustomerDetail = (props) => {
 
-    const { dataDetail, setActiveComponent } = props
+    const { loadUser, dataDetail, setActiveComponent } = props
     const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
     const [formData, setFormData] = useState({
         id: "",
         name: "",
@@ -43,26 +42,24 @@ const CustomerDetail = (props) => {
     }, [])
 
     const handleSubmit = async () => {
-
         setLoading(true)
         const gender = formData.gender === "1" ? true : false
         const res = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, dataDetail.role?.id, dataDetail.avatar)
 
         setTimeout(() => {
             if (res.data) {
+                loadUser()
                 message.success("Cập nhật thành công")
                 setTimeout(() => {
-                    navigate(0)
-                }, 1000)
+                    setActiveComponent("list")
+                    setLoading(false)
+                }, 1500)
             }
             else {
-                notification.error({
-                    message: "Cập nhật thất bại",
-                    description: JSON.stringify(res.message)
-                })
+                message.error(res.message.trim())
+                setLoading(false)
             }
-            setLoading(false)
-        }, 2000)
+        }, 1000)
     };
 
     return (

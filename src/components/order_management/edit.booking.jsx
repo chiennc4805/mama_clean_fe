@@ -184,7 +184,7 @@ const EditBookingComponent = (props) => {
                                 rules={[{ required: true, message: 'Vui lòng chọn ngày!' }]}
                             >
                                 <DatePicker
-                                    format="DD/MM/YYYY"
+                                    format={"DD/MM/YYYY"}
                                     size="large"
                                     style={{ width: "100%", borderRadius: 8 }}
                                 />

@@ -31,7 +31,7 @@ const CustomerForm = (props) => {
             {contextHolder}
 
             <Modal
-                title="Thêm mới người dùng" open={isFormOpen}
+                title="Thêm mới khách hàng" open={isFormOpen}
                 onOk={() => form.submit()}
                 onCancel={() => {
                     setIsFormOpen(false);
@@ -138,23 +138,6 @@ const CustomerForm = (props) => {
                     >
                         <Input.Password size="large" placeholder="******" style={{ borderRadius: 8 }} />
                     </Form.Item>
-                    {/* <Form.Item style={{ marginBottom: 0 }}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            size="large"
-                            block
-                            style={{
-                                background: "#41894b",
-                                borderColor: "#41894b",
-                                borderRadius: 8,
-                                fontWeight: 600,
-                                fontSize: 17
-                            }}
-                        >
-                            Đăng ký ngay
-                        </Button>
-                    </Form.Item> */}
                 </Form>
             </Modal>
         </>

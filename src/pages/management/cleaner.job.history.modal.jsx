@@ -155,6 +155,8 @@ const JobHistoryModal = (props) => {
                     <Table
                         columns={columns}
                         dataSource={historicalJobs}
+                        size="middle"
+                        scroll={{ x: "max-content" }}
                         pagination={
                             {
                                 current: current,
@@ -164,6 +166,10 @@ const JobHistoryModal = (props) => {
                                 showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                             }}
                         onChange={onChange}
+                        style={{
+                            fontSize: "14px",
+                            overflowX: "auto",
+                        }}
                     />
                 </Card>
             </Modal>

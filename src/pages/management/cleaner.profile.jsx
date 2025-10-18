@@ -53,7 +53,7 @@ const CleanerProfile = () => {
             if (resUpload.data !== "Upload failed!") {
 
                 const resUser = await updateUserAPI(values.id, values.name, values.email, values.phone, gender, user.role?.id, resUpload.data);
-                const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
+                const resCleaner = await updateCleanerAPI(cleanerId, dayjs(values.dob).format("YYYY-MM-DD"), values.idNumber, dayjs(values.idDate).format("YYYY-MM-DD"), values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
 
                 setTimeout(() => {
                     if (resUser.data && resCleaner.data) {
@@ -80,7 +80,7 @@ const CleanerProfile = () => {
             }
         } else {
             const resUser = await updateUserAPI(values.id, values.name, values.email, values.phone, gender, user.role?.id, user.avatar);
-            const resCleaner = await updateCleanerAPI(cleanerId, values.dob, values.idNumber, values.idDate, values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
+            const resCleaner = await updateCleanerAPI(cleanerId, dayjs(values.dob).format("YYYY-MM-DD"), values.idNumber, dayjs(values.idDate).format("YYYY-MM-DD"), values.idPlace, values.bank, values.bankNo, values.rating, values.ratingCount, values.id);
 
             setTimeout(() => {
                 if (resUser.data && resCleaner.data) {
@@ -226,7 +226,12 @@ const CleanerProfile = () => {
                                                 name="dob"
                                                 rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}
                                             >
-                                                <DatePicker size="large" style={{ width: '100%' }} placeholder="Chọn ngày sinh" />
+                                                <DatePicker
+                                                    size="large"
+                                                    style={{ width: '100%' }}
+                                                    placeholder="Chọn ngày sinh"
+                                                    format={"DD/MM/YYYY"}
+                                                />
                                             </Form.Item>
                                         </Col>
 
@@ -265,7 +270,11 @@ const CleanerProfile = () => {
                                                 name="idDate"
                                                 rules={[{ required: true, message: 'Vui lòng chọn ngày cấp!' }]}
                                             >
-                                                <DatePicker size="large" style={{ width: '100%' }} placeholder="Chọn ngày cấp" />
+                                                <DatePicker
+                                                    size="large" style={{ width: '100%' }}
+                                                    placeholder="Chọn ngày cấp"
+                                                    format={"DD/MM/YYYY"}
+                                                />
                                             </Form.Item>
                                         </Col>
 
@@ -323,9 +332,6 @@ const CleanerProfile = () => {
                                                         loading={loading}
                                                     >
                                                         Lưu thay đổi
-                                                    </Button>
-                                                    <Button size="large" onClick={() => personalForm.resetFields()}>
-                                                        Xoá
                                                     </Button>
                                                 </div>
                                             </Form.Item>

@@ -7,7 +7,7 @@ const loginAPI = (email, password) => {
         username: email,
         password: password,
     }
-    return axios.post(URL_BACKEND, data, {  headers: { "Content-Type": "application/json" }})
+    return axios.post(URL_BACKEND, data, { headers: { "Content-Type": "application/json" } })
 }
 
 const getAccountAPI = () => {
@@ -555,8 +555,33 @@ const fetchBookingCheckOutByBookingIdAPI = bookingId => {
     return axios.get(`/booking/checkout/${bookingId}`)
 }
 
+const createBookingActionAPI = (action, status, bookingId, userId) => {
+    const URL_BACKEND = "/booking-actions"
+    const data = {
+        action: action,
+        status: status,
+        booking: {
+            id: bookingId
+        },
+        user: {
+            id: userId
+        }
+    }
+    return axios.post(URL_BACKEND, data)
+}
 
-export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI, createPaymentAPI, fetchPaymentByIdAPI, fetchAllPaymentsWithPaginationAPI, fetchAllPaymentsWithoutPagination, fetchAllWalletTransactionsWithoutPagination, fetchAllWalletTransactionsWithPaginationAPI, createWalletTransactionAPI, getTotalOfAllBookingIncomeAPI, updateWalletTransactionAPI, fetchAllFeedbacksWithPaginationAPI, fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI };
+const fetchAllBookingActionsWithoutPaginationAPI = (filter = null) => {
+    let URL_BACKEND
+    if (filter) {
+        URL_BACKEND = `/booking-actions?filter=${filter}`
+    } else {
+        URL_BACKEND = `/booking-actions`
+    }
+    return axios.get(URL_BACKEND)
+}
+
+
+export { checkInAPI, createBookingAPI, createBookingCheckInAPI, createCleanerAPI, createServiceAPI, createUserAPI, fetchAllBookingsWithPaginationAPI, fetchAllCleanerWithPaginationAPI, fetchAllServicesWithoutPagination, fetchAllServicesWithPagination, fetchAllUsersWithoutPagination, fetchAllUserWithPaginationAPI, fetchCleanerByUserIdAPI, fetchServiceById, fetchUserByIdAPI, forgetPasswordAPI, getAccountAPI, getRefreshToken, loginAPI, logoutAPI, registerAPI, resendOtp, updateBookingAPI, updateCleanerAPI, updateUserAPI, verifyOtp, fetchAllBookingsWithoutPaginationAPI, assignCleanerJobManuallyAPI, getAvailableJobAPI, uploadImageAPI, createBookingCheckOutAPI, deleteBookingCheckOutAPI, deleteBookingCheckInAPI, deleteCleanerProfileAPI, deleteUserAPI, changePasswordAPI, fetchBookingByIdAPI, createFeedBackAPI, updateCleanerRatingAPI, deleteFeedbackAPI, createPaymentAPI, fetchPaymentByIdAPI, fetchAllPaymentsWithPaginationAPI, fetchAllPaymentsWithoutPagination, fetchAllWalletTransactionsWithoutPagination, fetchAllWalletTransactionsWithPaginationAPI, createWalletTransactionAPI, getTotalOfAllBookingIncomeAPI, updateWalletTransactionAPI, fetchAllFeedbacksWithPaginationAPI, fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, createBookingActionAPI, fetchAllBookingActionsWithoutPaginationAPI };
 
 //deleteUserAPI, deleteCleanerProfileAPI, deleteBookingCheckInAPI, deleteFeedbackAPI
 

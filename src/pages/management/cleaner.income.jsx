@@ -69,9 +69,9 @@ const IncomePaymentPage = () => {
         if (res.data) {
             setTimeout(() => {
                 setRefresh(prev => !prev)
-
                 message.success("Rút tiền thành công")
                 setLoading(false)
+                setWithdrawAmount('')
             }, 2000)
         } else {
             message.error(res.message.trim())
@@ -300,7 +300,7 @@ const IncomePaymentPage = () => {
                                 placeholder="Nhập số tiền"
                                 size="large"
                                 value={withdrawAmount}
-                                formatter={value => formatterNumber(value)}
+                                formatter={value => value ? formatterNumber(value) : ''}
                                 onChange={(value) => setWithdrawAmount(value)}
                                 style={{ marginBottom: '12px', width: "100%" }}
                             />

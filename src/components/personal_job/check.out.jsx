@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Typography, Space, Image, Upload, message, Input } from 'antd';
 import { UploadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import {
+    createBookingActionAPI,
     createBookingCheckOutAPI,
     deleteBookingCheckOutAPI,
     updateBookingAPI,
     uploadImageAPI
 } from '../../services/api.service';
+import { AuthContext } from '../context/auth.context';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export default function CheckOutJob(props) {
+
+    const { user } = useContext(AuthContext)
     const [notes, setNotes] = useState('');
     const [checkOutImage, setCheckOutImage] = useState(null);
     const [checkOutFile, setCheckOutFile] = useState(null);
-    const { dataDetail, setStep } = props;
+    const { dataDetail, setStep, loadJobs } = props;
     const [loading, setLoading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -51,6 +55,7 @@ export default function CheckOutJob(props) {
         if (resUploadFile.data !== 'Upload failed!') {
             const resCreate = await createBookingCheckOutAPI(resUploadFile.data, notes, dataDetail.id);
             if (resCreate.data) {
+                const statusParam = 'Đã hoàn thành'
                 const resUpdate = await updateBookingAPI(
                     dataDetail.id,
                     dataDetail.name,
@@ -61,17 +66,24 @@ export default function CheckOutJob(props) {
                     dataDetail.startTime,
                     dataDetail.totalPrice,
                     dataDetail.note,
-                    'Đã hoàn thành',
+                    statusParam,
                     dataDetail.customer.id,
                     dataDetail.cleaner.id,
                     dataDetail.service.id
                 );
                 if (resUpdate.data) {
-                    message.success('Đã xác nhận hoàn thành công việc thành công!');
-                    setTimeout(() => {
+                    const resCreateBookingAction = await createBookingActionAPI("CHECK_OUT", statusParam, dataDetail.id, user.id)
+                    if (resCreateBookingAction.data) {
+                        loadJobs()
+                        message.success('Đã xác nhận hoàn thành công việc thành công!');
+                        setTimeout(() => {
+                            setStep("list")
+                            setLoading(false);
+                        }, 2000);
+                    } else {
+                        message.error(resCreateBookingAction.message.trim());
                         setLoading(false);
-                        window.location.reload();
-                    }, 2000);
+                    }
                 } else {
                     await deleteBookingCheckOutAPI(resCreate.data.id);
                     message.error(resUpdate.message.trim());

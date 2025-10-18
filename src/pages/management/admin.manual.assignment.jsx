@@ -84,6 +84,7 @@ const ManualAssignment = () => {
                             Ngày làm việc
                         </div>
                         <DatePicker
+                            format={"DD/MM/YYYY"}
                             placeholder="Tìm kiếm theo ngày"
                             style={{ width: "100%" }}
                             onChange={(date, dateString) => setFilter({ ...filter, date: dateString })}

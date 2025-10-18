@@ -1,4 +1,4 @@
-import { Col, notification, Row, Table, Tag } from 'antd';
+import { Button, Col, notification, Row, Table, Tag } from 'antd';
 import dayjs from 'dayjs';
 
 
@@ -6,7 +6,7 @@ const BookingTable = (props) => {
 
     const [api, contextHolder] = notification.useNotification();
     const { dataBookings, loadBooking, pageSize, setPageSize,
-        current, setCurrent, total } = props
+        current, setCurrent, total, setDataDetail, setStep } = props
 
     const formatterNumber = (val) => {
         if (!val) return "0";
@@ -116,6 +116,15 @@ const BookingTable = (props) => {
             },
             width: 120,
             align: 'center'
+        }, {
+            title: 'Hành động',
+            key: 'action',
+            width: 130,
+            render: (record) => (
+                <Button style={{ backgroundColor: "#41864D" }} type="primary" size="small" onClick={() => { console.log(record); setDataDetail(record); setStep("detail") }}>
+                    Xem chi tiết
+                </Button>
+            ),
         },
     ];
 

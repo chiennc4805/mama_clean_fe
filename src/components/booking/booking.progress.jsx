@@ -455,7 +455,7 @@ const BookingProgress = (props) => {
             <style jsx>{`
                 /* Container */
                 .booking-container {
-                    max-width: 90%;
+                    max-width: 70%;
                     margin: 0 auto;
                     padding: 20px;
                     backgroundColor: #f5f5f5;

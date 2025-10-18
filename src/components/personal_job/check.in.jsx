@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Card, Button, Space, Tag, Image, message } from 'antd';
 import {
     ArrowLeftOutlined,
@@ -9,12 +9,16 @@ import {
 } from '@ant-design/icons';
 import {
     checkInAPI,
+    createBookingActionAPI,
     createBookingCheckInAPI,
     deleteBookingCheckInAPI,
     updateBookingAPI
 } from '../../services/api.service';
+import { AuthContext } from '../context/auth.context';
 
-const CheckInJob = ({ dataDetail, setStep }) => {
+const CheckInJob = ({ dataDetail, setStep, loadJobs }) => {
+
+    const { user } = useContext(AuthContext)
     const [loading, setLoading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -48,6 +52,7 @@ const CheckInJob = ({ dataDetail, setStep }) => {
                 if (res?.data.trim() === 'Thành công') {
                     const createBookingCheckIn = await createBookingCheckInAPI(lat, lon, dataDetail.id);
                     if (createBookingCheckIn.data) {
+                        const statusParam = 'Chờ Check-out'
                         const updateBooking = await updateBookingAPI(
                             dataDetail.id,
                             dataDetail.name,
@@ -58,26 +63,46 @@ const CheckInJob = ({ dataDetail, setStep }) => {
                             dataDetail.startTime,
                             dataDetail.totalPrice,
                             dataDetail.note,
-                            'Chờ Check-out',
+                            statusParam,
                             dataDetail.customer.id,
                             dataDetail.cleaner.id,
                             dataDetail.service.id
                         );
                         if (updateBooking.data) {
-                            message.success('Check-in công việc thành công!');
-                            setTimeout(() => window.location.reload(), 2000);
+                            const resCreate = await createBookingActionAPI("CHECK_IN", statusParam, dataDetail.id, user.id)
+                            if (resCreate.data) {
+                                loadJobs()
+                                message.success('Check-in công việc thành công!');
+                                setTimeout(() => {
+                                    setStep("list")
+                                    setLoading(false);
+                                }, 2000);
+                            } else {
+                                message.error(resCreate.message.trim());
+                                setLoading(false);
+                            }
                         } else {
                             await deleteBookingCheckInAPI(createBookingCheckIn.data.id);
                             message.error(updateBooking.message.trim());
+                            setLoading(false);
                         }
-                    } else message.error(createBookingCheckIn.message.trim());
-                } else message.error(res.data.trim());
-            } else message.error('Lấy địa chỉ thất bại');
+                    } else {
+                        message.error(createBookingCheckIn.message.trim());
+                        setLoading(false);
+                    }
+                } else {
+                    message.error(res.data.trim());
+                    setLoading(false);
+                };
+            } else {
+                message.error('Lấy địa chỉ thất bại');
+                setLoading(false);
+            };
         } catch (err) {
             console.error('Lỗi khi lấy tọa độ:', err);
             message.error('Không lấy được vị trí hiện tại');
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (

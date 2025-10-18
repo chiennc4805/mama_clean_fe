@@ -43,6 +43,7 @@ const CleanerSchedulePage = () => {
     return (
         <>
             <FullCalendar
+                height={800}
                 plugins={[dayGridPlugin, timeGridPlugin]}
                 initialView="timeGridWeek"
                 headerToolbar={{

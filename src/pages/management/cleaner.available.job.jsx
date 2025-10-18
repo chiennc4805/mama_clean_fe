@@ -82,6 +82,7 @@ const AvailableJobPage = () => {
                                     Ngày dọn dẹp
                                 </div>
                                 <DatePicker
+                                    format={"DD/MM/YYYY"}
                                     placeholder="Chọn ngày"
                                     style={{ width: 200, height: 40 }}  // tăng chiều rộng
                                     onChange={(date) => {
@@ -111,6 +112,7 @@ const AvailableJobPage = () => {
                     <JobDetail
                         setStep={setStep}
                         dataDetail={dataDetail}
+                        loadJobs={loadBooking}
                     />
                 }
             </div>

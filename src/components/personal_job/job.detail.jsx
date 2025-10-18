@@ -1,6 +1,6 @@
 import { Button, Card, Checkbox, Col, Empty, Image, message, notification, Popconfirm, Row, Spin, Tag, Typography } from 'antd';
 import { useContext, useState } from 'react';
-import { fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, getAvailableJobAPI, updateBookingAPI } from '../../services/api.service';
+import { createBookingActionAPI, fetchBookingCheckInByBookingIdAPI, fetchBookingCheckOutByBookingIdAPI, getAvailableJobAPI, updateBookingAPI } from '../../services/api.service';
 import { formatterNumber } from '../../services/common.function';
 import dayjs from 'dayjs';
 import "dayjs/locale/vi"; // để hiển thị thứ tiếng Việt
@@ -13,11 +13,10 @@ const JobDetail = (props) => {
 
     const { user } = useContext(AuthContext)
     const [isChecked, setIsChecked] = useState(false);
-    const { dataDetail, setStep } = props
+    const { dataDetail, setStep, loadJobs } = props
     const [loadingCancel, setLoadingCancel] = useState(false)
     const [loadingGet, setLoadingGet] = useState(false)
     const [showDetail, setShowDetail] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [bookingCheckIn, setBookingCheckIn] = useState(null)
     const [bookingCheckOut, setBookingCheckOut] = useState(null)
 
@@ -41,48 +40,72 @@ const JobDetail = (props) => {
 
     const handleCancelJob = async () => {
         setLoadingCancel(true)
+        const statusParam = "Mới"
+        const res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, statusParam, dataDetail.customer.id, null, dataDetail.service.id)
 
-        const res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Mới", dataDetail.customer.id, null, dataDetail.service.id)
-
-        setTimeout(() => {
-            if (res.data) {
-                message.success("Huỷ bỏ thành công")
+        if (res.data) {
+            const resCreate = await createBookingActionAPI("DENY", statusParam, dataDetail.id, user.id)
+            if (resCreate.data) {
+                loadJobs()
+                message.success("Huỷ việc thành công")
                 setTimeout(() => {
-                    window.location.reload()
+                    setStep("list")
                 }, 2000)
-            }
-            else {
+            } else {
                 setLoadingCancel(false);
-                notification.error({
-                    message: "Huỷ bỏ thất bại",
-                    description: JSON.stringify(res.message)
-                })
+                message.error(res.message.trim())
             }
-        }, 2000)
+        }
+        else {
+            setLoadingCancel(false);
+            message.error(res.message.trim())
+        }
     }
-
-    useState()
 
     const handleGetJob = async () => {
         setLoadingGet(true)
-
-        const res = await getAvailableJobAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, "Chờ Check-in", dataDetail.customer.id, user.id, dataDetail.service.id)
-
-        setTimeout(() => {
+        const statusParam = "Chờ Check-in"
+        let res
+        if (dataDetail.status === "Chờ xác nhận") {
+            res = await updateBookingAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, statusParam, dataDetail.customer.id, dataDetail.cleaner.id, dataDetail.service.id)
             if (res.data) {
-                message.success("Nhận việc thành công")
-                setTimeout(() => {
-                    window.location.reload()
-                }, 2000)
+                const resCreate = await createBookingActionAPI("ACCEPT", statusParam, dataDetail.id, user.id)
+                if (resCreate.data) {
+                    loadJobs()
+                    message.success("Nhận việc thành công")
+                    setTimeout(() => {
+                        setStep("list")
+                    }, 2000)
+                } else {
+                    setLoadingCancel(false);
+                    message.error(res.message.trim())
+                }
             }
             else {
-                setLoadingGet(false);
-                notification.error({
-                    message: "Nhận việc thất bại",
-                    description: JSON.stringify(res.message)
-                })
+                setLoadingCancel(false);
+                message.error(res.message.trim())
             }
-        }, 2000)
+        }
+        else if (dataDetail.status === "Mới") {
+            res = await getAvailableJobAPI(dataDetail.id, dataDetail.name, dataDetail.address, dataDetail.addressLat, dataDetail.addressLon, dataDetail.date, dataDetail.startTime, dataDetail.totalPrice, dataDetail.note, statusParam, dataDetail.customer.id, user.id, dataDetail.service.id)
+            if (res.data) {
+                const resCreate = await createBookingActionAPI("GET", statusParam, dataDetail.id, user.id)
+                if (resCreate.data) {
+                    loadJobs()
+                    message.success("Nhận việc thành công")
+                    setTimeout(() => {
+                        setStep("list")
+                    }, 2000)
+                } else {
+                    setLoadingCancel(false);
+                    message.error(res.message.trim())
+                }
+            }
+            else {
+                setLoadingCancel(false);
+                message.error(res.message.trim())
+            }
+        }
     }
 
     return (
@@ -526,8 +549,8 @@ const JobDetail = (props) => {
                                             title="Bỏ qua công việc"
                                             description="Bạn có chắc chắn bỏ qua công việc này?"
                                             onConfirm={handleCancelJob}
-                                            okText="Yes"
-                                            cancelText="No"
+                                            okText="Có"
+                                            cancelText="Không"
                                         >
                                             <Button
                                                 block

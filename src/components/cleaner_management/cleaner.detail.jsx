@@ -11,8 +11,8 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CleanerDetail = (props) => {
-    const { user } = useContext(AuthContext);
-    const { dataDetail, setActiveComponent } = props;
+
+    const { dataDetail, setActiveComponent, loadCleaner } = props;
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -35,6 +35,7 @@ const CleanerDetail = (props) => {
     }, []);
 
     useEffect(() => {
+        console.log(dataDetail.dob)
         setFormData({
             id: dataDetail.user.id,
             name: dataDetail.user.name,
@@ -58,20 +59,21 @@ const CleanerDetail = (props) => {
         setLoading(true);
         const gender = formData.gender === "1";
         const resUser = await updateUserAPI(formData.id, formData.name, formData.email, formData.phone, gender, dataDetail.user.role?.id);
-        const resCleaner = await updateCleanerAPI(formData.idCleaner, formData.dob, formData.idNumber, formData.idDate, formData.idPlace, formData.bank, formData.bankNo, formData.rating, formData.ratingCount, formData.id);
+        const resCleaner = await updateCleanerAPI(formData.idCleaner, dayjs(formData.dob, "YYYY-MM-DD").format("YYYY-MM-DD"), formData.idNumber, dayjs(formData.idDate, "YYYY-MM-DD").format("YYYY-MM-DD"), formData.idPlace, formData.bank, formData.bankNo, formData.rating, formData.ratingCount, formData.id);
 
         setTimeout(() => {
             if (resUser.data && resCleaner.data) {
+                loadCleaner()
                 message.success("Cập nhật thành công");
-                setTimeout(() => navigate(0), 1000);
+                setTimeout(() => {
+                    setActiveComponent("list")
+                    setLoading(false);
+                }, 1500);
             } else {
-                notification.error({
-                    message: "Cập nhật thất bại",
-                    description: JSON.stringify(resUser.message + "\n" + resCleaner.message)
-                });
+                message.error(res.message.trim())
+                setLoading(false);
             }
-            setLoading(false);
-        }, 3000);
+        }, 1000);
     };
 
     return (
@@ -137,8 +139,10 @@ const CleanerDetail = (props) => {
                         <Col span={isMobile ? 12 : 6}>
                             <Text>Ngày sinh</Text>
                             <DatePicker size="large" style={{ width: '100%' }}
-                                value={formData.dob}
-                                onChange={(date) => handleChange('dob', date)} />
+                                format={"DD/MM/YYYY"}
+                                value={formData.dob ? dayjs(formData.dob, "YYYY-MM-DD") : null}
+                                onChange={(date, dateString) => handleChange('dob', dateString)}
+                            />
                         </Col>
 
                         <Col span={isMobile ? 24 : 12}>
@@ -159,8 +163,9 @@ const CleanerDetail = (props) => {
                         <Col span={isMobile ? 24 : 12}>
                             <Text>Ngày cấp</Text>
                             <DatePicker size="large" style={{ width: '100%' }}
-                                value={formData.idDate}
-                                onChange={(value) => handleChange('idDate', value)} />
+                                format={"DD/MM/YYYY"}
+                                value={formData.idDate ? dayjs(formData.idDate, "YYYY-MM-DD") : null}
+                                onChange={(date, dateString) => handleChange('idDate', dateString)} />
                         </Col>
 
                         <Col span={24}>

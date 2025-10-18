@@ -2,7 +2,7 @@ import React, { act, useContext, useEffect, useState } from 'react';
 import { Tabs, Card, Button, Tag, Space, Empty, Popconfirm, message, Col, Row } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CommentOutlined, CreditCardOutlined, DollarOutlined, DragOutlined, EditOutlined, EnvironmentOutlined, EyeOutlined, FileTextOutlined, HomeOutlined, HourglassOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { fetchAllBookingsWithoutPaginationAPI, fetchAllWalletTransactionsWithoutPagination, fetchBookingByIdAPI, updateBookingAPI } from '../services/api.service';
+import { createBookingActionAPI, fetchAllBookingsWithoutPaginationAPI, fetchAllWalletTransactionsWithoutPagination, fetchBookingByIdAPI, updateBookingAPI } from '../services/api.service';
 import { AuthContext } from '../components/context/auth.context';
 import { formatterNumber } from '../services/common.function';
 import EditBooking from '../components/order_management/edit.booking';
@@ -13,7 +13,6 @@ import dayjs from 'dayjs';
 
 const OrderManagement = () => {
 
-    const navigate = useNavigate()
     const { user, setUser } = useContext(AuthContext)
     const [activeTab, setActiveTab] = useState('1');
     const [upcomingOrders, setUpcomingOrders] = useState([])
@@ -126,22 +125,28 @@ const OrderManagement = () => {
     const handleCancelBooking = async (bookingId) => {
         setLoadingId(bookingId);
         const cancelBooking = bookings.find(item => item.id === bookingId)
-
-        const res = await updateBookingAPI(cancelBooking.id, cancelBooking.name, cancelBooking.address, cancelBooking.addressLat, cancelBooking.addressLon, cancelBooking.date, cancelBooking.startTime, cancelBooking.totalPrice, cancelBooking.note, "Đã huỷ", cancelBooking.customer.id, cancelBooking?.cleaner?.id || "", cancelBooking.service.id)
+        const statusParam = "Đã huỷ"
+        const res = await updateBookingAPI(cancelBooking.id, cancelBooking.name, cancelBooking.address, cancelBooking.addressLat, cancelBooking.addressLon, cancelBooking.date, cancelBooking.startTime, cancelBooking.totalPrice, cancelBooking.note, statusParam, cancelBooking.customer.id, cancelBooking?.cleaner?.id || "", cancelBooking.service.id)
 
         if (res.data) {
-            setTimeout(() => {
-                message.success("Huỷ đặt lịch thành công!")
+            const resCreate = await createBookingActionAPI("CANCEL", statusParam, cancelBooking.id, user.id)
+            if (resCreate.data) {
                 setTimeout(() => {
-                    setUser
-                    setRefreshHistory(prev => !prev);
-                    setRefreshUpcoming(prev => !prev);
-                    setUser(prev => ({
-                        ...prev,
-                        balance: prev.balance + cancelBooking.totalPrice
-                    }))
-                }, 1000)
-            }, 2000)
+                    message.success("Huỷ đặt lịch thành công!")
+                    setTimeout(() => {
+                        setLoadingId(null)
+                        setRefreshHistory(prev => !prev);
+                        setRefreshUpcoming(prev => !prev);
+                        setUser(prev => ({
+                            ...prev,
+                            balance: prev.balance + cancelBooking.totalPrice
+                        }))
+                    }, 1000)
+                }, 2000)
+            } else {
+                message.error(res.message.trim())
+                setLoadingId(null)
+            }
         } else {
             message.error(res.message.trim())
             setLoadingId(null)

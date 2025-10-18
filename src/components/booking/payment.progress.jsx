@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Card, Col, Divider, message, Modal, notification, R
 import dayjs from 'dayjs';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createBookingAPI, createServiceAPI } from '../../services/api.service';
+import { createBookingActionAPI, createBookingAPI, createServiceAPI } from '../../services/api.service';
 import { getCoordsFromAddress } from '../../services/common.function';
 import { AuthContext } from '../context/auth.context';
 
@@ -64,19 +64,21 @@ const PaymentProgress = (props) => {
             if (coords) {
                 const res = await createBookingAPI(bookingInfo.name, bookingInfo.address, coords.lat, coords.lon, bookingInfo.date.format("DD/MM/YYYY"), bookingInfo.time.format("HH:mm:ss"), bookingInfo.price, bookingInfo.note, user.id, createService.data.id)
 
-                setTimeout(() => {
-                    if (res.data) {
-                        message.success("Đặt lịch thành công")
-                        setTimeout(() => { navigate(0); setLoading(false); }, 1500)
-                    }
-                    else {
-                        notification.error({
-                            message: "Đặt lịch thất bại",
-                            description: JSON.stringify(res.message)
-                        })
+                if (res.data) {
+                    const resCreate = await createBookingActionAPI("CREATE", "Mới", res.data.id, user.id)
+                    if (resCreate.data) {
+                        setTimeout(() => {
+                            message.success("Đặt lịch thành công")
+                            setTimeout(() => { navigate(0); setLoading(false); }, 1500)
+                        }, 1000)
+                    } else {
+                        message.error(resCreate.message.trim())
                         setLoading(false)
                     }
-                }, 1000)
+                } else {
+                    message.error(res.message.trim())
+                    setLoading(false)
+                }
             } else {
                 message.error("Lấy địa chỉ thất bại")
                 setLoading(false)

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Col, DatePicker, Drawer, Form, Input, message, Rate, Row, Select, Space, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import { Typography } from "antd";
 import TextArea from 'antd/es/input/TextArea';
-import { createFeedBackAPI, deleteFeedbackAPI, updateCleanerRatingAPI } from '../../services/api.service';
+import { createBookingActionAPI, createFeedBackAPI, deleteFeedbackAPI, updateCleanerRatingAPI } from '../../services/api.service';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/auth.context';
 
 
 const { Text } = Typography;
@@ -14,6 +15,7 @@ const { Option } = Select;
 
 const CreateFeedbackComponent = (props) => {
 
+    const { user } = useContext(AuthContext)
     const { open, setOpen, bookingId, setRefreshHistory, cleanerUserId } = props
     const [form] = Form.useForm()
     const [loading, setLoading] = useState(false)
@@ -24,22 +26,31 @@ const CreateFeedbackComponent = (props) => {
         if (res.data) {
             const resUpdateRating = await updateCleanerRatingAPI(cleanerUserId, values.rating)
             if (resUpdateRating.data) {
-                setTimeout(() => {
-                    message.success("Đánh giá thành công!")
+                const resCreate = await createBookingActionAPI("FEEDBACK", "Đã hoàn thành", bookingId, user.id)
+                if (resCreate.data) {
                     setTimeout(() => {
-                        setRefreshHistory(prev => !prev)
-                        setOpen(false)
-                        setLoading(false)
-                    }, 1000)
-                }, 2000)
+                        message.success("Đánh giá thành công!")
+                        setTimeout(() => {
+                            setRefreshHistory(prev => !prev)
+                            setOpen(false)
+                            setLoading(false)
+                        }, 1000)
+                    }, 2000)
+                } else {
+                    message.error(resCreate.message.trim())
+                    setOpen(false)
+                    setLoading(false)
+                }
             }
             else {
                 await deleteFeedbackAPI(res.data.id)
                 message.error(resUpdateRating.message.trim())
                 setOpen(false)
+                setLoading(false)
             }
         } else {
             message.error(res.message.trim())
+            setOpen(false)
             setLoading(false)
         }
     }

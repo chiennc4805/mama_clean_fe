@@ -1,11 +1,13 @@
 import { Button, Col, message, notification, Row, Select, Table } from 'antd';
-import { assignCleanerJobManuallyAPI } from '../../services/api.service';
+import { assignCleanerJobManuallyAPI, createBookingActionAPI } from '../../services/api.service';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../context/auth.context';
 
 
 const AssignmentTable = (props) => {
 
+    const { user } = useContext(AuthContext)
     const [api, contextHolder] = notification.useNotification();
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
         current, setCurrent, total, cleanersOption, loadBooking } = props
@@ -13,24 +15,27 @@ const AssignmentTable = (props) => {
 
     const assignCleaner = async (record) => {
         setLoadingId(record.id)
+        const statusParam = "Chờ xác nhận"
+        const res = await assignCleanerJobManuallyAPI(record.id, record.name, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, statusParam, record.customer.id, record.cleaner.id, record.service.id)
 
-        const res = await assignCleanerJobManuallyAPI(record.id, record.name, record.address, record.addressLat, record.addressLon, record.date, record.startTime, record.totalPrice, record.note, "Chờ xác nhận", record.customer.id, record.cleaner.id, record.service.id)
-
-        setTimeout(() => {
-            if (res.data) {
+        if (res.data) {
+            const resCreate = await createBookingActionAPI("ASSIGN", statusParam, record.id, user.id)
+            if (resCreate.data) {
                 message.success("Phân công thành công")
+                loadCleaner()
+                loadBooking()
+                setTimeout(() => {
+                    setLoadingId(null)
+                }, 2000)
+            } else {
+                message.error(resCreate.message.trim())
                 setLoadingId(null)
             }
-            else {
-                notification.error({
-                    message: "Phân công thất bại",
-                    description: JSON.stringify(res.message)
-                })
-                setLoadingId(null)
-            }
-            loadCleaner()
-            loadBooking()
-        }, 2000)
+        }
+        else {
+            message.error(res.message.trim())
+            setLoadingId(null)
+        }
     }
 
     const columns = [
@@ -54,7 +59,7 @@ const AssignmentTable = (props) => {
                     </span>
                 )
             },
-            width: 150,
+            width: 180,
         },
         {
             title: 'Công việc',
@@ -65,7 +70,7 @@ const AssignmentTable = (props) => {
                     </span>
                 )
             },
-            width: 180,
+            width: 140,
         },
         {
             title: 'Ngày & Giờ',
@@ -87,7 +92,7 @@ const AssignmentTable = (props) => {
             title: 'Phân công nhiệm vụ',
             render: (record) => (
                 <Select
-                    style={{ width: 140 }}
+                    style={{ width: 180 }}
                     placeholder="Chọn cleaner"
                     value={record.cleaner ? record.cleaner.id : undefined}
                     onChange={(value) => {
@@ -113,6 +118,7 @@ const AssignmentTable = (props) => {
                         assignCleaner(record)
                     }}
                     loading={loadingId === record.id ? true : false}
+                    style={{ backgroundColor: "#41864D" }}
                 >
                     Phân công
                 </Button>
