@@ -53,7 +53,7 @@ const LoginPage = () => {
                 borderRadius: 18,
                 boxShadow: "0 2px 16px #e6e6e6",
                 padding: "48px 36px 36px 36px",
-                width: 600,
+                width: 500,
                 maxWidth: "95vw",
                 display: "flex",
                 flexDirection: "column",
@@ -194,7 +194,7 @@ const LoginPage = () => {
                         <div style={{ width: "50%", borderTop: "1px solid #ddd" }}></div>
                     </div>
 
-                    <div style={{ marginBottom: 18, position: 'relative', display: 'inline-block', width: "100%" }}>
+                    <div style={{ marginBottom: 18, display: 'flex', justifyContent: "center", width: "100%" }}>
                         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
                             <GoogleLogin
                                 onSuccess={async credentialResponse => {

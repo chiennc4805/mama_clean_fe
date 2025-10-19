@@ -33,9 +33,9 @@ const FooterLayout = () => {
         {
             title: "Liên hệ",
             items: [
-                "0392-686-152",
-                "hotro@mamasclean.vn",
-                "Thôn 8, Thạch Thất, Hà Nội"
+                "091-449-5622",
+                "mamasclean.notification@gmail.com",
+                "Thạch Thất, Hà Nội"
             ]
         }
     ];
@@ -110,20 +110,8 @@ const FooterLayout = () => {
                                 color: "#21823b"
                             }}
                         >
-                            <a href="#" aria-label="Facebook" style={{ color: "#21823b" }}>
+                            <a href="https://www.facebook.com/people/Mamas-Clean/61581103506354/" aria-label="Facebook" style={{ color: "#21823b" }}>
                                 <FacebookFilled />
-                            </a>
-                            <a href="#" aria-label="Instagram" style={{ color: "#21823b" }}>
-                                <InstagramFilled />
-                            </a>
-                            <a href="#" aria-label="Twitter" style={{ color: "#21823b" }}>
-                                <TwitterSquareFilled />
-                            </a>
-                            <a href="#" aria-label="LinkedIn" style={{ color: "#21823b" }}>
-                                <LinkedinFilled />
-                            </a>
-                            <a href="#" aria-label="YouTube" style={{ color: "#21823b" }}>
-                                <YoutubeFilled />
                             </a>
                         </div>
                     </Col>

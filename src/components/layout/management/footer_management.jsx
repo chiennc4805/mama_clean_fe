@@ -56,10 +56,7 @@ const FooterManagement = () => {
 
             {/* Right side - Social Icons */}
             <Space size={16}>
-                <FacebookOutlined style={{ color: '#666', fontSize: iconSize }} />
-                <TwitterOutlined style={{ color: '#666', fontSize: iconSize }} />
-                <InstagramOutlined style={{ color: '#666', fontSize: iconSize }} />
-                <LinkedinOutlined style={{ color: '#666', fontSize: iconSize }} />
+                <a href="https://www.facebook.com/people/Mamas-Clean/61581103506354/"><FacebookOutlined style={{ color: '#666', fontSize: iconSize }} /></a>
             </Space>
         </Footer>
     );
