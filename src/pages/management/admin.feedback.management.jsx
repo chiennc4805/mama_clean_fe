@@ -64,7 +64,7 @@ const FeedbackManagement = () => {
             title: 'Người dọn dẹp',
             key: 'cleaner',
             width: 150,
-            render: (record) => (record.booking.cleaner.name)
+            render: (record) => (record.booking?.cleaner?.name || "")
         },
         {
             title: 'Xếp hạng',

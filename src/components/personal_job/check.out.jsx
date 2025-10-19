@@ -15,7 +15,7 @@ const { TextArea } = Input;
 
 export default function CheckOutJob(props) {
 
-    const { user } = useContext(AuthContext)
+    const { user, setUser } = useContext(AuthContext)
     const [notes, setNotes] = useState('');
     const [checkOutImage, setCheckOutImage] = useState(null);
     const [checkOutFile, setCheckOutFile] = useState(null);
@@ -79,6 +79,10 @@ export default function CheckOutJob(props) {
                         setTimeout(() => {
                             setStep("list")
                             setLoading(false);
+                            setUser(prev => ({
+                                ...prev,
+                                balance: prev.balance + Math.round(dataDetail.totalPrice * (1 - import.meta.env.VITE_INCOME_DEDUCTION))
+                            }))
                         }, 2000);
                     } else {
                         message.error(resCreateBookingAction.message.trim());

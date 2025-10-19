@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import { getAccountAPI } from '../../services/api.service';
+import { message } from 'antd';
 
 const AuthContext = createContext({
     id: "",
@@ -31,15 +32,21 @@ const AuthWrapper = ({ children }) => {
         const fetchUser = async () => {
             const token = localStorage.getItem("access_token");
             if (token) {
-                try {
-                    const res = await getAccountAPI();
+                const res = await getAccountAPI();
+                if (res.data) {
                     setUser(res.data.user);
-                } catch (err) {
+                    setIsAppLoading(false);
+                } else {
                     setUser(null);
+                    message.error(res.message.trim())
+                    setIsAppLoading(false);
+                    localStorage.removeItem("access_token")
                 }
+            } else {
+                setUser(null);
+                setIsAppLoading(false);
             }
-            setIsAppLoading(false)
-        };
+        }
         fetchUser();
     }, []);
 

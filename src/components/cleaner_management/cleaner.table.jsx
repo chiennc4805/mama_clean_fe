@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Col, message, notification, Popconfirm, Row, Table } from 'antd';
+import { Button, Col, message, notification, Popconfirm, Row, Space, Switch, Table } from 'antd';
 import { useState } from 'react';
-import { deleteUserAPI } from '../../services/api.service';
+import { deleteUserAPI, updateUserAPI } from '../../services/api.service';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -11,6 +11,7 @@ const CleanerTable = (props) => {
     const { dataCleaners, loadCleaner, pageSize, setPageSize,
         current, setCurrent, total, setDataDetail, setActiveComponent } = props
     const navigate = useNavigate()
+    const [loadingSwitch, setLoadingSwitch] = useState(false)
 
     const openNotificationWithIcon = (type, message, description) => {
         api[type]({
@@ -18,18 +19,6 @@ const CleanerTable = (props) => {
             description: description
         });
     };
-
-    const handleDeleteUser = async (userId, cleanerProfileId) => {
-        const deleteUser = await deleteUserAPI(userId)
-        if (deleteUser.data) {
-            message.success("Xoá cleaner thành công")
-            setTimeout(() => {
-                navigate(0)
-            }, 1000)
-        } else {
-            message.error(deleteUser.message.trim())
-        }
-    }
 
     const columns = [
         {
@@ -67,6 +56,45 @@ const CleanerTable = (props) => {
             width: 150,
         },
         {
+            title: 'Trạng thái',
+            key: 'status',
+            width: 150,
+            render: (record) => (
+                <Space direction="vertical">
+                    <Switch
+                        checkedChildren="Đang làm"
+                        unCheckedChildren="Nghỉ việc"
+                        checked={record.user.status ? true : false}
+                        style={{
+                            backgroundColor: record.user.status === true ? '#52c41a' : '#ff4d4f', // xanh & đỏ
+                        }}
+                        loading={loadingSwitch}
+                        onClick={async (checked, e) => {
+                            if ((!checked && confirm("Bạn có chắc chắn muốn nghỉ việc nhân viên này không?") || checked)) {
+                                setLoadingSwitch(true)
+                                let res
+                                if (checked) {
+                                    res = await updateUserAPI(record.user.id, record.user.name, record.user.email, record.user.phone, record.user.gender, record.user.role.id, record.user.avatar)
+                                } else {
+                                    res = await deleteUserAPI(record.user.id)
+                                }
+                                if (res.data) {
+                                    loadCleaner()
+                                    message.success("Cập nhật trạng thái thành công")
+                                    setTimeout(() => {
+                                        setLoadingSwitch(false)
+                                    }, 2000)
+                                } else {
+                                    message.error(res.message.trim())
+                                    setLoadingSwitch(false)
+                                }
+                            }
+                        }}
+                    />
+                </Space>
+            )
+        },
+        {
             title: '',
             key: 'action',
             width: 130,
@@ -75,17 +103,6 @@ const CleanerTable = (props) => {
                     <Button style={{ backgroundColor: "#41864D" }} type="primary" size="small" onClick={() => { setDataDetail(record); setActiveComponent("detail") }}>
                         Xem chi tiết
                     </Button>
-
-                    {/* <Popconfirm
-                        title="Xoá nguời dùng"
-                        description="Bạn chắc chắn xoá nguời dùng này?"
-                        onConfirm={() => handleDeleteUser(record.user.id, record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                        placement='left'
-                    >
-                        <DeleteOutlined style={{ cursor: "pointer", color: "red", marginLeft: 10 }} />
-                    </Popconfirm> */}
                 </>
 
 
