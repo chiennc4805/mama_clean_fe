@@ -1,5 +1,5 @@
 import { BankOutlined, ClockCircleOutlined, DollarOutlined, MenuUnfoldOutlined, ReadOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Menu, Button, Drawer } from 'antd';
+import { Layout, Menu, Button, Drawer, Spin } from 'antd';
 import { Footer } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { useContext, useState, useEffect } from 'react';
@@ -44,7 +44,17 @@ function App() {
 		}
 	}, [location.pathname]);
 
-	if (isAppLoading) return <>Đang tải vui lòng chờ</>
+	if (isAppLoading)
+		return (
+			<div style={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				height: "100vh"
+			}}>
+				<Spin size="large" tip="Đang tải, vui lòng chờ..." />
+			</div>
+		);
 
 	const siderStyle = {
 		height: '100vh',
